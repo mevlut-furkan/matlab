@@ -307,7 +307,7 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
       <div class="pill"><span class="live-dot"></span>Mevlüt Furkan İnce</div>
     </div>
   </header>
- <audio id="bg-music-portal" loop autoplay style="display:none">
+ <audio id="mac-audio" loop style="display:none">
   <source src="mac-muzigi.mp3" type="audio/mpeg">
 </audio>
   <section class="screen active" id="screen-intro">
@@ -537,14 +537,14 @@ function updateCounter(){
 /* AUDIO */
 const macAudio = document.getElementById('mac-audio');
 let audioMuted = false;
-let audioUserInteracted = false;
 
 function playMacMusic() {
-  if (audioMuted) return;
+  if (audioMuted || !macAudio) return;
   macAudio.currentTime = 0;
   macAudio.play().catch(() => {});
 }
 function stopMacMusic() {
+  if (!macAudio) return;
   macAudio.pause();
   macAudio.currentTime = 0;
 }
@@ -555,7 +555,7 @@ document.getElementById('btn-mute').addEventListener('click', () => {
   const label = document.getElementById('mute-label');
   const btn = document.getElementById('btn-mute');
   if (audioMuted) {
-    macAudio.pause();
+    if (macAudio) macAudio.pause();
     icon.textContent = '🔇';
     label.textContent = 'SES KAPALI';
     btn.classList.add('muted');
@@ -564,7 +564,7 @@ document.getElementById('btn-mute').addEventListener('click', () => {
     label.textContent = 'SES';
     btn.classList.remove('muted');
     // Eğer maç ekranındaysak müziği başlat
-    if (document.getElementById('screen-match').classList.contains('active')) {
+    if (document.getElementById('screen-match').classList.contains('active') && macAudio) {
       macAudio.play().catch(() => {});
     }
   }
@@ -575,7 +575,7 @@ function go(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo({top:0,behavior:'smooth'});
-  // Müzik kontrolü
+  // Müzik kontrolü — sadece maç ekranında çalsın
   if (id === 'screen-match') {
     playMacMusic();
   } else {
