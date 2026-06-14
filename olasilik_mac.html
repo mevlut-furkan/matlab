@@ -307,8 +307,9 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
       <div class="pill"><span class="live-dot"></span>Mevlüt Furkan İnce</div>
     </div>
   </header>
-  <audio id="mac-audio" src="mac-muzigi.mp3" loop preload="auto"></audio>
-
+ <audio id="bg-music-portal" loop autoplay style="display:none">
+  <source src="mac-muzigi.mp3" type="audio/mpeg">
+</audio>
   <section class="screen active" id="screen-intro">
     <div class="hero">
       <h1><span class="w1">OLASILIK</span><br><span class="w2">TAHMİNİ</span></h1>
@@ -459,9 +460,6 @@ input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-
     <p id="modal-sub">Tahminini <b><span id="modal-pct">—</span></b> olarak yerleştirdin. Şimdi düşün:</p>
     <ul class="qlist">
       <li>📊 Hangi istatistiğe bakarak tahmin yaptın? Puan mı, gol sayısı mı?</li>
-      <li>🤔 "Son 5 maçın 4'ünü kazandı" = "Bu maçı da <em>kesin kazanır</em>" demek midir?</li>
-      <li>🎲 Aynı maçı 10 kez oynasalar hep aynı sonuç çıkar mı?</li>
-      <li>👥 Yanındaki arkadaşının tahmini seninkiyle aynı mı? Neden farklı olabilir?</li>
     </ul>
     <div class="btn-row">
       <button class="btn ghost dark" id="btn-modal-back">↩ Tahmini Değiştir</button>
