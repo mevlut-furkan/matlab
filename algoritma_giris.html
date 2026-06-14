@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Algoritma · Mevlüt furkan ince · MAT.8.2.4</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #F5EDDC; }
+    button { font-family: inherit; cursor: pointer; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .anim-up { animation: slideUp 0.5s ease-out both; }
+  </style>
+</head>
+<body>
+<!-- MFİ: Geri tuşu + kopyalama engeli -->
+<a href="algoritma_portal.html" class="mfi-back" aria-label="Algoritma Portalına Dön">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:none"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+  <span class="mfi-back-txt">Algoritma Portalına Dön</span>
+</a>
+<style id="mfi-style">
+.mfi-back{position:fixed!important;top:12px!important;left:12px!important;z-index:2147483000!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:0!important;width:38px!important;height:38px!important;padding:0!important;border-radius:50%!important;text-decoration:none!important;background:rgba(20,24,58,.78)!important;color:#EEF0FF!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:0 4px 14px -4px rgba(0,0,0,.5)!important;cursor:pointer!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important;opacity:.72!important;transition:opacity .2s ease,transform .15s ease,background .2s ease!important;-webkit-user-select:none!important;user-select:none!important;}
+.mfi-back:hover{opacity:1!important;transform:translateY(-1px)!important;background:#14183A!important;}
+.mfi-back:active{transform:translateY(0)!important;}
+.mfi-back:focus-visible{outline:3px solid #5B5BF0!important;outline-offset:3px!important;opacity:1!important;}
+.mfi-back-txt{display:none!important;}
+html,body{-webkit-user-select:none!important;-ms-user-select:none!important;user-select:none!important;}
+input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-select:text!important;}
+</style>
+
+  <div id="root"></div>
+
+<script>
+// ── Lucide icons (inline SVG components) ──────────────────────
+window.LucideIcons = {};
+(function(){
+  function icon(paths, opts){
+    return function(props){
+      var size = props.size || 24;
+      var color = props.color || 'currentColor';
+      var style = props.style || {};
+      return React.createElement('svg',{
+        xmlns:'http://www.w3.org/2000/svg', width:size, height:size,
+        viewBox:'0 0 24 24', fill:'none', stroke:color,
+        strokeWidth: opts && opts.sw || 2,
+        strokeLinecap:'round', strokeLinejoin:'round', style:style
+      }, paths.map(function(d,i){ return React.createElement('path',{key:i,d:d}); }));
+    };
+  }
+  function iconWithExtra(paths, extras){
+    return function(props){
+      var size = props.size || 24;
+      var color = props.color || 'currentColor';
+      var style = props.style || {};
+      var children = paths.map(function(d,i){ return React.createElement('path',{key:'p'+i,d:d}); });
+      extras.forEach(function(e,i){
+        children.push(React.createElement(e.tag, Object.assign({key:'e'+i}, e.attrs)));
+      });
+      return React.createElement('svg',{
+        xmlns:'http://www.w3.org/2000/svg', width:size, height:size,
+        viewBox:'0 0 24 24', fill:'none', stroke:color,
+        strokeWidth:2, strokeLinecap:'round', strokeLinejoin:'round', style:style
+      }, children);
+    };
+  }
+
+  window.LucideIcons.Recycle = icon(['M7 19H4.815a1.83 1.83 0 0 1-1.57-2.763L7.043 9.6a1.83 1.83 0 0 1 3.156 0','M9 19h10.185a1.83 1.83 0 0 0 1.57-2.763L16.957 9.6a1.83 1.83 0 0 0-3.156 0','M5.573 12H9.83a1.83 1.83 0 0 1 1.578.905L12 14l.592-.905A1.83 1.83 0 0 1 14.17 12h4.257','M12 5v4','M10 7l2-2 2 2']);
+  window.LucideIcons.Bus = icon(['M8 6v6','M15 6v6','M2 12h19.6','M18 18h3s.5-1.7.8-2.8c.1-.4.2-.8.2-1.2 0-.4-.1-.8-.2-1.2l-1.4-5C20.1 6.8 19.1 6 18 6H4a2 2 0 0 0-2 2v10h3','M18 18H5'],
+    [{tag:'circle',attrs:{cx:7,cy:18,r:2}},{tag:'circle',attrs:{cx:15,cy:18,r:2}}]);
+  window.LucideIcons.Zap = icon(['M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z']);
+  window.LucideIcons.ArrowRight = icon(['M5 12h14','M12 5l7 7-7 7']);
+  window.LucideIcons.ArrowLeft = icon(['M19 12H5','M12 19l-7-7 7-7']);
+  window.LucideIcons.CheckCircle2 = icon(['M21.801 10A10 10 0 1 1 17 3.335','M9 11l3 3L22 4']);
+  window.LucideIcons.XCircle = icon(['m15 9-6 6','m9 9 6 6'],{});
+  // add circle for XCircle
+  window.LucideIcons.XCircle = iconWithExtra(['m15 9-6 6','m9 9 6 6'],[{tag:'circle',attrs:{cx:12,cy:12,r:10}}]);
+  window.LucideIcons.Lock = iconWithExtra(['M11 1a4 4 0 0 0-4 4v2a6 6 0 1 0 8 0V5a4 4 0 0 0-4-4z'],
+    [{tag:'rect',attrs:{x:3,y:11,width:18,height:11,rx:2,ry:2}}]);
+  window.LucideIcons.Lock = icon(['M18 11V7a6 6 0 0 0-12 0v4'],{});
+  window.LucideIcons.Lock = iconWithExtra(['M18 11V7a6 6 0 0 0-12 0v4'],[{tag:'rect',attrs:{width:20,height:11,x:2,y:11,rx:2,ry:2}}]);
+  window.LucideIcons.Play = icon(['M6 3l14 9-14 9V3z']);
+  window.LucideIcons.RotateCcw = icon(['M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8'],['M3 3v5h5']);
+  window.LucideIcons.RotateCcw = icon(['M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8','M3 3v5h5']);
+  window.LucideIcons.FileCode2 = icon(['M4 22h14a2 2 0 0 0 2-2V7l-5-5H6a2 2 0 0 0-2 2v4','M14 2v4a2 2 0 0 0 2 2h4','M10 13h-1','M9 18l2-2-2-2','M13 13l2 2-2 2']);
+  window.LucideIcons.Workflow = icon(['M17 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4z','M7 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4z','M7 21a2 2 0 1 0 0-4 2 2 0 0 0 0 4z','M7 7v4a2 2 0 0 0 2 2h6','M17 11v6']);
+  window.LucideIcons.Lightbulb = icon(['M15 14c.2-1 .7-1.7 1.5-2.5C17.5 10.3 18 9.2 18 8A6 6 0 0 0 6 8c0 1.2.5 2.3 1.5 3.5.8.8 1.3 1.5 1.5 2.5','M9 18h6','M10 22h4']);
+  window.LucideIcons.Trophy = icon(['M6 9H4.5a2.5 2.5 0 0 1 0-5H6','M18 9h1.5a2.5 2.5 0 0 0 0-5H18','M4 22h16','M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22','M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22','M18 2H6v7a6 6 0 0 0 12 0V2z']);
+  window.LucideIcons.Sparkles = icon(['m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z','M5 3v4','M19 17v4','M3 5h4','M17 19h4']);
+})();
+</script>
+
+<script type="text/babel">
+const {useState, useMemo} = React;
+const {Recycle,Bus,Zap,ArrowRight,ArrowLeft,CheckCircle2,XCircle,Lock,Play,RotateCcw,FileCode2,Workflow,Lightbulb,Trophy,Sparkles} = window.LucideIcons;
+
+const C = {
+  paper: "#F5EDDC",
+  paperDeep: "#ECE0C5",
+  ink: "#10243B",
+  inkSoft: "#1F3A5C",
+  amber: "#E8973A",
+  amberDeep: "#C77A1F",
+  eco: "#2F7D5A",
+  ecoSoft: "#7CB48F",
+  rose: "#C44545",
+  line: "rgba(16, 36, 59, 0.18)",
+  lineSoft: "rgba(16, 36, 59, 0.08)",
+};
+
+const MISSIONS = [
+  {
+    id: "recycle",
+    title: "Geri Dönüşüm Tesisi",
+    short: "Görev 01",
+    icon: Recycle,
+    accent: C.eco,
+    intro: "Şehrimizin yeni geri dönüşüm tesisi açıldı! Tesise getirilen plastik atığın yaklaşık %70'i yeniden kullanılabilir malzemeye dönüştürülüyor. Belediye, her gün getirilen plastik miktarına göre ne kadar malzeme üretileceğini hesaplayan bir algoritmaya ihtiyaç duyuyor.",
+    contextTag: "♻ Sürdürülebilirlik",
+    inputName: "Toplanan plastik (kg)",
+    inputVar: "plastik",
+    outputName: "Üretilen malzeme (kg)",
+    outputVar: "malzeme",
+    func: { m: 0.7, b: 0 },
+    funcDisplay: "f(x) = 0,7 · x",
+    variableOptions: [
+      { name: "Toplanan plastik miktarı (kg)", role: "input" },
+      { name: "Üretilen malzeme miktarı (kg)", role: "output" },
+      { name: "Tesisin açık olduğu saat", role: "none" },
+      { name: "Tesiste çalışan sayısı", role: "none" },
+    ],
+    table: [{x:10,y:7},{x:20,y:14},{x:50,y:35},{x:100,y:70}],
+    funcOptions: [
+      { display: "f(x) = 0,7 · x", correct: true },
+      { display: "f(x) = x + 0,7", correct: false },
+      { display: "f(x) = 1,7 · x", correct: false },
+      { display: "f(x) = 0,7 · x + 10", correct: false },
+    ],
+    funcHint: "Tabloda 10 kg plastik 7 kg malzeme veriyor. 7 ÷ 10 = 0,7. Yani üretilen malzeme, plastiğin 0,7 katı.",
+    inputSlotOptions: [
+      { text: "plastik değerini gir", correct: true },
+      { text: "malzeme değerini gir", correct: false },
+      { text: "tesis sayısını gir", correct: false },
+    ],
+    processSlotOptions: [
+      { text: "malzeme ← 0,7 × plastik", correct: true },
+      { text: "malzeme ← plastik + 0,7", correct: false },
+      { text: "plastik ← 0,7 × malzeme", correct: false },
+    ],
+    outputSlotOptions: [
+      { text: "malzeme değerini yaz", correct: true },
+      { text: "plastik değerini yaz", correct: false },
+      { text: "0,7 değerini yaz", correct: false },
+    ],
+    testCases: [10, 25, 80],
+    unit: "kg",
+    debrief: "Harika! Bu algoritma sayesinde tesis, gelen her plastik miktarı için ne kadar malzeme üreteceğini anında hesaplayabilir. Şehrin atıkları artık değer üretiyor!",
+  },
+  {
+    id: "carbon",
+    title: "Karbon Azaltma Misyonu",
+    short: "Görev 02",
+    icon: Bus,
+    accent: C.amber,
+    intro: "Belediye, otobüs kullanımını teşvik etmek için bir kampanya başlatıyor. Yapılan ölçümlere göre özel araç yerine otobüs tercih eden her yolcu, günde ortalama 2,5 kg karbon salımını engelliyor. Yolcu sayısına göre günlük tasarruf edilen karbon miktarını hesaplayan bir algoritma kurmalısın.",
+    contextTag: "🌍 İklim & ulaşım",
+    inputName: "Otobüs yolcu sayısı",
+    inputVar: "yolcu",
+    outputName: "Önlenen CO₂ (kg)",
+    outputVar: "karbon",
+    func: { m: 2.5, b: 0 },
+    funcDisplay: "f(x) = 2,5 · x",
+    variableOptions: [
+      { name: "Otobüsteki yolcu sayısı", role: "input" },
+      { name: "Önlenen karbon salımı (kg)", role: "output" },
+      { name: "Otobüsün rengi", role: "none" },
+      { name: "Şoförün adı", role: "none" },
+    ],
+    table: [{x:4,y:10},{x:10,y:25},{x:20,y:50},{x:40,y:100}],
+    funcOptions: [
+      { display: "f(x) = 2,5 · x", correct: true },
+      { display: "f(x) = x + 2,5", correct: false },
+      { display: "f(x) = 25 · x", correct: false },
+      { display: "f(x) = 2,5 · x + 10", correct: false },
+    ],
+    funcHint: "4 yolcu 10 kg karbon önlüyorsa, 10 ÷ 4 = 2,5. Her yolcu 2,5 kg karbon salımını engelliyor.",
+    inputSlotOptions: [
+      { text: "yolcu değerini gir", correct: true },
+      { text: "karbon değerini gir", correct: false },
+      { text: "saat değerini gir", correct: false },
+    ],
+    processSlotOptions: [
+      { text: "karbon ← 2,5 × yolcu", correct: true },
+      { text: "karbon ← yolcu + 2,5", correct: false },
+      { text: "karbon ← yolcu / 2,5", correct: false },
+    ],
+    outputSlotOptions: [
+      { text: "karbon değerini yaz", correct: true },
+      { text: "yolcu değerini yaz", correct: false },
+      { text: "2,5 değerini yaz", correct: false },
+    ],
+    testCases: [12, 30, 75],
+    unit: "kg CO₂",
+    debrief: "Bu algoritma ile belediye her gün otobüse binen yolcu sayısından doğrudan çevresel etkiyi okuyabilir. Senin matematiğin gerçekten dünyayı temizliyor!",
+  },
+  {
+    id: "energy",
+    title: "Akıllı Elektrik Sayacı",
+    short: "Görev 03",
+    icon: Zap,
+    accent: C.inkSoft,
+    intro: "Yeni nesil bir elektrik sayacı tasarlıyorsun. Şirket, her ay sabit bir hizmet bedeli (30 TL) alıyor; ayrıca tüketilen her kWh için 1,5 TL ekleniyor. Tüketime göre toplam faturayı hesaplayan algoritmayı kurman gerekiyor. Dikkat: Bu sefer fonksiyonun bir de SABİT TERİMİ var.",
+    contextTag: "⚡ Enerji & maliyet",
+    inputName: "Tüketim (kWh)",
+    inputVar: "tuketim",
+    outputName: "Fatura (TL)",
+    outputVar: "fatura",
+    func: { m: 1.5, b: 30 },
+    funcDisplay: "f(x) = 1,5 · x + 30",
+    variableOptions: [
+      { name: "Aylık elektrik tüketimi (kWh)", role: "input" },
+      { name: "Aylık fatura tutarı (TL)", role: "output" },
+      { name: "Sayacın rengi", role: "none" },
+      { name: "Sayaç markası", role: "none" },
+    ],
+    table: [{x:0,y:30},{x:10,y:45},{x:50,y:105},{x:100,y:180}],
+    funcOptions: [
+      { display: "f(x) = 1,5 · x + 30", correct: true },
+      { display: "f(x) = 1,5 · x", correct: false },
+      { display: "f(x) = 30 · x + 1,5", correct: false },
+      { display: "f(x) = x + 31,5", correct: false },
+    ],
+    funcHint: "Sıfır tüketimde bile 30 TL ödendiğine dikkat! Bu, formülün +30 sabit terimi. Her kWh fiyatını bulmak için: (45 − 30) ÷ 10 = 1,5 TL/kWh.",
+    inputSlotOptions: [
+      { text: "tuketim değerini gir", correct: true },
+      { text: "fatura değerini gir", correct: false },
+      { text: "30 değerini gir", correct: false },
+    ],
+    processSlotOptions: [
+      { text: "fatura ← 1,5 × tuketim + 30", correct: true },
+      { text: "fatura ← 1,5 × tuketim", correct: false },
+      { text: "fatura ← tuketim + 30", correct: false },
+      { text: "fatura ← 30 × tuketim + 1,5", correct: false },
+    ],
+    outputSlotOptions: [
+      { text: "fatura değerini yaz", correct: true },
+      { text: "tuketim değerini yaz", correct: false },
+      { text: "30 değerini yaz", correct: false },
+    ],
+    testCases: [20, 75, 150],
+    unit: "TL",
+    debrief: "Tebrikler! Sabit terimli fonksiyonlarla da çalışabilen bir algoritma tasarladın. Gerçek hayattaki çoğu fatura, abonelik ve taksit hesabı tam olarak bu yapıdadır.",
+  },
+];
+
+// ── APP ──────────────────────────────────────────────────────
+function App() {
+  const [screen, setScreen] = useState("home");
+  const [activeMission, setActiveMission] = useState(0);
+  const [completed, setCompleted] = useState([]);
+
+  const startMission = (idx) => { setActiveMission(idx); setScreen("mission"); };
+  const finishMission = (idx) => {
+    const next = completed.includes(idx) ? completed : [...completed, idx];
+    setCompleted(next);
+    if (next.length === MISSIONS.length) setScreen("victory");
+    else setScreen("home");
+  };
+
+  return (
+    <div style={{
+      minHeight:"100vh", background:C.paper, color:C.ink,
+      fontFamily:"'Plus Jakarta Sans', system-ui, sans-serif",
+      backgroundImage:`radial-gradient(circle at 20% 10%, rgba(232,151,58,0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(47,125,90,0.07) 0%, transparent 45%),
+        repeating-linear-gradient(0deg, ${C.lineSoft} 0px, ${C.lineSoft} 1px, transparent 1px, transparent 32px),
+        repeating-linear-gradient(90deg, ${C.lineSoft} 0px, ${C.lineSoft} 1px, transparent 1px, transparent 32px)`,
+      backgroundAttachment:"fixed"
+    }}>
+      <Header />
+      {screen === "home" && <Home completed={completed} onStart={startMission} />}
+      {screen === "mission" && <Mission mission={MISSIONS[activeMission]} onExit={() => setScreen("home")} onComplete={() => finishMission(activeMission)} />}
+      {screen === "victory" && <Victory onReset={() => { setCompleted([]); setScreen("home"); }} />}
+      <Footer />
+    </div>
+  );
+}
+
+// ── HEADER ───────────────────────────────────────────────────
+function Header() {
+  return (
+    <header style={{padding:"20px 32px",display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:`1px solid ${C.line}`,background:"rgba(245,237,220,0.92)",backdropFilter:"blur(8px)",position:"sticky",top:0,zIndex:50}}>
+      <div style={{display:"flex",alignItems:"center",gap:12}}>
+        <div style={{width:38,height:38,borderRadius:8,background:C.ink,color:C.paper,display:"grid",placeItems:"center",fontFamily:"'JetBrains Mono',monospace",fontWeight:700,fontSize:16,transform:"rotate(-3deg)"}}>fx</div>
+        <div>
+          <div style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,fontSize:18,letterSpacing:-0.3,lineHeight:1}}>Algoritma</div>
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,opacity:0.6,marginTop:2}}>MAT.8.2.4 · </div>
+        </div>
+      </div>
+      <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,padding:"6px 12px",border:`1px solid ${C.line}`,borderRadius:999,opacity:0.7}}>8. sınıf</div>
+    </header>
+  );
+}
+
+// ── HOME ─────────────────────────────────────────────────────
+function Home({ completed, onStart }) {
+  return (
+    <main style={{maxWidth:980,margin:"0 auto",padding:"48px 32px 80px"}}>
+      <div className="anim-up" style={{marginBottom:48}}>
+        <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:C.amber,letterSpacing:2,marginBottom:12}}>◆ GÖREV MERKEZİ ◆</div>
+        <h1 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,fontSize:"clamp(32px,5vw,52px)",lineHeight:1.05,letterSpacing:-1.5,margin:0,maxWidth:720}}>
+           <span style={{fontStyle:"italic",color:C.amber}}></span>
+        </h1>
+        <p style={{fontSize:17,lineHeight:1.55,opacity:0.75,maxWidth:620,marginTop:20}}>
+        </p>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:20}}>
+        {MISSIONS.map((m,i) => (
+          <MissionCard key={m.id} mission={m} index={i} unlocked={true} done={completed.includes(i)} onClick={() => onStart(i)} />
+        ))}
+      </div>
+      <div style={{marginTop:48,padding:"20px 24px",background:"rgba(16,36,59,0.04)",border:`1px dashed ${C.line}`,borderRadius:12,display:"flex",gap:14,alignItems:"flex-start"}}>
+        <Lightbulb size={20} color={C.amber} style={{flexShrink:0,marginTop:2}} />
+        <div style={{fontSize:14,lineHeight:1.55,opacity:0.8}}>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function MissionCard({ mission, index, unlocked, done, onClick }) {
+  const Icon = mission.icon;
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div onClick={onClick} className="anim-up"
+      style={{animationDelay:`${index*0.08}s`,background:C.paperDeep,border:`1.5px solid ${done?mission.accent:C.line}`,borderRadius:16,padding:24,cursor:unlocked?"pointer":"not-allowed",opacity:unlocked?1:0.45,transition:"all 0.25s ease",position:"relative",overflow:"hidden",transform:hovered?"translateY(-4px)":"translateY(0)",boxShadow:hovered?"0 20px 40px -20px rgba(16,36,59,0.3)":"none"}}
+      onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
+      <div style={{position:"absolute",top:16,right:16,fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:1.5,opacity:0.5}}>{mission.short}</div>
+      <div style={{width:56,height:56,borderRadius:12,background:mission.accent,color:C.paper,display:"grid",placeItems:"center",marginBottom:16}}>
+        {unlocked ? <Icon size={28} /> : <Lock size={24} />}
+      </div>
+      <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:mission.accent,marginBottom:6,fontWeight:500}}>{mission.contextTag}</div>
+      <h3 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:700,fontSize:22,letterSpacing:-0.5,margin:"0 0 12px"}}>{mission.title}</h3>
+      <div style={{fontSize:13,lineHeight:1.5,opacity:0.7,marginBottom:16}}>{mission.intro.slice(0,110)}…</div>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingTop:14,borderTop:`1px solid ${C.line}`}}>
+        <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,color:done?mission.accent:C.ink,opacity:0.85}}>
+          {done ? "✓ tamamlandı" : unlocked ? "→ başla" : "kilitli"}
+        </div>
+        {unlocked && !done && <ArrowRight size={18} style={{opacity:0.6}} />}
+        {done && <CheckCircle2 size={18} color={mission.accent} />}
+      </div>
+    </div>
+  );
+}
+
+// ── MISSION FLOW ─────────────────────────────────────────────
+function Mission({ mission, onExit, onComplete }) {
+  const [stage, setStage] = useState(0);
+  const stages = ["Brifing","Değişkenler","Fonksiyon","Algoritma","Test"];
+  const [varSelect, setVarSelect] = useState({});
+  const [funcChoice, setFuncChoice] = useState(null);
+  const [funcChecked, setFuncChecked] = useState(false);
+  const [slots, setSlots] = useState({ input:null, process:null, output:null });
+  const [showCode, setShowCode] = useState(false);
+  const [testIdx, setTestIdx] = useState(0);
+  const [testValue, setTestValue] = useState("");
+  const [testRun, setTestRun] = useState(null);
+
+  const goNext = () => setStage(s => Math.min(s+1,4));
+  const goPrev = () => setStage(s => Math.max(s-1,0));
+
+  const variablesValid =
+    Object.values(varSelect).filter(v=>v==="input").length===1 &&
+    Object.values(varSelect).filter(v=>v==="output").length===1 &&
+    mission.variableOptions.every((opt,i) => (varSelect[i]||"none")===opt.role);
+  const functionValid = funcChoice!==null && mission.funcOptions[funcChoice].correct;
+  const algorithmValid = slots.input!==null && slots.process!==null && slots.output!==null &&
+    mission.inputSlotOptions[slots.input].correct &&
+    mission.processSlotOptions[slots.process].correct &&
+    mission.outputSlotOptions[slots.output].correct;
+
+  const canAdvance = [true, variablesValid, functionValid&&funcChecked, algorithmValid, testRun?.correct===true][stage];
+
+  return (
+    <main style={{maxWidth:980,margin:"0 auto",padding:"32px 32px 60px"}}>
+      <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:28}}>
+        <button onClick={onExit} style={{background:"transparent",border:`1px solid ${C.line}`,color:C.ink,padding:"8px 14px",borderRadius:8,fontSize:13,display:"flex",alignItems:"center",gap:6,opacity:0.7}}>
+          <ArrowLeft size={14} /> Görev Merkezi
+        </button>
+        <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,opacity:0.6,letterSpacing:1}}>
+          {mission.short} · {mission.title.toUpperCase()}
+        </div>
+      </div>
+
+      <StageProgress stages={stages} current={stage} accent={mission.accent} />
+
+      <div key={stage} className="anim-up" style={{marginTop:36,minHeight:440}}>
+        {stage===0 && <BriefStage mission={mission} />}
+        {stage===1 && <VariableStage mission={mission} selection={varSelect} onSelect={(i,role)=>setVarSelect({...varSelect,[i]:role})} valid={variablesValid} />}
+        {stage===2 && <FunctionStage mission={mission} choice={funcChoice} onChoose={(i)=>{setFuncChoice(i);setFuncChecked(false);}} checked={funcChecked} onCheck={()=>setFuncChecked(true)} />}
+        {stage===3 && <AlgorithmStage mission={mission} slots={slots} setSlots={setSlots} showCode={showCode} setShowCode={setShowCode} />}
+        {stage===4 && <TestStage mission={mission} testIdx={testIdx} setTestIdx={setTestIdx} testValue={testValue} setTestValue={setTestValue} testRun={testRun} setTestRun={setTestRun} />}
+      </div>
+
+      <div style={{marginTop:36,paddingTop:20,borderTop:`1px solid ${C.line}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+        <button onClick={goPrev} disabled={stage===0} style={{background:"transparent",border:`1px solid ${C.line}`,color:C.ink,padding:"10px 18px",borderRadius:10,fontSize:14,opacity:stage===0?0.3:0.8,cursor:stage===0?"not-allowed":"pointer"}}>
+          ← Geri
+        </button>
+        {stage < 4 ? (
+          <button onClick={goNext} disabled={!canAdvance} style={{background:canAdvance?mission.accent:"rgba(16,36,59,0.12)",color:canAdvance?C.paper:"rgba(16,36,59,0.4)",border:"none",padding:"12px 22px",borderRadius:10,fontSize:14,fontWeight:600,display:"flex",alignItems:"center",gap:8,cursor:canAdvance?"pointer":"not-allowed",transition:"all 0.2s"}}>
+            Sonraki adım <ArrowRight size={16} />
+          </button>
+        ) : (
+          <button onClick={onComplete} disabled={!canAdvance} style={{background:canAdvance?mission.accent:"rgba(16,36,59,0.12)",color:canAdvance?C.paper:"rgba(16,36,59,0.4)",border:"none",padding:"12px 22px",borderRadius:10,fontSize:14,fontWeight:600,display:"flex",alignItems:"center",gap:8,cursor:canAdvance?"pointer":"not-allowed"}}>
+            <Trophy size={16} /> Görevi tamamla
+          </button>
+        )}
+      </div>
+    </main>
+  );
+}
+
+function StageProgress({ stages, current, accent }) {
+  return (
+    <div style={{display:"flex",gap:8}}>
+      {stages.map((s,i) => {
+        const active = i===current, done = i<current;
+        return (
+          <div key={s} style={{flex:1}}>
+            <div style={{height:4,borderRadius:2,background:done||active?accent:"rgba(16,36,59,0.12)",transition:"all 0.3s"}} />
+            <div style={{marginTop:8,fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:1,color:active?accent:"rgba(16,36,59,0.5)",fontWeight:active?700:400}}>
+              0{i+1} · {s.toUpperCase()}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// ── STAGE 0 — BRIEF ──────────────────────────────────────────
+function BriefStage({ mission }) {
+  const Icon = mission.icon;
+  return (
+    <div style={{background:C.paperDeep,borderRadius:18,padding:36,border:`1.5px solid ${C.line}`,position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",top:-20,right:-20,width:200,height:200,borderRadius:"50%",background:mission.accent,opacity:0.08}} />
+      <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:24}}>
+        <div style={{width:64,height:64,borderRadius:14,background:mission.accent,color:C.paper,display:"grid",placeItems:"center"}}>
+          <Icon size={32} />
+        </div>
+        <div>
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,color:mission.accent,letterSpacing:1.5,marginBottom:4}}>BRİFİNG · {mission.contextTag}</div>
+          <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:700,fontSize:30,letterSpacing:-0.7,margin:0}}>{mission.title}</h2>
+        </div>
+      </div>
+      <p style={{fontSize:16,lineHeight:1.65,opacity:0.85,maxWidth:640}}>{mission.intro}</p>
+      <div style={{marginTop:24,padding:16,background:"rgba(16,36,59,0.05)",borderLeft:`3px solid ${mission.accent}`,borderRadius:6,fontSize:14,fontStyle:"italic",opacity:0.75}}>
+        Sıradaki adım: Bu problemde <b>girdi</b> ve <b>çıktı</b> değişkenlerini ayırt et.
+      </div>
+    </div>
+  );
+}
+
+// ── STAGE 1 — VARIABLES ──────────────────────────────────────
+function VariableStage({ mission, selection, onSelect, valid }) {
+  const inputCount = Object.values(selection).filter(v=>v==="input").length;
+  const outputCount = Object.values(selection).filter(v=>v==="output").length;
+  return (
+    <div>
+      <StageHeader n="01" title="Değişkenleri Belirle" sub="Algoritmanın GİRDİSİ ve ÇIKTISI olacak büyüklükleri seç. Konuyla ilgisiz olanları işaretleme." accent={mission.accent} />
+      <div style={{display:"grid",gap:12,marginTop:24}}>
+        {mission.variableOptions.map((opt,i) => {
+          const sel = selection[i] || "none";
+          return (
+            <div key={i} style={{background:C.paperDeep,border:`1.5px solid ${sel==="input"?mission.accent:sel==="output"?C.amber:C.line}`,borderRadius:12,padding:"14px 18px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,transition:"all 0.2s"}}>
+              <div style={{fontSize:15,fontWeight:500}}>{opt.name}</div>
+              <div style={{display:"flex",gap:6}}>
+                <ChipButton active={sel==="input"} onClick={()=>onSelect(i,sel==="input"?"none":"input")} color={mission.accent} disabled={sel!=="input"&&inputCount>=1}>GİRDİ</ChipButton>
+                <ChipButton active={sel==="output"} onClick={()=>onSelect(i,sel==="output"?"none":"output")} color={C.amber} disabled={sel!=="output"&&outputCount>=1}>ÇIKTI</ChipButton>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <FeedbackBar valid={valid} hint="Bir GİRDİ ve bir ÇIKTI seçmelisin. İlgisiz seçenekleri boş bırak." />
+    </div>
+  );
+}
+
+function ChipButton({ active, onClick, color, disabled, children }) {
+  return (
+    <button onClick={onClick} disabled={disabled} style={{background:active?color:"transparent",color:active?C.paper:disabled?"rgba(16,36,59,0.3)":C.ink,border:`1.5px solid ${active?color:C.line}`,padding:"6px 12px",borderRadius:999,fontSize:11,fontFamily:"'JetBrains Mono',monospace",fontWeight:600,letterSpacing:0.8,cursor:disabled?"not-allowed":"pointer",transition:"all 0.15s"}}>
+      {children}
+    </button>
+  );
+}
+
+// ── STAGE 2 — FUNCTION ───────────────────────────────────────
+function FunctionStage({ mission, choice, onChoose, checked, onCheck }) {
+  const isCorrect = choice!==null && mission.funcOptions[choice].correct;
+  const th = {textAlign:"left",padding:"10px 8px",fontSize:11,fontFamily:"'JetBrains Mono',monospace",letterSpacing:0.6,opacity:0.65};
+  const td = {padding:"10px 8px",fontFamily:"'JetBrains Mono',monospace"};
+  return (
+    <div>
+      <StageHeader n="02" title="Fonksiyonu Keşfet" sub="Tablodaki sayılar arasındaki ilişkiyi inceleyerek doğrusal fonksiyonu seç." accent={mission.accent} />
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginTop:24}}>
+        <div style={{background:C.paperDeep,border:`1.5px solid ${C.line}`,borderRadius:14,padding:20}}>
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:1.5,opacity:0.6,marginBottom:12}}>VERİ TABLOSU</div>
+          <table style={{width:"100%",borderCollapse:"collapse",fontSize:14}}>
+            <thead>
+              <tr style={{borderBottom:`2px solid ${C.ink}`}}>
+                <th style={th}>x · {mission.inputName}</th>
+                <th style={th}>y · {mission.outputName}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mission.table.map((row,i) => (
+                <tr key={i} style={{borderBottom:`1px solid ${C.line}`}}>
+                  <td style={td}>{row.x.toString().replace(".",",")}</td>
+                  <td style={{...td,color:mission.accent,fontWeight:600}}>{row.y.toString().replace(".",",")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:1.5,opacity:0.6,marginBottom:4}}>FONKSİYON SEÇENEKLERİ</div>
+          {mission.funcOptions.map((opt,i) => {
+            const sel = choice===i;
+            const showWrong = checked&&sel&&!opt.correct;
+            const showRight = checked&&sel&&opt.correct;
+            return (
+              <button key={i} onClick={()=>onChoose(i)} style={{background:sel?mission.accent:C.paperDeep,color:sel?C.paper:C.ink,border:`1.5px solid ${showWrong?C.rose:showRight?mission.accent:sel?mission.accent:C.line}`,padding:"16px 18px",borderRadius:10,fontSize:16,fontFamily:"'JetBrains Mono',monospace",fontWeight:500,textAlign:"left",transition:"all 0.15s",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <span>{opt.display}</span>
+                {showRight && <CheckCircle2 size={18} />}
+                {showWrong && <XCircle size={18} color={C.rose} />}
+              </button>
+            );
+          })}
+          <button onClick={onCheck} disabled={choice===null} style={{marginTop:4,background:"transparent",border:`1.5px dashed ${C.ink}`,color:C.ink,padding:"10px 14px",borderRadius:10,fontSize:13,fontWeight:600,opacity:choice===null?0.4:1,cursor:choice===null?"not-allowed":"pointer"}}>
+            Cevabı kontrol et
+          </button>
+        </div>
+      </div>
+      {checked && !isCorrect && (
+        <div className="anim-up" style={{marginTop:18,padding:16,background:"rgba(196,69,69,0.08)",border:`1px solid rgba(196,69,69,0.3)`,borderRadius:10,fontSize:14}}>
+          <b style={{color:C.rose}}>Tekrar dene.</b> <span style={{opacity:0.85}}>İpucu: {mission.funcHint}</span>
+        </div>
+      )}
+      {checked && isCorrect && (
+        <div className="anim-up" style={{marginTop:18,padding:16,background:"rgba(47,125,90,0.1)",border:`1px solid ${C.eco}`,borderRadius:10,fontSize:14,display:"flex",alignItems:"center",gap:10}}>
+          <CheckCircle2 size={20} color={C.eco} />
+          <span><b style={{color:C.eco}}>Doğru!</b> Fonksiyon <span style={{fontFamily:"'JetBrains Mono',monospace",fontWeight:600}}>{mission.funcDisplay}</span> şeklindedir.</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── STAGE 3 — ALGORITHM ──────────────────────────────────────
+function AlgorithmStage({ mission, slots, setSlots, showCode, setShowCode }) {
+  return (
+    <div>
+      <StageHeader n="03" title="Algoritmayı Kur" sub="Akış şemasındaki boşlukları doğru bloklarla doldur. İstersen sözde kod görünümüne de geçebilirsin." accent={mission.accent} />
+      <div style={{display:"flex",gap:8,marginTop:20,padding:4,background:"rgba(16,36,59,0.06)",borderRadius:10,width:"fit-content"}}>
+        <ToggleBtn active={!showCode} onClick={()=>setShowCode(false)}><Workflow size={14} /> Akış Şeması</ToggleBtn>
+        <ToggleBtn active={showCode} onClick={()=>setShowCode(true)}><FileCode2 size={14} /> Sözde Kod</ToggleBtn>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24,marginTop:24,alignItems:"start"}}>
+        {showCode ? <PseudocodeView mission={mission} slots={slots} /> : <FlowchartView mission={mission} slots={slots} />}
+        <div style={{display:"flex",flexDirection:"column",gap:18}}>
+          <BlockPicker label="GİRDİ BLOĞU" color={mission.accent} options={mission.inputSlotOptions} selected={slots.input} onSelect={i=>setSlots({...slots,input:i})} />
+          <BlockPicker label="İŞLEM BLOĞU" color={C.ink} options={mission.processSlotOptions} selected={slots.process} onSelect={i=>setSlots({...slots,process:i})} />
+          <BlockPicker label="ÇIKTI BLOĞU" color={C.amber} options={mission.outputSlotOptions} selected={slots.output} onSelect={i=>setSlots({...slots,output:i})} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ToggleBtn({ active, onClick, children }) {
+  return (
+    <button onClick={onClick} style={{background:active?C.paper:"transparent",color:C.ink,border:"none",padding:"8px 14px",borderRadius:7,fontSize:12,fontWeight:600,display:"flex",alignItems:"center",gap:6,boxShadow:active?"0 1px 3px rgba(16,36,59,0.15)":"none",opacity:active?1:0.6}}>
+      {children}
+    </button>
+  );
+}
+
+function FlowchartView({ mission, slots }) {
+  const inputText = slots.input!==null ? mission.inputSlotOptions[slots.input].text : "?";
+  const processText = slots.process!==null ? mission.processSlotOptions[slots.process].text : "?";
+  const outputText = slots.output!==null ? mission.outputSlotOptions[slots.output].text : "?";
+  return (
+    <div style={{background:C.paperDeep,border:`1.5px solid ${C.line}`,borderRadius:14,padding:24,display:"flex",flexDirection:"column",alignItems:"center",gap:0}}>
+      <FlowOval label="BAŞLA" color={C.ink} />
+      <Connector />
+      <FlowParallelogram label={inputText} color={mission.accent} placeholder={slots.input===null} />
+      <Connector />
+      <FlowRect label={processText} color={C.ink} placeholder={slots.process===null} />
+      <Connector />
+      <FlowParallelogram label={outputText} color={C.amber} placeholder={slots.output===null} />
+      <Connector />
+      <FlowOval label="BİTİR" color={C.ink} />
+    </div>
+  );
+}
+
+function FlowOval({ label, color }) {
+  return <div style={{background:color,color:C.paper,padding:"10px 28px",borderRadius:999,fontFamily:"'JetBrains Mono',monospace",fontSize:12,fontWeight:700,letterSpacing:1}}>{label}</div>;
+}
+function FlowRect({ label, color, placeholder }) {
+  return <div style={{background:placeholder?"transparent":C.paper,color:placeholder?"rgba(16,36,59,0.4)":C.ink,border:`2px ${placeholder?"dashed":"solid"} ${placeholder?C.line:color}`,padding:"14px 22px",borderRadius:6,fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:600,minWidth:220,textAlign:"center"}}>{placeholder?"boş işlem bloğu":label}</div>;
+}
+function FlowParallelogram({ label, color, placeholder }) {
+  return <div style={{background:placeholder?"transparent":color,color:placeholder?"rgba(16,36,59,0.4)":C.paper,border:placeholder?`2px dashed ${C.line}`:"none",padding:"12px 30px",clipPath:"polygon(8% 0, 100% 0, 92% 100%, 0 100%)",fontFamily:"'JetBrains Mono',monospace",fontSize:13,fontWeight:600,minWidth:240,textAlign:"center"}}>{placeholder?"boş giriş/çıkış bloğu":label}</div>;
+}
+function Connector() {
+  return <div style={{width:2,height:22,background:C.ink,opacity:0.5,position:"relative"}}><div style={{position:"absolute",bottom:-2,left:-4,width:0,height:0,borderLeft:"5px solid transparent",borderRight:"5px solid transparent",borderTop:`6px solid ${C.ink}`,opacity:0.7}} /></div>;
+}
+
+function PseudocodeView({ mission, slots }) {
+  const inputText = slots.input!==null ? mission.inputSlotOptions[slots.input].text : "...";
+  const processText = slots.process!==null ? mission.processSlotOptions[slots.process].text : "...";
+  const outputText = slots.output!==null ? mission.outputSlotOptions[slots.output].text : "...";
+  const lines = [
+    {n:"1",t:"BAŞLA",color:C.ink},
+    {n:"2",t:inputText,color:mission.accent,placeholder:slots.input===null},
+    {n:"3",t:processText,color:C.ink,placeholder:slots.process===null},
+    {n:"4",t:outputText,color:C.amber,placeholder:slots.output===null},
+    {n:"5",t:"BİTİR",color:C.ink},
+  ];
+  return (
+    <div style={{background:C.ink,color:C.paper,borderRadius:14,padding:24,fontFamily:"'JetBrains Mono',monospace",fontSize:14,lineHeight:2}}>
+      <div style={{fontSize:11,opacity:0.55,marginBottom:14,letterSpacing:1.5}}>// sözde kod · {mission.id}.algo</div>
+      {lines.map(l => (
+        <div key={l.n} style={{display:"flex",gap:14}}>
+          <span style={{opacity:0.4,width:16}}>{l.n}</span>
+          <span style={{color:l.placeholder?"rgba(245,237,220,0.3)":l.color,fontStyle:l.placeholder?"italic":"normal",fontWeight:600}}>{l.t}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function BlockPicker({ label, color, options, selected, onSelect }) {
+  return (
+    <div>
+      <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:10,letterSpacing:1.5,opacity:0.6,marginBottom:8,color,fontWeight:700}}>{label}</div>
+      <div style={{display:"flex",flexDirection:"column",gap:6}}>
+        {options.map((opt,i) => {
+          const sel = selected===i;
+          return (
+            <button key={i} onClick={()=>onSelect(i)} style={{background:sel?color:C.paperDeep,color:sel?C.paper:C.ink,border:`1.5px solid ${sel?color:C.line}`,padding:"10px 14px",borderRadius:8,fontSize:13,fontFamily:"'JetBrains Mono',monospace",fontWeight:500,textAlign:"left",transition:"all 0.15s"}}>
+              {opt.text}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── STAGE 4 — TEST ───────────────────────────────────────────
+function TestStage({ mission, testIdx, setTestIdx, testValue, setTestValue, testRun, setTestRun }) {
+  const currentInput = mission.testCases[testIdx];
+  const expected = mission.func.m * currentInput + mission.func.b;
+
+  const runTest = () => {
+    const userAnswer = parseFloat(testValue.replace(",","."));
+    if (isNaN(userAnswer)) return;
+    const correct = Math.abs(userAnswer - expected) < 0.001;
+    setTestRun({ userAnswer, expected, correct });
+  };
+  const reset = () => { setTestRun(null); setTestValue(""); };
+  const nextCase = () => { setTestIdx((testIdx+1)%mission.testCases.length); reset(); };
+
+  return (
+    <div>
+      <StageHeader n="04" title="Algoritmayı Test Et" sub="Şehir yetkilileri seni test ediyor! Aşağıdaki giriş değerini algoritmaya ver ve doğru çıktıyı üret." accent={mission.accent} />
+      <div style={{background:C.paperDeep,border:`1.5px solid ${C.line}`,borderRadius:14,padding:28,marginTop:24}}>
+        <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:1.5,opacity:0.6,marginBottom:8}}>TEST SENARYOSU {testIdx+1}/{mission.testCases.length}</div>
+        <div style={{fontSize:17,lineHeight:1.5,marginBottom:24,maxWidth:580}}>
+          Sisteme şu girdi geliyor: <b style={{color:mission.accent,fontFamily:"'JetBrains Mono',monospace"}}>{mission.inputVar} = {mission.testCases[testIdx]}</b>. Algoritmanın üreteceği {mission.outputName.toLowerCase()} değerini hesapla ve aşağıya gir.
+        </div>
+        <div style={{display:"flex",gap:12,alignItems:"center",flexWrap:"wrap"}}>
+          <input type="text" value={testValue} onChange={e=>setTestValue(e.target.value)}
+            onKeyDown={e=>e.key==="Enter"&&runTest()}
+            placeholder={`${mission.outputVar} = ?`}
+            style={{padding:"12px 16px",fontSize:16,fontFamily:"'JetBrains Mono',monospace",background:C.paper,border:`2px solid ${C.line}`,borderRadius:10,width:200,color:C.ink,outline:"none"}} />
+          <button onClick={runTest} style={{background:C.ink,color:C.paper,border:"none",padding:"12px 18px",borderRadius:10,fontSize:13,fontWeight:600,display:"flex",alignItems:"center",gap:8}}>
+            <Play size={14} /> Algoritmayı çalıştır
+          </button>
+          {testRun && (
+            <button onClick={reset} style={{background:"transparent",color:C.ink,border:`1px solid ${C.line}`,padding:"12px 14px",borderRadius:10,fontSize:13,display:"flex",alignItems:"center",gap:6,opacity:0.7}}>
+              <RotateCcw size={13} /> Sıfırla
+            </button>
+          )}
+        </div>
+
+        {testRun && (
+          <div className="anim-up" style={{marginTop:24,padding:20,background:testRun.correct?"rgba(47,125,90,0.1)":"rgba(196,69,69,0.08)",border:`1.5px solid ${testRun.correct?C.eco:C.rose}`,borderRadius:12}}>
+            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:1.5,opacity:0.7,marginBottom:10,color:testRun.correct?C.eco:C.rose}}>ALGORİTMA İZ DÖKÜMÜ</div>
+            <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:15,lineHeight:1.8}}>
+              <div>{">"} {mission.inputVar} = {currentInput}</div>
+              <div>{">"} {mission.func.b===0
+                ? `${mission.outputVar} ← ${mission.func.m.toString().replace(".",",")} × ${currentInput}`
+                : `${mission.outputVar} ← ${mission.func.m.toString().replace(".",",")} × ${currentInput} + ${mission.func.b}`}</div>
+              <div style={{fontSize:18,fontWeight:700,marginTop:8}}>{">"} {mission.outputVar} = {expected.toString().replace(".",",")} {mission.unit}</div>
+            </div>
+            {testRun.correct ? (
+              <div style={{marginTop:14,display:"flex",alignItems:"center",gap:10}}>
+                <CheckCircle2 size={20} color={C.eco} />
+                <span style={{fontWeight:600}}>Mükemmel! Cevabın algoritma çıktısıyla aynı.</span>
+              </div>
+            ) : (
+              <div style={{marginTop:14,display:"flex",alignItems:"center",gap:10}}>
+                <XCircle size={20} color={C.rose} style={{flexShrink:0}} />
+                <span>Senin cevabın <b>{testRun.userAnswer.toString().replace(".",",")}</b>, algoritmanın üretmesi gereken değer ise <b>{expected.toString().replace(".",",")}</b>. Tekrar dene.</span>
+              </div>
+            )}
+          </div>
+        )}
+        {testRun?.correct && (
+          <div style={{marginTop:18}}>
+            <button onClick={nextCase} style={{background:"transparent",border:`1px dashed ${C.line}`,color:C.ink,padding:"10px 16px",borderRadius:10,fontSize:13,opacity:0.7}}>
+              Başka bir senaryo dene →
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── SHARED COMPONENTS ─────────────────────────────────────────
+function StageHeader({ n, title, sub, accent }) {
+  return (
+    <div>
+      <div style={{fontFamily:"'JetBrains Mono',monospace",fontSize:11,letterSpacing:2,color:accent,marginBottom:8}}>AŞAMA {n}</div>
+      <h2 style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:700,fontSize:28,letterSpacing:-0.6,margin:"0 0 8px"}}>{title}</h2>
+      <div style={{fontSize:15,opacity:0.7,lineHeight:1.55,maxWidth:640}}>{sub}</div>
+    </div>
+  );
+}
+
+function FeedbackBar({ valid, hint }) {
+  return (
+    <div style={{marginTop:20,padding:"12px 16px",background:valid?"rgba(47,125,90,0.1)":"rgba(16,36,59,0.04)",border:`1px solid ${valid?C.eco:C.line}`,borderRadius:10,fontSize:13,display:"flex",alignItems:"center",gap:10}}>
+      {valid ? (
+        <><CheckCircle2 size={16} color={C.eco} /><span><b style={{color:C.eco}}>Doğru seçim!</b> Sonraki adıma geçebilirsin.</span></>
+      ) : (
+        <><Lightbulb size={16} style={{opacity:0.6}} /><span style={{opacity:0.75}}>{hint}</span></>
+      )}
+    </div>
+  );
+}
+
+// ── VICTORY ──────────────────────────────────────────────────
+function Victory({ onReset }) {
+  return (
+    <main style={{maxWidth:760,margin:"0 auto",padding:"80px 32px",textAlign:"center"}}>
+      <div className="anim-up" style={{fontFamily:"'JetBrains Mono',monospace",fontSize:12,letterSpacing:3,color:C.amber,marginBottom:16}}>◆ SERTİFİKA ◆</div>
+      <Sparkles size={56} color={C.amber} style={{margin:"0 auto 20px"}} />
+      <h1 className="anim-up" style={{fontFamily:"'Bricolage Grotesque',sans-serif",fontWeight:800,fontSize:"clamp(36px,6vw,60px)",lineHeight:1.05,letterSpacing:-1.8,margin:"0 0 20px",animationDelay:"0.1s"}}>
+        Tebrikler, <span style={{color:C.amber,fontStyle:"italic"}}>Baş Mühendis</span>!
+      </h1>
+      <p className="anim-up" style={{fontSize:18,lineHeight:1.6,opacity:0.8,maxWidth:540,margin:"0 auto 36px",animationDelay:"0.2s"}}>
+        Üç kritik şehir görevini de tamamladın. Doğrusal fonksiyonlardan akış şemalarına ve sözde koda kadar bir algoritmanın tüm yolculuğunu inşa ettin.
+      </p>
+      <button onClick={onReset} style={{background:C.ink,color:C.paper,border:"none",padding:"14px 24px",borderRadius:10,fontSize:14,fontWeight:600,display:"inline-flex",alignItems:"center",gap:8}}>
+        <RotateCcw size={16} /> Görevleri sıfırla ve tekrar oyna
+      </button>
+    </main>
+  );
+}
+
+// ── FOOTER ────────────────────────────────────────────────────
+function Footer() {
+  return (
+    <footer style={{padding:"20px 32px",borderTop:`1px solid ${C.line}`,fontSize:11,fontFamily:"'JetBrains Mono',monospace",opacity:0.5,textAlign:"center",letterSpacing:1}}>
+      MAT.8.2.4 · Mevlüt Furkan ince
+    </footer>
+  );
+}
+
+// ── RENDER ───────────────────────────────────────────────────
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+</script>
+
+<script>
+/* MFİ: kopyalama / inceleme caydırıcıları */
+(function(){
+  function inField(t){return t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.isContentEditable);}
+  document.addEventListener("contextmenu",function(e){e.preventDefault();});
+  document.addEventListener("copy",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("cut",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("dragstart",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("keydown",function(e){
+    var k=(e.key||"").toLowerCase();
+    if(e.key==="F12"){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==="i"||k==="j"||k==="c")){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&!inField(e.target)&&(k==="u"||k==="s")){e.preventDefault();return false;}
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terazi · Cebir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F5FB;--bg-a:rgba(139,92,246,.12);--bg-b:rgba(244,63,94,.12);--bg-c:rgba(59,130,246,.10);
+  --surface:#FFFFFF;--surface-2:#FBFBFE;--ink:#14183A;--muted:#5A6080;--faint:#8A90B4;
+  --border:rgba(20,24,58,.10);--border-strong:rgba(20,24,58,.16);
+  --shadow:0 1px 2px rgba(20,24,58,.04),0 12px 32px -12px rgba(20,24,58,.18);
+  --violet:#8B5CF6;--indigo:#5B5BF0;--rose:#F43F5E;--amber:#F59E0B;--emerald:#10B981;--blue:#3B82F6;
+}
+[data-theme="dark"]{
+  --bg:#0A0C1C;--bg-a:rgba(139,92,246,.18);--bg-b:rgba(244,63,94,.16);--bg-c:rgba(59,130,246,.12);
+  --surface:rgba(22,26,52,.72);--surface-2:rgba(28,32,62,.72);--ink:#EEF0FF;--muted:#A6ACD6;--faint:#727aa8;
+  --border:rgba(255,255,255,.10);--border-strong:rgba(255,255,255,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 36px -14px rgba(0,0,0,.6);
+}
+html,body{min-height:100%}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden;transition:background .4s,color .4s;
+  user-select:none;-webkit-user-select:none;}
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora span{position:absolute;border-radius:50%;filter:blur(70px);animation:drift 22s ease-in-out infinite}
+.aurora .a1{width:46vmax;height:46vmax;top:-14vmax;left:-10vmax;background:var(--bg-a)}
+.aurora .a2{width:40vmax;height:40vmax;top:8vmax;right:-12vmax;background:var(--bg-b);animation-delay:-7s}
+.aurora .a3{width:38vmax;height:38vmax;bottom:-16vmax;left:30vmax;background:var(--bg-c);animation-delay:-13s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vmax,3vmax) scale(1.08)}66%{transform:translate(-3vmax,2vmax) scale(.96)}}
+.wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:1.2rem 1.2rem 4rem}
+
+.back-btn{position:fixed;top:12px;left:12px;z-index:60;display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:50%;text-decoration:none;background:rgba(20,24,58,.78);color:#EEF0FF;
+  border:1px solid rgba(255,255,255,.22);box-shadow:0 4px 14px -4px rgba(0,0,0,.5);backdrop-filter:blur(6px);
+  opacity:.72;transition:opacity .2s,transform .15s,background .2s}
+.back-btn:hover{opacity:1;transform:translateY(-1px);background:#14183A}
+.back-btn svg{width:16px;height:16px}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:60;width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;backdrop-filter:blur(8px);transition:transform .15s}
+.theme-toggle:hover{transform:translateY(-1px)}
+.theme-toggle svg{width:18px;height:18px}.theme-toggle .moon{display:none}
+[data-theme="dark"] .theme-toggle .sun{display:none}[data-theme="dark"] .theme-toggle .moon{display:block}
+
+.hero{text-align:center;margin:2.6rem 0 1.2rem;animation:rise .6s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--violet)}
+.hero h1{font-family:'Sora',sans-serif;font-weight:800;letter-spacing:-.03em;font-size:clamp(1.9rem,5vw,2.8rem);margin:.4rem 0 .3rem}
+.hero h1 .g{background:linear-gradient(100deg,var(--violet),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:48ch;margin:0 auto;font-size:.98rem}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);
+  backdrop-filter:blur(12px);padding:1.4rem;margin-bottom:1.2rem;animation:rise .6s ease both}
+
+.xrow{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:.4rem;flex-wrap:wrap}
+.xrow .lab{font-family:'Space Mono',monospace;font-size:.78rem;color:var(--faint);letter-spacing:.06em}
+.xstep{display:flex;align-items:center;gap:.6rem}
+.xstep button{width:34px;height:34px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface-2);
+  color:var(--ink);font-size:1.2rem;font-weight:800;cursor:pointer;line-height:1}
+.xstep button:hover{border-color:var(--violet)}
+.xstep .v{min-width:2.4rem;text-align:center;font-family:'Sora',sans-serif;font-weight:800;font-size:1.2rem;color:var(--violet)}
+.status{text-align:center;font-family:'Sora',sans-serif;font-weight:800;font-size:1.1rem;min-height:1.5rem;margin-bottom:.4rem}
+.status.bal{color:var(--emerald)}.status.l{color:var(--violet)}.status.r{color:var(--rose)}
+
+.scale{position:relative;height:240px;margin:0 auto;max-width:560px}
+.beam-wrap{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:90%;
+  display:flex;flex-direction:column;align-items:center;transition:transform .45s cubic-bezier(.34,1.3,.6,1);transform-origin:center top}
+.beam{width:100%;height:10px;border-radius:6px;background:linear-gradient(90deg,var(--violet),var(--rose));box-shadow:0 4px 14px -4px rgba(0,0,0,.4)}
+.pivot{width:0;height:0;border-left:24px solid transparent;border-right:24px solid transparent;border-top:44px solid var(--border-strong);margin-top:-1px}
+.base{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:130px;height:14px;border-radius:8px;background:var(--border-strong)}
+.pans{position:absolute;top:40px;left:0;right:0;display:flex;justify-content:space-between;padding:0 1%}
+.panbox{width:46%;display:flex;flex-direction:column;align-items:center;gap:.4rem;transition:transform .45s cubic-bezier(.34,1.3,.6,1)}
+.string{width:2px;height:24px;background:var(--border-strong)}
+.pan{width:100%;min-height:96px;border-radius:14px;border:2px dashed var(--border-strong);background:var(--surface-2);
+  display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:6px;padding:10px;transition:border-color .2s,box-shadow .2s;touch-action:none}
+.pan.glow{border-color:var(--emerald);box-shadow:0 0 0 3px rgba(16,185,129,.25)}
+.pan.over{border-color:var(--violet);box-shadow:0 0 0 3px rgba(139,92,246,.25)}
+.chip{display:flex;align-items:center;justify-content:center;border-radius:9px;font-family:'Sora',sans-serif;font-weight:800;
+  color:#fff;cursor:grab;touch-action:none;animation:drop .25s ease both}
+@keyframes drop{from{opacity:0;transform:translateY(-10px) scale(.8)}to{opacity:1;transform:none}}
+.chip:active{cursor:grabbing}
+.chip.x{width:50px;height:38px;font-size:1.05rem;background:linear-gradient(135deg,var(--violet),var(--indigo))}
+.chip.u{width:30px;height:30px;font-size:.85rem;color:#3a2400;background:linear-gradient(135deg,var(--amber),#fbbf24)}
+.pan-lab{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--faint)}
+
+.palette{display:flex;align-items:center;justify-content:center;gap:1.2rem;margin-top:1.2rem}
+.palette .ttl{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--faint)}
+.src{cursor:grab;touch-action:none}
+.eqline{text-align:center;margin-top:1rem;font-family:'Space Mono',monospace;font-size:.85rem;color:var(--muted)}
+.eqline b{color:var(--ink)}
+.tools{display:flex;justify-content:center;margin-top:.9rem}
+.reset{padding:.55rem 1.1rem;border:1px solid var(--border-strong);border-radius:11px;background:var(--surface-2);
+  color:var(--muted);font-family:'Sora',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer}
+.reset:hover{color:var(--ink);border-color:var(--violet)}
+.ghost{position:fixed;z-index:999;pointer-events:none;opacity:.88;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;color:#fff}
+
+.footer{margin-top:2rem;text-align:center;font-size:.78rem;color:var(--muted)}
+.footer b{font-family:'Sora',sans-serif;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}.beam-wrap,.panbox{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+
+<a class="back-btn" href="cebir_portal.html" aria-label="Cebir Portalına Dön">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+</a>
+<button class="theme-toggle" id="themeToggle" aria-label="Tema değiştir" title="Tema değiştir">
+  <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+  <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+</button>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="eyebrow">Cebir · Serbest Deneme</span>
+    <h1>Terazi <span class="g">Cebir</span></h1>
+    <p>Blokları elinle iki kefeye sürükle. Bir taraf ağır olursa terazi eğilir — dengeyi sen kur!</p>
+  </div>
+
+  <div class="card">
+    <div class="xrow">
+      <span class="lab">Bir x bloğu kaç birim ağır?</span>
+      <div class="xstep">
+        <button onclick="bumpX(-1)">−</button>
+        <span class="v" id="xv">2</span>
+        <button onclick="bumpX(1)">+</button>
+      </div>
+    </div>
+    <div class="status" id="status">Bloklarla denemeye başla</div>
+
+    <div class="scale">
+      <div class="beam-wrap" id="beamWrap"><div class="beam"></div><div class="pivot"></div></div>
+      <div class="base"></div>
+      <div class="pans">
+        <div class="panbox" id="boxL">
+          <div class="string"></div>
+          <div class="pan" id="panL" data-side="left"></div>
+          <div class="pan-lab">SOL</div>
+        </div>
+        <div class="panbox" id="boxR">
+          <div class="string"></div>
+          <div class="pan" id="panR" data-side="right"></div>
+          <div class="pan-lab">SAĞ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="palette">
+      <span class="ttl">Sürükle →</span>
+      <div class="chip x src" id="srcX" data-t="x">x</div>
+      <div class="chip u src" id="srcU" data-t="u">1</div>
+    </div>
+    <div class="eqline" id="eqline"></div>
+    <div class="tools"><button class="reset" onclick="resetAll()">⟳ Temizle</button></div>
+  </div>
+
+  <div class="footer">Hazırlayan <b>Mevlüt Furkan İnce</b></div>
+</div>
+
+<script>
+/* tema + kopyalama engeli (sürükleme korunur) */
+(function(){var r=document.documentElement,K="oa-theme",s=null;try{s=localStorage.getItem(K)}catch(e){}
+  r.setAttribute("data-theme",s||"dark");
+  document.getElementById("themeToggle").addEventListener("click",function(){
+    var n=r.getAttribute("data-theme")==="dark"?"light":"dark";r.setAttribute("data-theme",n);try{localStorage.setItem(K,n)}catch(e){}});})();
+(function(){function inF(t){return t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.isContentEditable);}
+  document.addEventListener("contextmenu",e=>e.preventDefault());
+  document.addEventListener("copy",e=>{if(!inF(e.target))e.preventDefault();});
+  document.addEventListener("keydown",function(e){var k=(e.key||"").toLowerCase();
+    if(e.key==="F12"){e.preventDefault();}
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==="i"||k==="j"||k==="c")){e.preventDefault();}
+    if((e.ctrlKey||e.metaKey)&&!inF(e.target)&&(k==="u"||k==="s")){e.preventDefault();}});})();
+
+/* ---------- TERAZİ SANDBOX ---------- */
+let xVal=2;
+let L={x:0,u:0}, R={x:0,u:0};
+const panL=document.getElementById('panL'), panR=document.getElementById('panR');
+
+function bumpX(d){xVal=Math.max(1,Math.min(6,xVal+d));document.getElementById('xv').textContent=xVal;render();}
+
+function weight(s){return s.x*xVal + s.u;}
+function exprStr(s){let p=[];if(s.x>0)p.push((s.x===1?'':s.x)+'x');if(s.u>0)p.push(''+s.u);return p.length?p.join(' + '):'0';}
+
+function render(){
+  // fill pans
+  renderPan(panL,L); renderPan(panR,R);
+  const lw=weight(L), rw=weight(R), diff=lw-rw;
+  // tilt
+  const angle=Math.max(-13,Math.min(13,diff*2.5));
+  document.getElementById('beamWrap').style.transform=`translateX(-50%) rotate(${-angle}deg)`;
+  const dy=Math.max(-46,Math.min(46,diff*7));
+  document.getElementById('boxL').style.transform=`translateY(${dy}px)`;
+  document.getElementById('boxR').style.transform=`translateY(${-dy}px)`;
+  // status
+  const st=document.getElementById('status');
+  st.className='status';
+  if(lw===0&&rw===0){st.textContent='Bloklarla denemeye başla';}
+  else if(diff===0){st.textContent='⚖️ Dengede! İki taraf eşit.';st.classList.add('bal');
+    panL.classList.add('glow');panR.classList.add('glow');}
+  else{panL.classList.remove('glow');panR.classList.remove('glow');
+    if(diff>0){st.textContent='Sol taraf daha ağır ↓';st.classList.add('l');}
+    else{st.textContent='Sağ taraf daha ağır ↓';st.classList.add('r');}}
+  if(diff!==0){panL.classList.remove('glow');panR.classList.remove('glow');}
+  // equation line
+  document.getElementById('eqline').innerHTML =
+    `Sol: <b>${exprStr(L)}</b> (ağırlık ${lw}) &nbsp;•&nbsp; Sağ: <b>${exprStr(R)}</b> (ağırlık ${rw})`;
+}
+function renderPan(pan,s){
+  pan.innerHTML='';
+  for(let i=0;i<s.x;i++)pan.appendChild(chip('x'));
+  for(let i=0;i<s.u;i++)pan.appendChild(chip('u'));
+  if(s.x===0&&s.u===0){const d=document.createElement('div');d.className='pan-lab';d.textContent='boş';pan.appendChild(d);}
+}
+function chip(type){const c=document.createElement('div');c.className='chip '+type;c.dataset.t=type;
+  c.textContent=type==='x'?'x':'1';attachChipDrag(c);return c;}
+
+/* drag system */
+let ghost=null;
+function startGhost(type,x,y){
+  ghost=document.createElement('div');ghost.className='ghost '+type;ghost.textContent=type==='x'?'x':'1';
+  if(type==='x'){ghost.style.width='50px';ghost.style.height='38px';ghost.style.background='linear-gradient(135deg,var(--violet),var(--indigo))';}
+  else{ghost.style.width='30px';ghost.style.height='30px';ghost.style.color='#3a2400';ghost.style.background='linear-gradient(135deg,var(--amber),#fbbf24)';}
+  document.body.appendChild(ghost);moveGhost(x,y);
+}
+function moveGhost(x,y){if(ghost){ghost.style.left=(x-ghost.offsetWidth/2)+'px';ghost.style.top=(y-ghost.offsetHeight/2)+'px';}}
+function endGhost(){if(ghost){ghost.remove();ghost=null;}}
+function over(el,x,y){const r=el.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;}
+function targetSide(x,y){if(over(panL,x,y))return'left';if(over(panR,x,y))return'right';return null;}
+function highlight(side){panL.classList.toggle('over',side==='left');panR.classList.toggle('over',side==='right');}
+
+/* palette sources: create on drop */
+['srcX','srcU'].forEach(id=>{
+  const src=document.getElementById(id);
+  src.addEventListener('pointerdown',e=>{
+    e.preventDefault();const type=src.dataset.t;src.setPointerCapture(e.pointerId);
+    startGhost(type,e.clientX,e.clientY);
+    const move=ev=>{moveGhost(ev.clientX,ev.clientY);highlight(targetSide(ev.clientX,ev.clientY));};
+    const up=ev=>{src.releasePointerCapture(e.pointerId);src.removeEventListener('pointermove',move);src.removeEventListener('pointerup',up);
+      endGhost();highlight(null);
+      const side=targetSide(ev.clientX,ev.clientY);
+      if(side){(side==='left'?L:R)[type]++;render();}
+    };
+    src.addEventListener('pointermove',move);src.addEventListener('pointerup',up);
+  });
+});
+
+/* placed chips: move between pans / remove if dropped outside */
+function attachChipDrag(c){
+  c.addEventListener('pointerdown',e=>{
+    e.preventDefault();e.stopPropagation();
+    const type=c.dataset.t;const fromSide=c.parentElement.dataset.side;
+    c.setPointerCapture(e.pointerId);
+    startGhost(type,e.clientX,e.clientY);c.style.visibility='hidden';
+    const move=ev=>{moveGhost(ev.clientX,ev.clientY);highlight(targetSide(ev.clientX,ev.clientY));};
+    const up=ev=>{c.releasePointerCapture(e.pointerId);c.removeEventListener('pointermove',move);c.removeEventListener('pointerup',up);
+      endGhost();highlight(null);
+      const side=targetSide(ev.clientX,ev.clientY);
+      // remove from source
+      (fromSide==='left'?L:R)[type]--;
+      // add to target if dropped on a pan (else removed)
+      if(side){(side==='left'?L:R)[type]++;}
+      render();
+    };
+    c.addEventListener('pointermove',move);c.addEventListener('pointerup',up);
+  });
+}
+function resetAll(){L={x:0,u:0};R={x:0,u:0};render();}
+render();
+</script>
+</body>
+</html>

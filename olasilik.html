@@ -1,0 +1,3578 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Olasılık</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#FFF8F0;
+  --card:#fff;
+  --navy:#1B2D4F;
+  --ink:#2D3748;
+  --muted:#8A95A5;
+  --border:#E8EDF4;
+  --orange:#FF9500;
+  --orange-dark:#FF6B35;
+  --green:#10B981;
+  --amber:#F59E0B;
+  --rose:#F43F5E;
+  --gold:#E8B850;
+  --gold-dark:#8B5A1F;
+  --indigo:#6366F1;
+  --shadow:0 4px 0 rgba(0,0,0,.12);
+  --shadow-lg:0 8px 0 rgba(0,0,0,.10);
+  --r:18px;
+  --rr:28px;
+}
+
+html{font-size:15px}
+*{user-select:none;-webkit-user-select:none;}
+body{
+  font-family:'Nunito',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  padding:24px 14px 80px;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255,200,100,.18) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(150,180,255,.18) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(200,255,200,.10) 0%, transparent 60%);
+}
+
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:radial-gradient(circle, rgba(0,0,0,.05) 1px, transparent 1px);
+  background-size:24px 24px;
+  pointer-events:none;
+  z-index:0;
+}
+
+.app{position:relative;z-index:1;max-width:1180px;margin:0 auto}
+
+/* ── HEADER ── */
+.header{text-align:center;margin-bottom:18px}
+.header h1{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(28px,5vw,46px);
+  color:var(--navy);
+  letter-spacing:.5px;
+  line-height:1.1;
+}
+.header h1 em{
+  font-style:normal;
+  background:linear-gradient(135deg,var(--orange-dark),var(--orange));
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.header p{
+  font-size:13px;font-weight:700;color:var(--muted);
+  margin-top:6px;letter-spacing:.04em;text-transform:uppercase;
+}
+
+/* ── MODE TABS ── */
+.mode-tabs{
+  display:flex;justify-content:center;
+  gap:8px;margin-bottom:24px;
+}
+.tab-btn{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 22px;
+  border-radius:50px;
+  border:2.5px solid var(--navy);
+  background:#fff;
+  cursor:pointer;
+  font-family:'Fredoka One',cursive;
+  font-size:15px;color:var(--navy);
+  box-shadow:var(--shadow);
+  transition:all .15s;
+  letter-spacing:.3px;
+}
+.tab-btn:hover{transform:translateY(-2px);background:#FFFBEF}
+.tab-btn:active{transform:translateY(1px);box-shadow:0 1px 0 rgba(0,0,0,.12)}
+.tab-btn.active{
+  background:var(--navy);
+  color:#fff;
+  transform:translateY(0);
+}
+.tab-btn .tab-icon{font-size:18px}
+
+.mode{display:none;animation:fadeIn .3s ease}
+.mode.active{display:block}
+@keyframes fadeIn{
+  0%{opacity:0;transform:translateY(6px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+/* ── MAIN GRID (Torba) ── */
+.main-grid{
+  display:grid;
+  grid-template-columns:240px 1fr 1fr;
+  gap:18px;
+  align-items:start;
+}
+@media(max-width:920px){.main-grid{grid-template-columns:240px 1fr}}
+@media(max-width:640px){.main-grid{grid-template-columns:1fr}}
+
+/* ── CARD ── */
+.card{
+  background:var(--card);
+  border:2.5px solid var(--navy);
+  border-radius:var(--rr);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+}
+
+/* ── BAG SECTION ── */
+.bag-top{
+  background:var(--navy);
+  padding:12px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.bag-top-title{
+  font-family:'Fredoka One',cursive;
+  font-size:18px;color:#fff;letter-spacing:.4px;
+}
+.total-bubble{
+  background:var(--orange);
+  color:#fff;
+  font-family:'Fredoka One',cursive;
+  font-size:20px;
+  width:42px;height:42px;
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:3px solid rgba(255,255,255,.3);
+  box-shadow:0 3px 0 rgba(0,0,0,.2);
+}
+
+#bagCanvas{display:block;width:100%;height:200px;background:transparent}
+#bagCanvas.shake{animation:shake .6s ease}
+@keyframes shake{
+  0%,100%{transform:translateX(0) rotate(0)}
+  15%{transform:translateX(-3px) rotate(-3deg)}
+  30%{transform:translateX(3px) rotate(3deg)}
+  45%{transform:translateX(-3px) rotate(-2deg)}
+  60%{transform:translateX(3px) rotate(2deg)}
+  75%{transform:translateX(-2px) rotate(-1deg)}
+}
+
+.bag-legend{padding:10px 14px 14px;display:flex;flex-direction:column;gap:6px}
+.leg-row{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:var(--ink)}
+.leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,.12)}
+.leg-name{flex:1;font-weight:800}
+.leg-frac{
+  font-family:'Fredoka One',cursive;
+  font-size:13px;color:var(--navy);
+  background:#F8FAFF;
+  padding:2px 8px;border-radius:8px;
+  border:1.5px solid var(--border);
+}
+
+/* ── CONTROLS CARD ── */
+.ctrl-card{margin-top:14px;padding:16px 18px;border-radius:var(--rr)}
+.ctrl-title{
+  font-family:'Fredoka One',cursive;
+  font-size:15px;color:var(--navy);
+  margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+}
+.ctrl-title::before{content:'⚙️';font-size:14px}
+
+.c-rows{display:flex;flex-direction:column;gap:4px}
+.c-row{
+  display:flex;align-items:center;gap:10px;
+  padding:7px 8px;
+  border-radius:14px;
+  transition:background .15s;
+}
+.c-row:hover{background:#F8FAFF}
+.c-swatch{
+  width:22px;height:22px;border-radius:50%;flex-shrink:0;
+  border:2.5px solid rgba(0,0,0,.15);
+  box-shadow:inset -2px -2px 4px rgba(0,0,0,.15),inset 2px 2px 4px rgba(255,255,255,.4);
+}
+.c-name{font-size:12px;font-weight:800;flex:1;color:var(--ink)}
+.c-ctrl{display:flex;align-items:center;gap:6px}
+.c-btn{
+  width:26px;height:26px;border-radius:9px;
+  border:2px solid var(--navy);
+  background:#fff;cursor:pointer;
+  font-size:16px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--navy);
+  transition:all .12s;
+  line-height:1;
+  font-family:'Fredoka One',cursive;
+}
+.c-btn:hover{background:var(--navy);color:#fff;transform:scale(1.1)}
+.c-btn:active{transform:scale(.95)}
+.c-btn:disabled{opacity:.35;cursor:not-allowed;transform:none;background:#fff;color:var(--navy)}
+.c-val{
+  font-family:'Fredoka One',cursive;
+  font-size:16px;color:var(--navy);
+  min-width:20px;text-align:center;
+}
+.total-strip{
+  margin-top:10px;padding-top:10px;
+  border-top:2px dashed var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.total-strip span{font-size:12px;font-weight:800;color:var(--muted)}
+.total-strip strong{
+  font-family:'Fredoka One',cursive;
+  font-size:18px;color:var(--navy);
+}
+
+/* ── PRED CARD ── */
+.pred-card{padding:20px 22px}
+
+.pred-title{
+  font-family:'Fredoka One',cursive;
+  font-size:20px;color:var(--navy);
+  margin-bottom:4px;
+  display:flex;align-items:center;gap:8px;
+}
+.pred-subtitle{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:16px}
+
+.color-picker{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;min-height:40px}
+.cp-empty{
+  font-size:12px;font-weight:700;color:var(--muted);
+  font-style:italic;padding:10px 4px;
+}
+.cp-btn{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 12px;
+  border-radius:50px;
+  border:2.5px solid transparent;
+  background:#F0F4F8;
+  cursor:pointer;
+  font-family:'Nunito',sans-serif;
+  font-size:12px;font-weight:800;
+  color:var(--ink);
+  transition:all .15s;
+}
+.cp-btn:hover{transform:translateY(-2px);box-shadow:0 4px 0 rgba(0,0,0,.1)}
+.cp-btn.active{
+  background:#fff;
+  border-color:var(--navy);
+  box-shadow:0 4px 0 rgba(0,0,0,.12);
+  transform:translateY(-2px);
+}
+.cp-dot{width:13px;height:13px;border-radius:50%;flex-shrink:0;border:2px solid rgba(0,0,0,.12);box-shadow:inset -1px -1px 3px rgba(0,0,0,.1)}
+
+.zone-row{display:flex;justify-content:space-between;margin-bottom:6px}
+.zone-lbl{
+  font-size:9.5px;font-weight:800;color:var(--muted);
+  letter-spacing:.04em;text-transform:uppercase;text-align:center;
+  flex:1;line-height:1.3;
+}
+.zone-lbl span{font-size:14px;display:block;margin-bottom:2px}
+
+.spec-outer{
+  padding:6px;
+  background:#F8FAFF;
+  border-radius:50px;
+  border:2.5px solid var(--border);
+  margin-bottom:6px;
+  position:relative;
+}
+.spec-bar{
+  height:30px;
+  border-radius:50px;
+  background:linear-gradient(90deg,
+    #EF4444 0%,
+    #F97316 20%,
+    #F59E0B 35%,
+    #84CC16 50%,
+    #22D3EE 68%,
+    #6366F1 85%,
+    #A855F7 100%);
+  cursor:crosshair;
+  position:relative;
+  overflow:visible;
+  transition:transform .1s;
+}
+.spec-bar:hover{transform:scaleY(1.05)}
+.spec-bar::after{
+  content:'👆 önce yukarıdan renk seç!';
+  position:absolute;
+  right:14px;top:50%;transform:translateY(-50%);
+  font-size:10px;font-weight:800;color:rgba(255,255,255,.85);
+  pointer-events:none;
+  font-family:'Nunito',sans-serif;
+  text-shadow:0 1px 2px rgba(0,0,0,.25);
+}
+.spec-bar.has-pred::after{display:none}
+
+.marker{
+  position:absolute;
+  top:50%;
+  width:28px;height:28px;
+  border-radius:50%;
+  transform:translate(-50%,-50%);
+  border:3px solid #fff;
+  box-shadow:0 3px 10px rgba(0,0,0,.3);
+  pointer-events:all;
+  cursor:grab;
+  animation:markerPop .3s cubic-bezier(.34,1.56,.64,1);
+}
+.marker:active{cursor:grabbing}
+@keyframes markerPop{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(-90deg);opacity:0}
+  100%{transform:translate(-50%,-50%) scale(1) rotate(0deg);opacity:1}
+}
+
+.multi-spec-container{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+
+.spec-row-wrap{
+  border-radius:16px;
+  border:2px solid var(--border);
+  overflow:hidden;
+  animation:fadeIn .25s ease;
+}
+.spec-row-header{
+  display:flex;align-items:center;gap:8px;
+  padding:7px 12px 5px;
+  background:#F8FAFF;
+  border-bottom:2px solid var(--border);
+}
+.spec-row-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid rgba(0,0,0,.15);flex-shrink:0;
+}
+.spec-row-name{
+  font-size:12px;font-weight:800;color:var(--navy);flex:1;
+}
+.spec-row-zone{
+  font-family:'Fredoka One',cursive;
+  font-size:12px;color:var(--muted);
+  background:#fff;padding:2px 8px;border-radius:8px;
+  border:1.5px solid var(--border);
+  min-width:90px;text-align:center;
+  transition:color .2s,border-color .2s;
+}
+.spec-row-zone.set{color:var(--navy);border-color:var(--navy)}
+
+.spec-zone-row{
+  display:flex;justify-content:space-between;
+  padding:4px 8px 0;background:#F8FAFF;
+}
+.spec-zone-lbl{
+  font-size:8.5px;font-weight:800;color:var(--muted);
+  letter-spacing:.03em;text-transform:uppercase;
+  text-align:center;flex:1;line-height:1.3;
+}
+.spec-zone-lbl span{font-size:12px;display:block;margin-bottom:1px}
+
+.spec-row-outer{
+  padding:6px 8px 8px;
+  background:#F8FAFF;
+  position:relative;
+}
+.spec-row-bar{
+  height:28px;
+  border-radius:50px;
+  background:linear-gradient(90deg,
+    #EF4444 0%,
+    #F97316 20%,
+    #F59E0B 35%,
+    #84CC16 50%,
+    #22D3EE 68%,
+    #6366F1 85%,
+    #A855F7 100%);
+  cursor:crosshair;
+  position:relative;
+  overflow:visible;
+  transition:transform .1s;
+  border:2px solid rgba(0,0,0,.07);
+}
+.spec-row-bar:hover{transform:scaleY(1.06)}
+
+.pred-legend{
+  margin-top:14px;
+  padding:12px 14px;
+  background:#F8FAFF;
+  border-radius:16px;
+  border:2px solid var(--border);
+  display:none;
+}
+
+.pred-legend.show{display:block}
+.legend-title{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.legend-items{display:flex;flex-wrap:wrap;gap:7px}
+.li-item{
+  display:flex;align-items:center;gap:6px;
+  padding:5px 11px;
+  background:#fff;
+  border:2px solid var(--border);
+  border-radius:50px;
+  font-size:12px;font-weight:800;color:var(--ink);
+}
+.li-dot{width:13px;height:13px;border-radius:50%;border:2.5px solid rgba(0,0,0,.12);flex-shrink:0}
+.li-val{
+  font-family:'Fredoka One',cursive;
+  font-size:13px;color:var(--navy);
+}
+
+.actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.btn-reset{
+  padding:8px 14px;
+  border-radius:50px;
+  border:2.5px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  font-family:'Nunito',sans-serif;
+  font-size:12px;font-weight:800;
+  color:var(--muted);
+  transition:all .15s;
+}
+.btn-reset:hover{border-color:var(--rose);color:var(--rose);background:#FFF5F5;transform:translateY(-1px)}
+
+/* ── EXPERIMENT CARD ── */
+.exp-card{padding:20px 22px;display:flex;flex-direction:column;gap:14px}
+.exp-title{
+  font-family:'Fredoka One',cursive;
+  font-size:20px;color:var(--navy);
+  display:flex;align-items:center;gap:8px;
+}
+.exp-subtitle{font-size:12px;font-weight:700;color:var(--muted);margin-top:-10px}
+
+.exp-result-area{
+  background:linear-gradient(135deg,#FFF8E8,#FFF0D0);
+  border:2.5px dashed var(--orange);
+  border-radius:20px;
+  padding:14px;
+  display:flex;align-items:center;gap:14px;
+}
+.last-ball{
+  width:62px;height:62px;border-radius:50%;
+  background:#fff;
+  border:3.5px solid var(--border);
+  box-shadow:inset -3px -3px 6px rgba(0,0,0,.15),inset 3px 3px 6px rgba(255,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;
+  font-size:22px;color:var(--muted);
+  flex-shrink:0;
+  transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+}
+.last-ball.has-ball{
+  border-color:rgba(0,0,0,.18);
+  color:transparent;
+}
+.last-ball.pop{animation:ballPop .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes ballPop{
+  0%{transform:scale(.2) rotate(-180deg);opacity:0}
+  60%{transform:scale(1.25) rotate(10deg)}
+  100%{transform:scale(1) rotate(0deg);opacity:1}
+}
+.last-ball .shine{
+  position:absolute;
+  top:18%;left:20%;
+  width:30%;height:25%;
+  border-radius:50%;
+  background:rgba(255,255,255,.55);
+}
+.exp-info{flex:1;min-width:0}
+.exp-info-label{
+  font-size:10px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;
+}
+.exp-info-name{
+  font-family:'Fredoka One',cursive;
+  font-size:18px;color:var(--navy);
+  line-height:1.2;margin-bottom:4px;
+}
+.exp-history-strip{display:flex;gap:3px;flex-wrap:wrap;min-height:14px}
+.hist-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:1.5px solid rgba(0,0,0,.15);
+  animation:histPop .25s ease;
+}
+@keyframes histPop{
+  0%{transform:scale(0)}
+  100%{transform:scale(1)}
+}
+
+.draw-row{display:flex;gap:8px;align-items:stretch}
+.btn-draw{
+  flex:1;
+  padding:14px 16px;
+  border-radius:18px;
+  border:none;
+  background:linear-gradient(135deg,var(--orange-dark),var(--orange));
+  color:#fff;
+  cursor:pointer;
+  font-family:'Fredoka One',cursive;
+  font-size:19px;letter-spacing:.5px;
+  box-shadow:0 5px 0 #C25400,0 8px 18px rgba(255,107,53,.35);
+  transition:all .12s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-draw:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 0 #C25400,0 10px 22px rgba(255,107,53,.45)}
+.btn-draw:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 #C25400,0 4px 8px rgba(255,107,53,.3)}
+.btn-draw:disabled{opacity:.45;cursor:not-allowed;background:#999;box-shadow:0 5px 0 #666}
+.btn-draw-multi{
+  padding:14px 14px;
+  border-radius:18px;
+  border:2.5px solid var(--navy);
+  background:#fff;
+  color:var(--navy);
+  cursor:pointer;
+  font-family:'Fredoka One',cursive;
+  font-size:15px;
+  box-shadow:0 4px 0 var(--navy);
+  transition:all .12s;
+  min-width:64px;
+}
+.btn-draw-multi:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 0 var(--navy);background:#FFFBEF}
+.btn-draw-multi:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 var(--navy)}
+.btn-draw-multi:disabled{opacity:.4;cursor:not-allowed}
+
+.draw-counter{
+  text-align:center;
+  font-size:11px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.draw-counter strong{
+  font-family:'Fredoka One',cursive;
+  font-size:14px;color:var(--navy);margin:0 3px;
+}
+
+.exp-chart{
+  background:#F8FAFF;
+  border:2px solid var(--border);
+  border-radius:16px;
+  padding:12px 14px;
+  display:none;
+}
+.exp-chart.show{display:flex;flex-direction:column;gap:8px}
+.chart-title{
+  font-size:10.5px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.chart-row{
+  display:grid;
+  grid-template-columns:18px 64px 1fr auto;
+  gap:8px;align-items:center;
+  font-size:11.5px;font-weight:800;
+}
+.chart-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(0,0,0,.12)}
+.chart-name{color:var(--ink)}
+.chart-bar-wrap{
+  height:14px;background:#fff;
+  border-radius:8px;border:1.5px solid var(--border);
+  overflow:hidden;position:relative;
+}
+.chart-fill{
+  height:100%;border-radius:6px;
+  transition:width .5s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+}
+.chart-expected{
+  position:absolute;top:-3px;bottom:-3px;
+  width:2.5px;background:var(--navy);
+  border-radius:2px;
+  pointer-events:none;
+}
+.chart-expected::after{
+  content:'';
+  position:absolute;top:-5px;left:-3px;
+  border:4px solid transparent;
+  border-top-color:var(--navy);
+}
+.chart-val{
+  font-family:'Fredoka One',cursive;
+  font-size:12px;color:var(--navy);
+  white-space:nowrap;
+}
+.chart-val .chart-pct{
+  font-family:'Nunito',sans-serif;
+  font-size:10px;font-weight:800;color:var(--muted);
+  margin-left:3px;
+}
+.chart-legend{
+  font-size:10px;font-weight:700;color:var(--muted);
+  display:flex;align-items:center;gap:4px;
+}
+.chart-legend::before{
+  content:'';
+  width:0;height:0;
+  border:4px solid transparent;
+  border-top-color:var(--navy);
+}
+
+.feedback-box{
+  border-radius:16px;
+  padding:12px 14px;
+  font-size:13px;font-weight:700;
+  line-height:1.5;
+  display:none;
+  border:2.5px solid;
+}
+.feedback-box.show{display:block;animation:fbSlide .35s ease}
+@keyframes fbSlide{
+  0%{transform:translateY(-8px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+.feedback-box.good{background:#ECFDF5;border-color:var(--green);color:#065F46}
+.feedback-box.mid{background:#FFFBEB;border-color:var(--amber);color:#92400E}
+.feedback-box.bad{background:#FEF2F2;border-color:var(--rose);color:#9F1239}
+.feedback-box .fb-title{
+  font-family:'Fredoka One',cursive;
+  font-size:15px;margin-bottom:5px;
+  display:flex;align-items:center;gap:6px;
+}
+.feedback-box ul{margin:6px 0 0 16px;padding:0}
+.feedback-box li{margin-bottom:3px}
+
+.hint-card{
+  margin-top:16px;
+  padding:12px 16px;
+  background:#FFFBF0;
+  border:2.5px dashed var(--amber);
+  border-radius:16px;
+  font-size:12px;font-weight:700;color:#92400E;
+  line-height:1.55;
+}
+.hint-card strong{color:#B45309}
+
+/* ═══════════════════════════════════════════════ */
+/* ── YAZI TURA SEKMESİ ── */
+/* ═══════════════════════════════════════════════ */
+.yt-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;align-items:start;
+}
+@media(max-width:720px){.yt-grid{grid-template-columns:1fr}}
+
+.coin-card{
+  padding:24px 22px;
+  display:flex;flex-direction:column;
+  gap:18px;align-items:center;
+}
+.coin-title{
+  font-family:'Fredoka One',cursive;
+  font-size:20px;color:var(--navy);
+  display:flex;align-items:center;gap:8px;
+}
+.coin-subtitle{
+  font-size:12px;font-weight:700;color:var(--muted);
+  margin-top:-10px;text-align:center;
+}
+
+.coin-wrap{
+  perspective:1100px;
+  height:170px;width:170px;
+  display:flex;align-items:center;justify-content:center;
+  margin:6px 0;
+}
+.coin{
+  width:140px;height:140px;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform 1.15s cubic-bezier(.32,1.45,.5,1);
+}
+.coin.spin{transition:transform .07s linear}
+.coin-face{
+  position:absolute;inset:0;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 32% 28%, #FFEDA8 0%, #F0C868 35%, #C99540 70%, #9C6E20 100%);
+  border:5px solid var(--gold-dark);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;
+  font-size:32px;letter-spacing:1px;
+  color:#5C3D14;
+  text-shadow:1px 1px 0 rgba(255,235,180,.5),-1px -1px 0 rgba(0,0,0,.15);
+  box-shadow:
+    inset -10px -10px 22px rgba(120,70,20,.45),
+    inset 10px 10px 22px rgba(255,230,160,.45),
+    0 8px 18px rgba(120,70,20,.3);
+  backface-visibility:hidden;
+  -webkit-backface-visibility:hidden;
+}
+.coin-face.tura{
+  transform:rotateY(180deg);
+  background:
+    radial-gradient(circle at 32% 28%, #FFE08C 0%, #E0AC4C 35%, #B07820 70%, #7F5410 100%);
+}
+.coin-face::before{
+  content:'';
+  position:absolute;inset:7%;
+  border-radius:50%;
+  border:2px dashed rgba(92,61,20,.4);
+}
+.coin-face .coin-label{
+  position:relative;z-index:1;
+  font-size:30px;
+}
+.coin-face .coin-deco{
+  position:absolute;
+  font-size:11px;font-weight:900;
+  letter-spacing:.15em;
+  color:rgba(92,61,20,.55);
+  font-family:'Nunito',sans-serif;
+}
+.coin-face .coin-deco.top{top:14%}
+.coin-face,.coin-face *{user-select:none;-webkit-user-select:none;pointer-events:none;}
+.coin-face .coin-deco.bottom{bottom:14%}
+
+/* Çevir / multi flip butonları */
+.flip-row{display:flex;gap:8px;width:100%}
+.btn-flip{
+  flex:1;
+  padding:14px 16px;
+  border-radius:18px;
+  border:none;
+  background:linear-gradient(135deg,#E8B850,#A87520);
+  color:#fff;
+  cursor:pointer;
+  font-family:'Fredoka One',cursive;
+  font-size:19px;letter-spacing:.5px;
+  text-shadow:0 1px 0 rgba(0,0,0,.18);
+  box-shadow:0 5px 0 var(--gold-dark),0 8px 18px rgba(168,117,32,.35);
+  transition:all .12s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-flip:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 0 var(--gold-dark),0 10px 22px rgba(168,117,32,.45)}
+.btn-flip:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 var(--gold-dark),0 4px 8px rgba(168,117,32,.3)}
+.btn-flip:disabled{opacity:.5;cursor:not-allowed;background:#aaa;box-shadow:0 5px 0 #777}
+
+.btn-flip-multi{
+  padding:14px 14px;
+  border-radius:18px;
+  border:2.5px solid var(--navy);
+  background:#fff;
+  color:var(--navy);
+  cursor:pointer;
+  font-family:'Fredoka One',cursive;
+  font-size:15px;
+  box-shadow:0 4px 0 var(--navy);
+  transition:all .12s;
+  min-width:64px;
+}
+.btn-flip-multi:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 6px 0 var(--navy);background:#FFFBEF}
+.btn-flip-multi:active:not(:disabled){transform:translateY(2px);box-shadow:0 2px 0 var(--navy)}
+.btn-flip-multi:disabled{opacity:.4;cursor:not-allowed}
+
+.flip-counter{
+  text-align:center;
+  font-size:11px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;
+}
+.flip-counter strong{
+  font-family:'Fredoka One',cursive;
+  font-size:14px;color:var(--navy);margin:0 3px;
+}
+
+/* Sağ panel: istatistik kartları */
+.yt-right{display:flex;flex-direction:column;gap:14px}
+.yt-stats{display:flex;gap:10px}
+.yt-stat{
+  flex:1;
+  background:#F8FAFF;
+  border:2.5px solid var(--border);
+  border-radius:18px;
+  padding:14px 12px;
+  text-align:center;
+  transition:all .2s;
+}
+.yt-stat.y{border-color:var(--amber);background:linear-gradient(135deg,#FFFBEB,#FEF3C7)}
+.yt-stat.t{border-color:var(--indigo);background:linear-gradient(135deg,#EEF2FF,#E0E7FF)}
+.yt-stat-icon{font-size:22px;margin-bottom:2px}
+.yt-stat-name{
+  font-size:10.5px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;
+}
+.yt-stat.y .yt-stat-name{color:#92400E}
+.yt-stat.t .yt-stat-name{color:#3730A3}
+.yt-stat-val{
+  font-family:'Fredoka One',cursive;
+  font-size:32px;color:var(--navy);
+  line-height:1;
+}
+.yt-stat-pct{
+  font-size:12px;color:var(--muted);
+  font-weight:800;margin-top:4px;
+}
+
+/* %50 hedef çubuğu */
+.yt-bar-card{padding:14px 16px}
+.yt-bar-title{
+  font-size:10.5px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:10px;text-align:center;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.yt-bar-title .target-pill{
+  background:var(--navy);color:#fff;
+  padding:3px 10px;border-radius:50px;
+  font-family:'Fredoka One',cursive;
+  font-size:11px;letter-spacing:.04em;
+}
+.yt-bar-wrap{
+  height:34px;
+  background:#F0F4F8;
+  border:2.5px solid var(--border);
+  border-radius:50px;
+  overflow:hidden;
+  position:relative;
+  display:flex;
+}
+.yt-bar-y,.yt-bar-t{
+  height:100%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;
+  font-size:13px;color:#fff;
+  text-shadow:0 1px 2px rgba(0,0,0,.3);
+  transition:width .55s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;overflow:hidden;
+}
+.yt-bar-y{background:linear-gradient(135deg,var(--amber),#D97706)}
+.yt-bar-t{background:linear-gradient(135deg,var(--indigo),#4F46E5)}
+.yt-bar-target{
+  position:absolute;
+  top:-5px;bottom:-5px;
+  left:50%;
+  width:3px;background:var(--navy);
+  border-radius:2px;
+  transform:translateX(-50%);
+  pointer-events:none;
+  z-index:2;
+}
+.yt-bar-target::before,.yt-bar-target::after{
+  content:'';position:absolute;
+  left:50%;
+  border:5px solid transparent;
+  transform:translateX(-50%);
+}
+.yt-bar-target::before{top:-6px;border-top-color:var(--navy)}
+.yt-bar-target::after{bottom:-6px;border-bottom-color:var(--navy)}
+
+/* Tarihçe şeridi */
+.yt-history-card{padding:14px 16px}
+.yt-history-title{
+  font-size:10.5px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;
+  margin-bottom:8px;
+}
+.yt-hist-strip{
+  display:flex;gap:4px;flex-wrap:wrap;
+  min-height:22px;
+}
+.yt-hist-dot{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;
+  font-size:11px;color:#fff;
+  border:2px solid rgba(0,0,0,.15);
+  text-shadow:0 1px 1px rgba(0,0,0,.25);
+  animation:histPop .25s ease;
+}
+.yt-hist-dot.y{background:var(--amber)}
+.yt-hist-dot.t{background:var(--indigo)}
+.yt-hist-empty{
+  font-size:11px;font-weight:700;color:var(--muted);
+  font-style:italic;text-align:center;width:100%;padding:4px;
+}
+
+/* ── FOOTER ── */
+.footer{
+  margin-top:28px;text-align:center;
+  font-size:11px;font-weight:700;color:var(--muted);
+  letter-spacing:.04em;
+}
+.footer .kazanim{
+  display:inline-block;
+  background:#fff;
+  border:2px solid var(--border);
+  padding:7px 14px;
+  border-radius:50px;
+  margin-top:4px;
+  color:var(--navy);
+  font-weight:800;
+}
+
+/* ═══ ÇARK ÇEVİR ═══ */
+.wheel-grid{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  gap:18px;align-items:start;
+}
+@media(max-width:720px){.wheel-grid{grid-template-columns:1fr}}
+
+/* ═══ ZAR AT ═══ */
+.dice-grid{
+  display:grid;
+  grid-template-columns:320px 1fr;
+  gap:18px;align-items:start;
+}
+@media(max-width:720px){.dice-grid{grid-template-columns:1fr}}
+
+/* Zar yüzleri (3D küp) — premium görünüm */
+.dice-face{
+  position:absolute;
+  width:130px;height:130px;
+  background:linear-gradient(145deg,#FFFFFF 0%,#F8F6F2 40%,#EDE8DE 100%);
+  border:none;
+  border-radius:22px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  padding:13px;
+  gap:0;
+  box-shadow:
+    inset 0 3px 8px rgba(255,255,255,.98),
+    inset 0 -5px 14px rgba(0,0,0,.22),
+    inset 4px 0 8px rgba(255,255,255,.7),
+    inset -4px 0 10px rgba(0,0,0,.12);
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+}
+.dice-face[data-val="1"]{transform:translateZ(65px)}
+.dice-face[data-val="2"]{transform:rotateY(180deg) translateZ(65px)}
+.dice-face[data-val="3"]{transform:rotateY(90deg) translateZ(65px)}
+.dice-face[data-val="4"]{transform:rotateY(-90deg) translateZ(65px)}
+.dice-face[data-val="5"]{transform:rotateX(90deg) translateZ(65px)}
+.dice-face[data-val="6"]{transform:rotateX(-90deg) translateZ(65px)}
+
+/* Köşe vurgusu (yansıma efekti) */
+.dice-face::before{
+  content:'';
+  position:absolute;
+  top:4px;left:4px;right:4px;
+  height:42%;
+  border-radius:18px 18px 60% 60%;
+  background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 100%);
+  pointer-events:none;
+}
+
+/* Nokta hücreleri */
+.dot-cell{
+  display:flex;align-items:center;justify-content:center;
+}
+.dot{
+  width:18px;height:18px;
+  border-radius:50%;
+  background:radial-gradient(circle at 32% 28%,#5C4EC4,#1B1464);
+  box-shadow:
+    0 3px 6px rgba(0,0,0,.55),
+    0 1px 0 rgba(255,255,255,.12),
+    inset 0 -2px 4px rgba(0,0,0,.45),
+    inset 0 2px 3px rgba(150,130,220,.35);
+  flex-shrink:0;
+}
+/* 1 yüzünde tek kırmızı nokta (klasik) */
+.dot.red{
+  background:radial-gradient(circle at 32% 28%,#FF7070,#C41E3A);
+  box-shadow:
+    0 3px 6px rgba(196,30,58,.65),
+    0 1px 0 rgba(255,255,255,.15),
+    inset 0 -2px 4px rgba(0,0,0,.4),
+    inset 0 2px 3px rgba(255,160,160,.35);
+}
+
+/* Zarın oturduğu platform */
+.dice-platform{
+  position:relative;
+  width:180px;height:180px;
+  display:flex;align-items:center;justify-content:center;
+  /* Subtle felted tray look */
+  background:radial-gradient(ellipse at 50% 50%, rgba(230,235,250,.0) 0%, rgba(200,210,240,.0) 100%);
+}
+.dice-platform::after{
+  content:'';
+  position:absolute;
+  bottom:-10px;left:50%;transform:translateX(-50%);
+  width:120px;height:22px;
+  background:radial-gradient(ellipse,rgba(0,0,0,.22) 0%,transparent 70%);
+  border-radius:50%;
+  pointer-events:none;
+  transition:all .3s ease;
+}
+/* Dice 3d container outer glow when rolling */
+#dice3d.rolling{
+  filter:drop-shadow(0 8px 22px rgba(99,102,241,.35));
+}
+
+/* mini zar (extra dice) */
+.mini-dice{
+  width:58px;height:58px;
+  background:linear-gradient(145deg,#FFFFFF 0%,#F8F6F2 50%,#EDE8DE 100%);
+  border-radius:13px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  padding:7px;gap:0;
+  box-shadow:0 5px 0 #C8BEA8,0 6px 14px rgba(0,0,0,.22),inset 0 2px 5px rgba(255,255,255,.95),inset 0 -3px 6px rgba(0,0,0,.18);
+  animation:ballPop .4s cubic-bezier(.34,1.56,.64,1);
+  position:relative;
+}
+.mini-dice::before{
+  content:'';
+  position:absolute;
+  top:3px;left:3px;right:3px;height:35%;
+  border-radius:10px 10px 50% 50%;
+  background:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,0) 100%);
+  pointer-events:none;
+}
+.mini-dot-cell{display:flex;align-items:center;justify-content:center}
+.mini-dot{
+  width:10px;height:10px;border-radius:50%;
+  background:radial-gradient(circle at 32% 28%,#5C4EC4,#1B1464);
+  box-shadow:0 2px 3px rgba(0,0,0,.5),inset 0 -1px 2px rgba(0,0,0,.35),inset 0 1px 2px rgba(150,130,220,.3);
+  flex-shrink:0;
+}
+.mini-dot.red{
+  background:radial-gradient(circle at 32% 28%,#FF7070,#C41E3A);
+  box-shadow:0 2px 3px rgba(196,30,58,.55);
+}
+
+/* dice stat cards */
+.dice-stat{
+  background:#F8FAFF;
+  border:2.5px solid var(--border);
+  border-radius:18px;
+  padding:12px 10px;
+  text-align:center;
+  transition:all .2s;
+}
+.dice-stat-face{
+  font-size:22px;margin-bottom:4px;
+  display:flex;align-items:center;justify-content:center;gap:3px;
+  flex-wrap:wrap;
+  height:30px;
+}
+.dice-stat-face .sdot{
+  width:8px;height:8px;border-radius:50%;
+  background:#6366F1;display:inline-block;
+}
+.dice-stat-val{
+  font-family:'Fredoka One',cursive;
+  font-size:26px;color:var(--navy);line-height:1;
+}
+.dice-stat-pct{font-size:11px;color:var(--muted);font-weight:800;margin-top:3px}
+
+/* dice bar rows */
+.dice-bar-row{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:var(--ink)}
+.dice-bar-label{
+  width:22px;text-align:center;
+  font-family:'Fredoka One',cursive;font-size:15px;color:var(--navy);
+}
+.dice-bar-track{
+  flex:1;height:18px;background:#F0F4F8;border-radius:50px;
+  overflow:hidden;position:relative;border:2px solid var(--border);
+}
+.dice-bar-fill{
+  height:100%;border-radius:50px;
+  background:linear-gradient(90deg,#818CF8,#6366F1);
+  transition:width .55s cubic-bezier(.34,1.56,.64,1);
+}
+.dice-bar-exp{
+  position:absolute;top:-3px;bottom:-3px;
+  width:2.5px;background:var(--navy);border-radius:2px;
+  pointer-events:none;
+}
+.dice-bar-val{
+  font-family:'Fredoka One',cursive;font-size:13px;
+  color:var(--navy);min-width:30px;text-align:right;
+}
+
+/* dice history dots */
+.dice-hist-dot{
+  width:26px;height:26px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Fredoka One',cursive;
+  font-size:14px;color:#fff;
+  background:linear-gradient(135deg,#818CF8,#6366F1);
+  border:2px solid rgba(99,102,241,.35);
+  box-shadow:0 2px 0 #3730A3;
+  animation:histPop .25s ease;
+  flex-shrink:0;
+}
+/* ═══ GALTON TAHTASI ═══ */
+.galton-grid{
+  display:grid;
+  grid-template-columns:420px 1fr;
+  gap:18px;align-items:start;
+}
+@media(max-width:780px){.galton-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<!-- MFİ: Geri tuşu + kopyalama engeli -->
+<a href="olasilik_portal.html" class="mfi-back" aria-label="Olasılık Portalına Dön">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:none"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+  <span class="mfi-back-txt">Olasılık Portalına Dön</span>
+</a>
+<style id="mfi-style">
+.mfi-back{position:fixed!important;top:12px!important;left:12px!important;z-index:2147483000!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:0!important;width:38px!important;height:38px!important;padding:0!important;border-radius:50%!important;text-decoration:none!important;background:rgba(20,24,58,.78)!important;color:#EEF0FF!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:0 4px 14px -4px rgba(0,0,0,.5)!important;cursor:pointer!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important;opacity:.72!important;transition:opacity .2s ease,transform .15s ease,background .2s ease!important;-webkit-user-select:none!important;user-select:none!important;}
+.mfi-back:hover{opacity:1!important;transform:translateY(-1px)!important;background:#14183A!important;}
+.mfi-back:active{transform:translateY(0)!important;}
+.mfi-back:focus-visible{outline:3px solid #5B5BF0!important;outline-offset:3px!important;opacity:1!important;}
+.mfi-back-txt{display:none!important;}
+html,body{-webkit-user-select:none!important;-ms-user-select:none!important;user-select:none!important;}
+input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-select:text!important;}
+</style>
+
+<div class="app">
+
+  <div class="header">
+    <h1>Olasılık <em>Atölyesi</em></h1>
+    <p>Olasılık ve İstatistik Öğretimi kapsamında yapılmıştır.</p>
+  </div>
+
+  <!-- ── MOD SEKMELERİ ── -->
+  <div class="mode-tabs">
+    <button class="tab-btn active" data-mode="bag" onclick="switchMode('bag')">
+      <span class="tab-icon">🎒</span> Olasılık Torbası
+    </button>
+    <button class="tab-btn" data-mode="coin" onclick="switchMode('coin')">
+      <span class="tab-icon">🪙</span> Yazı Tura
+    </button>
+    <button class="tab-btn" data-mode="wheel" onclick="switchMode('wheel')">
+      <span class="tab-icon">🎡</span> Çark Çevir
+    </button>
+    <button class="tab-btn" data-mode="dice" onclick="switchMode('dice')">
+      <span class="tab-icon">🎲</span> Zar At
+    </button>
+    <button class="tab-btn" data-mode="galton" onclick="switchMode('galton')">
+      <span class="tab-icon">🪀</span> Galton Tahtası
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ── MOD 1: TORBA ── -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="mode active" id="mode-bag">
+    <div class="main-grid">
+
+      <!-- SOL: TORBA -->
+      <div>
+        <div class="card">
+          <div class="bag-top">
+            <span class="bag-top-title">Torba</span>
+            <div class="total-bubble" id="totalDisp">8</div>
+          </div>
+          <canvas id="bagCanvas" width="240" height="200"></canvas>
+          <div class="bag-legend" id="bagLegend"></div>
+        </div>
+
+        <div class="card ctrl-card">
+          <div class="ctrl-title">Top Sayısı</div>
+          <div class="c-rows" id="colorRows"></div>
+          <div class="total-strip">
+            <span>Toplam</span>
+            <strong id="totalDisp2">8</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORTA: TAHMİN -->
+      <div>
+        <div class="card pred-card">
+          <div class="pred-title">🎯 Spektrumda yerini göster.</div>
+          <div class="pred-subtitle">Hangi rengin spektrumunu yapmak istiyorsan üstüne tıkla. Ardından spektrumdaki topu sürükle.</div>
+
+          <div class="color-picker" id="colorPicker"></div>
+
+          <div class="multi-spec-container" id="multiSpecContainer"></div>
+
+          <div class="pred-legend" id="predLegend">
+            <div class="legend-title">📌 Tahminlerin</div>
+            <div class="legend-items" id="legendItems"></div>
+          </div>
+
+          <div class="actions">
+            <button class="btn-reset" onclick="resetPreds()">↺ Tahminleri sıfırla</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAĞ: DENEY -->
+      <div>
+        <div class="card exp-card">
+          <div class="exp-title">🎲 Şimdi Dene!</div>
+
+          <div class="exp-result-area">
+            <div class="last-ball" id="lastBall">?<span class="shine" style="display:none"></span></div>
+            <div class="exp-info">
+              <div class="exp-info-label">Son Çekilen</div>
+              <div class="exp-info-name" id="lastName">— henüz çekmedin —</div>
+              <div class="exp-history-strip" id="histStrip" title="Son 12 çekiliş"></div>
+            </div>
+          </div>
+
+          <div class="draw-row">
+            <button class="btn-draw" id="btnDraw" onclick="drawOne()">🎲 Çek!</button>
+            <button class="btn-draw-multi" onclick="drawMany(10)" id="btn10">10×</button>
+            <button class="btn-draw-multi" onclick="drawMany(50)" id="btn50">50×</button>
+          </div>
+          <div class="draw-counter">
+            Toplam çekiliş: <strong id="totalDraws">0</strong>
+          </div>
+
+          <div class="exp-chart" id="expChart">
+            <div class="chart-title">
+              <span>📊 Frekans</span>
+              <span class="chart-legend">Sonuç</span>
+            </div>
+            <div id="chartBody"></div>
+          </div>
+
+          <div class="feedback-box" id="feedback"></div>
+
+          <div class="actions">
+            <button class="btn-reset" onclick="resetExperiment()">↺ Deneyi sıfırla</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ── MOD 2: YAZI TURA ── -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="mode" id="mode-coin">
+    <div class="yt-grid">
+
+      <!-- SOL: PARA + ÇEVİR -->
+      <div class="card coin-card">
+        <div class="coin-title">🪙 Madeni Para</div>
+
+        <div class="coin-wrap">
+          <div class="coin" id="coin">
+            <div class="coin-face yazi">
+              <span class="coin-deco top">★ ★ ★</span>
+              <span class="coin-label">YAZI</span>
+              <span class="coin-deco bottom">1 TL</span>
+            </div>
+            <div class="coin-face tura">
+              <span class="coin-deco top">ATATÜRK</span>
+              <span class="coin-label">TURA</span>
+              <span class="coin-deco bottom">◆ ◆ ◆</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="flip-row">
+          <button class="btn-flip" id="btnFlip" onclick="flipCoin()">🎲 Çevir!</button>
+          <button class="btn-flip-multi" id="btnFlip10" onclick="flipMany(10)">10×</button>
+          <button class="btn-flip-multi" id="btnFlip50" onclick="flipMany(50)">50×</button>
+        </div>
+        <div class="flip-counter">
+          Toplam atış: <strong id="totalFlips">0</strong>
+        </div>
+
+        <div class="actions" style="justify-content:center;margin-top:4px">
+          <button class="btn-reset" onclick="resetCoin()">↺ Sıfırla</button>
+        </div>
+      </div>
+
+      <!-- SAĞ: İSTATİSTİK -->
+      <div class="yt-right">
+
+        <!-- Yazı / Tura sayaç kartları -->
+        <div class="yt-stats">
+          <div class="yt-stat y">
+            <div class="yt-stat-name">Yazı</div>
+            <div class="yt-stat-val" id="countY">0</div>
+            <div class="yt-stat-pct" id="pctY">–</div>
+          </div>
+          <div class="yt-stat t">
+            <div class="yt-stat-name">Tura</div>
+            <div class="yt-stat-val" id="countT">0</div>
+            <div class="yt-stat-pct" id="pctT">–</div>
+          </div>
+        </div>
+
+        <!-- %50 hedef çubuğu -->
+        <div class="card yt-bar-card">
+          <div class="yt-bar-title">
+            <span>Yazı ↔ Tura oranı</span>
+            <span class="target-pill">⚖️ Hedef: %50</span>
+          </div>
+          <div class="yt-bar-wrap">
+            <div class="yt-bar-y" id="barY" style="width:50%"></div>
+            <div class="yt-bar-t" id="barT" style="width:50%"></div>
+            <div class="yt-bar-target"></div>
+          </div>
+        </div>
+
+        <!-- Tarihçe -->
+        <div class="card yt-history-card">
+          <div class="yt-history-title">📜 Son 20 atış</div>
+          <div class="yt-hist-strip" id="ytHistStrip">
+            <div class="yt-hist-empty">— henüz atış yok —</div>
+          </div>
+        </div>
+
+        <!-- Geri bildirim -->
+        <div class="feedback-box" id="coinFeedback"></div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ── MOD 3: ÇARK ÇEVİR ── -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="mode" id="mode-wheel">
+    <div class="wheel-grid">
+
+      <!-- SOL: ÇARK + KONTROL -->
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="card" style="padding:20px 18px;display:flex;flex-direction:column;align-items:center;gap:14px">
+          <div style="font-family:'Fredoka One',cursive;font-size:20px;color:var(--navy);display:flex;align-items:center;gap:8px">🎡 Şans Çarkı</div>
+          <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:-8px;text-align:center">Dilimleri ayarla, çevir!</div>
+
+          <!-- ÇARK CANVAS -->
+          <div style="position:relative;width:260px;height:260px;flex-shrink:0">
+            <canvas id="wheelCanvas" width="260" height="260" style="display:block;border-radius:50%"></canvas>
+            <!-- Ok işaretçi -->
+            <div style="position:absolute;top:-6px;left:50%;transform:translateX(-50%);z-index:3;
+              width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;
+              border-top:22px solid var(--navy);filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))"></div>
+          </div>
+
+          <div class="flip-row" style="width:100%;max-width:260px">
+            <button class="btn-draw" id="btnWheel" onclick="spinWheel()" style="font-size:17px">🎡 Çevir!</button>
+            <button class="btn-draw-multi" id="btnWheel10" onclick="spinMany(10)">10×</button>
+            <button class="btn-draw-multi" id="btnWheel50" onclick="spinMany(50)">50×</button>
+          </div>
+          <div class="draw-counter">Toplam çevirme: <strong id="wheelTotal">0</strong></div>
+          <div class="actions" style="justify-content:center;margin-top:0">
+            <button class="btn-reset" onclick="resetWheel()">↺ Sıfırla</button>
+          </div>
+        </div>
+
+        <!-- DİLİM KONTROL KARTI -->
+        <div class="card ctrl-card">
+          <div class="ctrl-title" style="margin-bottom:12px">🎨 Dilim Sayısı</div>
+          <div class="c-rows" id="wheelColorRows"></div>
+          <div class="total-strip">
+            <span>Toplam dilim</span>
+            <strong id="wheelTotalDisp">8</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAĞ: SONUÇ + İSTATİSTİK -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- Son sonuç -->
+        <div class="card exp-card" style="gap:12px">
+          <div class="exp-title">🎯 Sonuç</div>
+          <div class="exp-result-area" id="wheelResultArea">
+            <div class="last-ball" id="wheelLastBall" style="font-size:22px">?<span class="shine" style="display:none"></span></div>
+            <div class="exp-info">
+              <div class="exp-info-label">Son Gelen</div>
+              <div class="exp-info-name" id="wheelLastName">— henüz çevirmedin —</div>
+              <div class="exp-history-strip" id="wheelHistStrip" title="Son 12 çevirme"></div>
+            </div>
+          </div>
+
+          <!-- Frekans grafik -->
+          <div class="exp-chart" id="wheelChart">
+            <div class="chart-title"><span>📊 Frekans</span><span class="chart-legend">Sonuç</span></div>
+            <div id="wheelChartBody"></div>
+          </div>
+
+          <div class="feedback-box" id="wheelFeedback"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ── MOD 4: ZAR AT ── -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="mode" id="mode-dice">
+    <div class="dice-grid">
+
+      <!-- SOL: ZAR + ATMA -->
+      <div class="card" style="padding:24px 22px;display:flex;flex-direction:column;gap:18px;align-items:center">
+        <div style="font-family:'Fredoka One',cursive;font-size:20px;color:var(--navy);display:flex;align-items:center;gap:8px">🎲 Zar Atma</div>
+        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:-12px;text-align:center">6 yüzlü zar — her yüzün olasılığı 1/6</div>
+
+        <!-- Kaç zar? -->
+        <div style="display:flex;align-items:center;gap:10px;font-family:'Fredoka One',cursive;font-size:15px;color:var(--navy)">
+          <span>Zar sayısı:</span>
+          <button class="c-btn" onclick="adjDiceCount(-1)">−</button>
+          <span id="diceCountDisp" style="font-size:20px;min-width:24px;text-align:center">1</span>
+          <button class="c-btn" onclick="adjDiceCount(1)">+</button>
+        </div>
+
+        <!-- ZAR GÖRSELİ — çoklu 3D zar -->
+        <div id="diceWrap" style="perspective:1000px;min-height:180px;width:100%;display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;padding:10px 0">
+          <!-- JS ile doldurulacak: her zar için .dice-platform + .dice3d-item -->
+        </div>
+
+        <div class="flip-row" style="width:100%;max-width:280px">
+          <button class="btn-flip" id="btnDice" onclick="rollDice()" style="background:linear-gradient(135deg,#6366F1,#4F46E5);box-shadow:0 5px 0 #3730A3,0 8px 18px rgba(99,102,241,.35)">🎲 At!</button>
+          <button class="btn-flip-multi" id="btnDice10" onclick="rollMany(10)" style="min-width:58px">10×</button>
+          <button class="btn-flip-multi" id="btnDice50" onclick="rollMany(50)" style="min-width:58px">50×</button>
+        </div>
+        <div class="flip-counter">Toplam atış: <strong id="diceTotal">0</strong></div>
+        <div class="actions" style="justify-content:center;margin-top:0">
+          <button class="btn-reset" onclick="resetDice()">↺ Sıfırla</button>
+        </div>
+      </div>
+
+      <!-- SAĞ: İSTATİSTİK -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- 6'lı sayaç grid -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px" id="diceStatGrid">
+          <!-- JS ile doldurulacak -->
+        </div>
+
+        <!-- Oran çubuğu -->
+        <div class="card yt-bar-card">
+          <div class="yt-bar-title">
+            <span>Dağılım</span>
+            <span class="target-pill">⚖️ Hedef: %16.7</span>
+          </div>
+          <div id="diceBarWrap" style="display:flex;flex-direction:column;gap:5px"></div>
+        </div>
+
+        <!-- Tarihçe -->
+        <div class="card yt-history-card">
+          <div class="yt-history-title">📜 Son 24 atış</div>
+          <div class="yt-hist-strip" id="diceHistStrip">
+            <div class="yt-hist-empty">— henüz atış yok —</div>
+          </div>
+        </div>
+
+        <div class="feedback-box" id="diceFeedback"></div>
+
+        <!-- Olasılık dağılımı paneli (2 veya 3 zar için) -->
+        <div class="card yt-bar-card" id="diceProbPanel" style="display:none">
+          <div class="yt-bar-title">
+            <span id="diceProbTitle">Toplam Dağılımı</span>
+            <span class="target-pill" id="diceProbBadge">2 Zar</span>
+          </div>
+          <div id="diceProbBars" style="display:flex;flex-direction:column;gap:4px"></div>
+          <div style="margin-top:10px;padding:8px 10px;background:#F8FAFF;border-radius:12px;border:1.5px solid var(--border);font-size:11px;font-weight:700;color:var(--muted);line-height:1.6" id="diceProbNote"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════ -->
+  <!-- ── MOD 5: GALTON TAHTASI ── -->
+  <!-- ═══════════════════════════════════════════════ -->
+  <div class="mode" id="mode-galton">
+    <div class="galton-grid">
+
+      <!-- SOL: TAHTA + KONTROLLER -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card" style="padding:18px 18px 14px;display:flex;flex-direction:column;align-items:center;gap:12px">
+          <div style="font-family:'Fredoka One',cursive;font-size:20px;color:var(--navy);display:flex;align-items:center;gap:8px">🪀 Galton Tahtası</div>
+          <div style="font-size:12px;font-weight:700;color:var(--muted);margin-top:-8px;text-align:center">Her çivide top sola ya da sağa düşer — olasılık ½</div>
+
+          <canvas id="galtonCanvas" width="400" height="480" style="display:block;max-width:100%;border-radius:16px;border:2.5px solid var(--navy)"></canvas>
+
+          <div class="flip-row" style="width:100%;max-width:360px">
+            <button class="btn-draw" id="btnGalton" onclick="galtonDrop(1)" style="font-size:17px">🪀 Bırak!</button>
+            <button class="btn-draw-multi" id="btnGalton10" onclick="galtonDrop(10)">10×</button>
+            <button class="btn-draw-multi" id="btnGalton50" onclick="galtonDrop(50)">50×</button>
+            <button class="btn-draw-multi" id="btnGalton100" onclick="galtonDrop(100)">100×</button>
+          </div>
+          <div class="draw-counter">Toplam top: <strong id="galtonTotal">0</strong></div>
+          <div class="actions" style="justify-content:center;margin-top:0">
+            <button class="btn-reset" onclick="galtonReset()">↺ Sıfırla</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAĞ: AYARLAR + İSTATİSTİK -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- Satır sayısı -->
+        <div class="card ctrl-card">
+          <div class="ctrl-title" style="margin-bottom:12px">⚙️ Ayarlar</div>
+          <div class="c-row">
+            <span class="c-name" style="font-size:13px">Satır sayısı</span>
+            <div class="c-ctrl">
+              <button class="c-btn" onclick="adjGaltonRows(-1)">−</button>
+              <span class="c-val" id="galtonRowsDisp">8</span>
+              <button class="c-btn" onclick="adjGaltonRows(1)">+</button>
+            </div>
+          </div>
+          <div style="margin-top:10px;padding:10px 12px;background:#F8FAFF;border-radius:14px;border:1.5px solid var(--border);font-size:12px;font-weight:700;color:var(--muted);line-height:1.6">
+            Top her çiviye çarptığında sola veya sağa eşit ihtimalle düşer.
+          </div>
+        </div>
+
+        <!-- Binom teorik vs gerçek -->
+        <div class="card yt-bar-card" id="galtonStatCard">
+          <div class="yt-bar-title" style="margin-bottom:10px">
+            <span>📊 Kutu Dağılımı</span>
+            <span class="target-pill">Binom(n,½)</span>
+          </div>
+          <div id="galtonBars" style="display:flex;flex-direction:column;gap:4px"></div>
+          <div style="margin-top:8px;font-size:10px;font-weight:700;color:var(--muted);display:flex;gap:12px">
+            <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:linear-gradient(90deg,#818CF8,#6366F1);margin-right:4px"></span>Gerçek</span>
+            <span><span style="display:inline-block;width:2px;height:10px;background:var(--navy);margin-right:4px;vertical-align:middle"></span>Teorik</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   PAYLAŞILAN: SES (Web Audio API)
+   ═══════════════════════════════════════════════════════════ */
+let audioCtx=null;
+function getAudio(){
+  if(!audioCtx){
+    try{audioCtx=new (window.AudioContext||window.webkitAudioContext)()}
+    catch(e){audioCtx=null}
+  }
+  return audioCtx;
+}
+function playPop(){
+  const ctx=getAudio();if(!ctx)return;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='sine';
+  o.frequency.setValueAtTime(420,ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(720,ctx.currentTime+.08);
+  g.gain.setValueAtTime(.0001,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.25,ctx.currentTime+.01);
+  g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.15);
+  o.connect(g);g.connect(ctx.destination);
+  o.start();o.stop(ctx.currentTime+.16);
+}
+function playClick(freq=600){
+  const ctx=getAudio();if(!ctx)return;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='triangle';o.frequency.value=freq;
+  g.gain.setValueAtTime(.0001,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.12,ctx.currentTime+.005);
+  g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.05);
+  o.connect(g);g.connect(ctx.destination);
+  o.start();o.stop(ctx.currentTime+.06);
+}
+function playWin(){
+  const ctx=getAudio();if(!ctx)return;
+  [523,659,784,1047].forEach((f,i)=>{
+    const o=ctx.createOscillator(),g=ctx.createGain();
+    o.type='sine';o.frequency.value=f;
+    const t=ctx.currentTime+i*.08;
+    g.gain.setValueAtTime(.0001,t);
+    g.gain.exponentialRampToValueAtTime(.18,t+.02);
+    g.gain.exponentialRampToValueAtTime(.0001,t+.2);
+    o.connect(g);g.connect(ctx.destination);
+    o.start(t);o.stop(t+.22);
+  });
+}
+function playMetal(){
+  const ctx=getAudio();if(!ctx)return;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type='triangle';
+  o.frequency.setValueAtTime(880,ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(440,ctx.currentTime+.3);
+  g.gain.setValueAtTime(.0001,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.22,ctx.currentTime+.01);
+  g.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.4);
+  o.connect(g);g.connect(ctx.destination);
+  o.start();o.stop(ctx.currentTime+.42);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOD GEÇİŞİ
+   ═══════════════════════════════════════════════════════════ */
+function switchMode(m){
+  document.querySelectorAll('.mode').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+  document.getElementById('mode-'+m).classList.add('active');
+  document.querySelector(`[data-mode="${m}"]`).classList.add('active');
+  playClick(820);
+  // Torba moduna geçince canvas'ı yeniden çiz (gizliyken DPR değişmiş olabilir)
+  if(m==='bag')setTimeout(drawBag,60);
+  if(m==='wheel')setTimeout(drawWheel,60);
+  if(m==='galton')setTimeout(()=>{galtonCanvas()._galtonReady=false;galtonInit();},60);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOD 1: TORBA — VERİ
+   ═══════════════════════════════════════════════════════════ */
+const COLORS=[
+  {n:'Yeşil',  h:'#22C55E'},
+  {n:'Kırmızı',h:'#EF4444'},
+  {n:'Mavi',   h:'#3B82F6'},
+  {n:'Sarı',   h:'#EAB308'},
+  {n:'Mor',    h:'#A855F7'},
+];
+
+let counts=[5,3,0,0,0];
+let preds={};
+let drawHistory=[];
+let drawCounts=[0,0,0,0,0];
+let busy=false;
+
+COLORS.forEach(c=>{preds[c.n]=null});
+
+const MAX_PER_COLOR=20;
+const total=()=>counts.reduce((a,b)=>a+b,0);
+const totalDraws=()=>drawHistory.length;
+
+/* TOP SAYISI KONTROLLERİ */
+function buildControls(){
+  const el=document.getElementById('colorRows');
+  el.innerHTML='';
+  COLORS.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='c-row';
+    row.innerHTML=`
+      <div class="c-swatch" style="background:${c.h}"></div>
+      <span class="c-name">${c.n}</span>
+      <div class="c-ctrl">
+        <button class="c-btn" onclick="adj(${i},-1)" aria-label="${c.n} azalt">−</button>
+        <span class="c-val" id="cv${i}">${counts[i]}</span>
+        <button class="c-btn" onclick="adj(${i},1)" aria-label="${c.n} arttır">+</button>
+      </div>`;
+    el.appendChild(row);
+  });
+}
+function adj(i,d){
+  const nv=Math.max(0,Math.min(MAX_PER_COLOR,counts[i]+d));
+  if(nv===counts[i])return;
+  counts[i]=nv;
+  playClick(d>0?700:500);
+  document.getElementById('cv'+i).textContent=counts[i];
+  if(counts[i]===0)preds[COLORS[i].n]=null;
+  resetExperimentSilent();
+  refreshBag();
+}
+
+/* TORBA — CANVAS ÇİZİMİ (DPR) */
+function setupCanvasDPR(canvas){
+  const dpr=window.devicePixelRatio||1;
+  const rect=canvas.getBoundingClientRect();
+  if(rect.width===0)return canvas.getContext('2d');
+  canvas.width=Math.round(rect.width*dpr);
+  canvas.height=Math.round(rect.height*dpr);
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  canvas._cssW=rect.width;
+  canvas._cssH=rect.height;
+  return ctx;
+}
+
+function drawBag(){
+  const t=total();
+  document.getElementById('totalDisp').textContent=t;
+  document.getElementById('totalDisp2').textContent=t;
+  updateLegend();
+
+  const canvas=document.getElementById('bagCanvas');
+  const ctx=setupCanvasDPR(canvas);
+  const W=canvas._cssW||240, H=canvas._cssH||200;
+  ctx.clearRect(0,0,W,H);
+
+  const cx=W/2, cy=H/2+10;
+  const rx=W/2-20, ry=H/2-18;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);
+  ctx.fillStyle='#FFF3DC';
+  ctx.fill();
+  ctx.strokeStyle='#C89B4A';
+  ctx.lineWidth=3;
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);
+  ctx.clip();
+  ctx.strokeStyle='rgba(180,130,60,.08)';
+  ctx.lineWidth=12;
+  for(let y=cy-ry;y<cy+ry;y+=18){
+    ctx.beginPath();ctx.moveTo(cx-rx,y);ctx.lineTo(cx+rx,y);ctx.stroke();
+  }
+  ctx.restore();
+
+  if(t===0){
+    ctx.fillStyle='rgba(180,130,60,.4)';
+    ctx.font='bold 14px Nunito,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('boş torba 😅',cx,cy);
+  } else {
+    drawBalls(ctx,cx,cy,rx,ry,t);
+  }
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(cx-rx*.6,cy-ry+8);
+  ctx.quadraticCurveTo(cx,cy-ry-18,cx+rx*.6,cy-ry+8);
+  ctx.strokeStyle='#A07030';
+  ctx.lineWidth=4;
+  ctx.lineCap='round';
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawBalls(ctx,cx,cy,rx,ry,t){
+  const r=t<=4?22:t<=8?17:t<=14?13:t<=20?10:8;
+  const pool=[];
+  COLORS.forEach((c,i)=>{for(let j=0;j<counts[i];j++)pool.push(c)});
+  let seed=t*13+counts[0]*7+counts[1]*11+counts[2]*5+counts[3]*3+counts[4]*2;
+  const rand=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]]}
+
+  const positions=[];let att=0;
+  while(positions.length<t&&att<9000){
+    const ang=rand()*Math.PI*2;
+    const dist=Math.sqrt(rand());
+    const px=cx+dist*(rx-r-6)*Math.cos(ang);
+    const py=cy+dist*(ry-r-6)*Math.sin(ang);
+    let ok=true;
+    for(const p of positions){
+      if((p[0]-px)**2+(p[1]-py)**2<(r*2+3)**2){ok=false;break}
+    }
+    if(ok)positions.push([px,py]);att++;
+  }
+
+  positions.forEach(([px,py],k)=>{
+    const c=pool[k];
+    ctx.beginPath();ctx.arc(px+2,py+3,r,0,Math.PI*2);
+    ctx.fillStyle='rgba(0,0,0,.12)';ctx.fill();
+    ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);
+    ctx.fillStyle=c.h;ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.18)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.arc(px-r*.28,py-r*.3,r*.35,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.45)';ctx.fill();
+    ctx.beginPath();ctx.arc(px-r*.15,py-r*.5,r*.12,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.fill();
+  });
+}
+
+function updateLegend(){
+  const t=total(),el=document.getElementById('bagLegend');
+  el.innerHTML='';
+  if(t===0){
+    el.innerHTML='<div class="leg-row" style="color:var(--muted);font-style:italic;justify-content:center;padding:6px">Aşağıdan top ekle</div>';
+    return;
+  }
+  COLORS.forEach((c,i)=>{
+    if(counts[i]===0)return;
+    el.innerHTML+=`<div class="leg-row">
+      <div class="leg-dot" style="background:${c.h}"></div>
+      <span class="leg-name">${c.n}</span>
+      <span class="leg-frac">${counts[i]} / ${t}</span>
+    </div>`;
+  });
+}
+
+/* TAHMİN — BÖLGELER */
+const ZONES=[
+  {v:0,    label:'İmkânsız',  icon:'😱'},
+  {v:0.25, label:'Az olası',  icon:'🤏'},
+  {v:0.5,  label:'Eşit şans', icon:'⚖️'},
+  {v:0.75, label:'Çok olası', icon:'💪'},
+  {v:1,    label:'Kesin',     icon:'✅'},
+];
+function snap(x){
+  return ZONES.reduce((a,b)=>Math.abs(b.v-x)<Math.abs(a.v-x)?b:a);
+}
+function zoneOf(p){
+  if(p<=0)return ZONES[0];
+  if(p>=1)return ZONES[4];
+  if(p<0.375)return ZONES[1];
+  if(p<=0.625)return ZONES[2];
+  if(p<1)return ZONES[3];
+  return ZONES[4];
+}
+
+/* TAHMİN — RENK SEÇİCİ (renklere tıklayınca spektrum aç/kapat) */
+// openSpecs: hangi renk indeksleri için spektrum açık
+const openSpecs=new Set();
+
+function buildColorPicker(){
+  const el=document.getElementById('colorPicker');
+  el.innerHTML='';
+  const avail=COLORS.map((c,i)=>({c,i})).filter(({i})=>counts[i]>0);
+
+  // Torba boşsa spektrumleri da temizle
+  if(avail.length===0){
+    el.innerHTML='<div class="cp-empty">Önce sol taraftan torbaya top ekle 👈</div>';
+    openSpecs.clear();
+    buildMultiSpec();
+    return;
+  }
+
+  // Torba değişince açık olan ama artık 0 olan renkleri kapat
+  openSpecs.forEach(i=>{if(counts[i]===0)openSpecs.delete(i)});
+
+  avail.forEach(({c,i})=>{
+    const isOpen=openSpecs.has(i);
+    const btn=document.createElement('button');
+    btn.className='cp-btn'+(isOpen?' active':'');
+    btn.innerHTML=`<div class="cp-dot" style="background:${c.h}"></div>${c.n}`;
+    btn.onclick=()=>{
+      if(openSpecs.has(i)){
+        openSpecs.delete(i);
+      } else {
+        openSpecs.add(i);
+      }
+      playClick(800);
+      buildColorPicker();
+    };
+    el.appendChild(btn);
+  });
+
+  buildMultiSpec();
+}
+
+/* Tüm açık spektrumları oluştur */
+function buildMultiSpec(){
+  const container=document.getElementById('multiSpecContainer');
+  container.innerHTML='';
+
+  if(openSpecs.size===0){
+    renderLegend();
+    updateFeedback();
+    return;
+  }
+
+  openSpecs.forEach(i=>{
+    const c=COLORS[i];
+    if(counts[i]===0)return;
+
+    const wrap=document.createElement('div');
+    wrap.className='spec-row-wrap';
+    wrap.id='specWrap'+i;
+
+    const hasPred=preds[c.n]!==null;
+    const zoneLabel=hasPred?snap(preds[c.n]).icon+' '+snap(preds[c.n]).label:'tıkla →';
+
+    wrap.innerHTML=`
+      <div class="spec-row-header">
+        <div class="spec-row-dot" style="background:${c.h}"></div>
+        <span class="spec-row-name">${c.n}</span>
+        <span class="spec-row-zone${hasPred?' set':''}" id="specZone${i}">${zoneLabel}</span>
+      </div>
+      <div class="spec-zone-row">
+        <span class="spec-zone-lbl"><span>😱</span>İmkânsız</span>
+        <span class="spec-zone-lbl"><span>🤏</span>Az olası</span>
+        <span class="spec-zone-lbl"><span>⚖️</span>Eşit şans</span>
+        <span class="spec-zone-lbl"><span>💪</span>Çok olası</span>
+        <span class="spec-zone-lbl"><span>✅</span>Kesin</span>
+      </div>
+      <div class="spec-row-outer">
+        <div class="spec-row-bar" id="specBar${i}"></div>
+      </div>`;
+
+    container.appendChild(wrap);
+
+    // Marker ekle
+    const bar=wrap.querySelector('.spec-row-bar');
+    if(hasPred){
+      addMarkerToBar(bar,c,i);
+    }
+
+    // Tıklama
+    bar.addEventListener('click',function(ev){
+      if(ev.target.classList.contains('marker'))return;
+      const rect=this.getBoundingClientRect();
+      let x=Math.max(0,Math.min(1,(ev.clientX-rect.left)/rect.width));
+      preds[c.n]=snap(x).v;
+      playClick(900);
+      // Marker güncelle
+      this.querySelectorAll('.marker').forEach(m=>m.remove());
+      addMarkerToBar(this,c,i);
+      updateZoneLabel(i,c);
+      renderLegend();
+      updateFeedback();
+      const bw=document.getElementById('bagCanvas');
+      bw.classList.remove('shake');void bw.offsetWidth;bw.classList.add('shake');
+    });
+  });
+
+  renderLegend();
+  updateFeedback();
+}
+
+function addMarkerToBar(bar,c,i){
+  const m=document.createElement('div');
+  m.className='marker';
+  m.style.left=preds[c.n]*100+'%';
+  m.style.background=c.h;
+  m.dataset.color=c.n;
+  bar.appendChild(m);
+  makeDraggableOnBar(m,c,i,bar);
+}
+
+function updateZoneLabel(i,c){
+  const zl=document.getElementById('specZone'+i);
+  if(!zl)return;
+  if(preds[c.n]!==null){
+    const z=snap(preds[c.n]);
+    zl.textContent=z.icon+' '+z.label;
+    zl.classList.add('set');
+  } else {
+    zl.textContent='tıkla →';
+    zl.classList.remove('set');
+  }
+}
+
+function makeDraggableOnBar(marker,c,i,bar){
+  function getX(e){return e.touches?e.touches[0].clientX:e.clientX}
+  function move(e){
+    e.preventDefault();
+    const rect=bar.getBoundingClientRect();
+    let x=Math.max(0,Math.min(1,(getX(e)-rect.left)/rect.width));
+    const snapped=snap(x);
+    preds[c.n]=snapped.v;
+    marker.style.left=snapped.v*100+'%';
+    updateZoneLabel(i,c);
+    renderLegend();
+    updateFeedback();
+  }
+  function stop(){
+    document.removeEventListener('mousemove',move);
+    document.removeEventListener('mouseup',stop);
+    document.removeEventListener('touchmove',move);
+    document.removeEventListener('touchend',stop);
+  }
+  marker.addEventListener('mousedown',e=>{e.preventDefault();document.addEventListener('mousemove',move);document.addEventListener('mouseup',stop)});
+  marker.addEventListener('touchstart',e=>{e.preventDefault();document.addEventListener('touchmove',move,{passive:false});document.addEventListener('touchend',stop)},{passive:false});
+}
+
+/* Eski renderMarkers — artık buildMultiSpec çağırıyor */
+function renderMarkers(){
+  buildMultiSpec();
+}
+
+function renderLegend(){
+  const leg=document.getElementById('predLegend');
+  const items=document.getElementById('legendItems');
+  const active=COLORS.filter((c,i)=>counts[i]>0&&preds[c.n]!==null);
+  if(active.length===0){leg.classList.remove('show');return;}
+  leg.classList.add('show');
+  items.innerHTML=active.map(c=>`
+    <div class="li-item">
+      <div class="li-dot" style="background:${c.h}"></div>
+      ${c.n}
+      <span class="li-val">${snap(preds[c.n]).label}</span>
+    </div>`).join('');
+}
+
+function resetPreds(){
+  resetPredsSilent();
+  playClick(400);
+  buildColorPicker();
+}
+function resetPredsSilent(){
+  COLORS.forEach(c=>{preds[c.n]=null});
+  openSpecs.clear();
+}
+
+/* DENEY — TOP ÇEKME */
+function pickOne(){
+  const t=total();
+  if(t===0)return null;
+  let r=Math.random()*t;
+  for(let i=0;i<COLORS.length;i++){
+    r-=counts[i];
+    if(r<0)return i;
+  }
+  return COLORS.length-1;
+}
+
+function drawOne(){
+  if(busy)return;
+  if(total()===0){flashEmpty();return}
+  const idx=pickOne();
+  recordDraw(idx);
+  animateLastBall(idx);
+  playPop();
+  shakeBag();
+  updateExperimentUI();
+  updateFeedback();
+}
+
+function drawMany(n){
+  if(busy)return;
+  if(total()===0){flashEmpty();return}
+  busy=true;
+  setBagButtons(false);
+
+  let drawn=0;
+  const interval=n>=50?12:35;
+  function step(){
+    const idx=pickOne();
+    recordDraw(idx);
+    drawn++;
+    if(drawn===n||drawn%(n>=50?7:3)===0){
+      animateLastBall(idx,true);
+    }
+    if(drawn%(n>=50?6:2)===0)playClick(500+Math.random()*400);
+    updateExperimentUI(true);
+    if(drawn<n){
+      setTimeout(step,interval);
+    } else {
+      shakeBag();
+      animateLastBall(idx);
+      playPop();
+      busy=false;
+      setBagButtons(true);
+      updateFeedback();
+    }
+  }
+  step();
+}
+
+function setBagButtons(enabled){
+  ['btnDraw','btn10','btn50'].forEach(id=>{
+    document.getElementById(id).disabled=!enabled;
+  });
+}
+
+function recordDraw(idx){
+  if(idx===null)return;
+  drawHistory.push(idx);
+  drawCounts[idx]++;
+}
+
+function shakeBag(){
+  const bw=document.getElementById('bagCanvas');
+  bw.classList.remove('shake');void bw.offsetWidth;bw.classList.add('shake');
+}
+
+function flashEmpty(){
+  const ln=document.getElementById('lastName');
+  ln.textContent='⚠️ Önce torbaya top ekle!';
+  ln.style.color='var(--rose)';
+  setTimeout(()=>{ln.style.color=''},1500);
+}
+
+function animateLastBall(idx,quick=false){
+  const lb=document.getElementById('lastBall');
+  const ln=document.getElementById('lastName');
+  const c=COLORS[idx];
+  lb.style.background=c.h;
+  lb.classList.add('has-ball');
+  lb.querySelector('.shine').style.display='block';
+  ln.textContent=c.n;
+  ln.style.color='';
+  if(!quick){
+    lb.classList.remove('pop');void lb.offsetWidth;lb.classList.add('pop');
+  }
+}
+
+function resetExperiment(){
+  if(totalDraws()===0)return;
+  playClick(350);
+  resetExperimentSilent();
+  updateExperimentUI();
+  updateFeedback();
+}
+function resetExperimentSilent(){
+  drawHistory=[];
+  drawCounts=[0,0,0,0,0];
+  const lb=document.getElementById('lastBall');
+  const ln=document.getElementById('lastName');
+  lb.className='last-ball';
+  lb.style.background='';
+  lb.querySelector('.shine').style.display='none';
+  ln.textContent='— henüz çekmedin —';
+}
+
+function updateExperimentUI(skipHist=false){
+  document.getElementById('totalDraws').textContent=totalDraws();
+
+  if(!skipHist){
+    const strip=document.getElementById('histStrip');
+    const last=drawHistory.slice(-12);
+    strip.innerHTML=last.map(i=>
+      `<div class="hist-dot" style="background:${COLORS[i].h}"></div>`
+    ).join('');
+  }
+
+  const chart=document.getElementById('expChart');
+  const body=document.getElementById('chartBody');
+  const td=totalDraws();
+  if(td===0){chart.classList.remove('show');body.innerHTML='';return}
+  chart.classList.add('show');
+
+  const t=total();
+  body.innerHTML='';
+  COLORS.forEach((c,i)=>{
+    if(counts[i]===0&&drawCounts[i]===0)return;
+    const expected=t>0?counts[i]/t:0;
+    const actual=td>0?drawCounts[i]/td:0;
+    const widthPct=Math.round(actual*100);
+    const expPct=Math.round(expected*100);
+    body.insertAdjacentHTML('beforeend',`
+      <div class="chart-row">
+        <div class="chart-dot" style="background:${c.h}"></div>
+        <div class="chart-name">${c.n}</div>
+        <div class="chart-bar-wrap">
+          <div class="chart-fill" style="width:${widthPct}%;background:${c.h}"></div>
+          ${t>0&&counts[i]>0?`<div class="chart-expected" style="left:${expPct}%"></div>`:''}
+        </div>
+        <div class="chart-val">${drawCounts[i]}<span class="chart-pct">/ ${td}</span></div>
+      </div>
+    `);
+  });
+}
+
+/* GERİ BİLDİRİM (Torba) */
+function updateFeedback(){
+  const fb=document.getElementById('feedback');
+  const td=totalDraws();
+  const t=total();
+
+  const activePreds=COLORS.filter((c,i)=>counts[i]>0&&preds[c.n]!==null);
+
+  if(activePreds.length===0){
+    if(td>=10){
+      fb.className='feedback-box mid show';
+      fb.innerHTML=`<div class="fb-title">💭 Şimdi tahmin et!</div>
+        Soldaki spektrumdan renklerin ne kadar olası olduğunu işaretle.
+        Sonra çekmeye devam et — tahminin tuttu mu görelim!`;
+    } else {
+      fb.className='feedback-box';
+    }
+    return;
+  }
+
+  if(td===0){
+    fb.className='feedback-box mid show';
+    fb.innerHTML=`<div class="fb-title">🎲 Şimdi <em>Çek!</em> butonuna bas</div>
+      Tahminlerini yaptın. Hadi gerçekten ne çıkacak görelim!`;
+    return;
+  }
+
+  if(td<5){
+    fb.className='feedback-box';
+    return;
+  }
+
+  const matches=[],misses=[];
+  activePreds.forEach(c=>{
+    const i=COLORS.indexOf(c);
+    const realP=counts[i]/t;
+    const realZone=zoneOf(realP);
+    const predZone=snap(preds[c.n]);
+    if(realZone.label===predZone.label){
+      matches.push({c,zone:realZone});
+    } else {
+      misses.push({c,pred:predZone,real:realZone,
+        actual:drawCounts[i],actualP:drawCounts[i]/td});
+    }
+  });
+
+  if(misses.length>0&&matches.length>0){
+    fb.className='feedback-box mid show';
+    fb.innerHTML=`<div class="fb-title">👍 Yakın ama tam değil</div>
+      <strong>${matches.length}</strong> tahminin doğru,
+      <strong>${misses.length}</strong> tanesi şaşırdı:
+      <ul>${misses.map(m=>`<li><strong>${m.c.n}</strong>: sen ${snapLabel(m.pred)}, gerçekte ${snapLabel(m.real)} (${m.actual}/${td})</li>`).join('')}</ul>`;
+  } else {
+    fb.className='feedback-box';
+  }
+}
+function snapLabel(z){return `<em>${z.icon} ${z.label}</em>`}
+
+function refreshBag(){
+  COLORS.forEach((c,i)=>{
+    const el=document.getElementById('cv'+i);
+    if(el)el.textContent=counts[i];
+  });
+  drawBag();
+  buildColorPicker();
+  updateExperimentUI();
+  updateFeedback();
+}
+
+let resizeTO;
+window.addEventListener('resize',()=>{
+  clearTimeout(resizeTO);
+  resizeTO=setTimeout(drawBag,150);
+});
+
+/* ═══════════════════════════════════════════════════════════
+   MOD 2: YAZI TURA
+   ═══════════════════════════════════════════════════════════ */
+let coinHist=[];      // 'Y' veya 'T'
+let coinRot=0;        // toplam dönüş (deg)
+let coinBusy=false;
+let coinWonOnce=false;
+
+function flipCoin(){
+  if(coinBusy)return;
+  coinBusy=true;
+  setCoinButtons(false);
+
+  const result=Math.random()<0.5?'Y':'T';
+  const coin=document.getElementById('coin');
+  coin.classList.remove('spin');
+
+  // Hedef yüze döndür (Y=0°, T=180°)
+  const targetMod=result==='T'?180:0;
+  const currentMod=((coinRot%360)+360)%360;
+  const spins=360*(4+Math.floor(Math.random()*3)); // 4-6 tur
+  let delta=spins+(targetMod-currentMod);
+  if(delta<360)delta+=720;
+  coinRot+=delta;
+  coin.style.transform=`rotateY(${coinRot}deg)`;
+
+  playMetal();
+  // Atış esnasında küçük tıklar
+  let ticks=0;
+  const tickInt=setInterval(()=>{
+    if(ticks++<4&&coinBusy)playClick(500+Math.random()*350);
+    else clearInterval(tickInt);
+  },200);
+
+  setTimeout(()=>{
+    coinHist.push(result);
+    updateCoinUI();
+    updateCoinFeedback();
+    coinBusy=false;
+    setCoinButtons(true);
+  },1170);
+}
+
+function flipMany(n){
+  if(coinBusy)return;
+  coinBusy=true;
+  setCoinButtons(false);
+
+  const coin=document.getElementById('coin');
+  coin.classList.add('spin');
+
+  let i=0;
+  const interval=n>=50?14:35;
+  function step(){
+    const result=Math.random()<0.5?'Y':'T';
+    coinHist.push(result);
+    i++;
+    if(i%(n>=50?7:2)===0)playClick(450+Math.random()*350);
+    coinRot+=180+Math.floor(Math.random()*120); // hafif kaotik dönüş
+    coin.style.transform=`rotateY(${coinRot}deg)`;
+    updateCoinUI(true);
+    if(i<n){
+      setTimeout(step,interval);
+    } else {
+      // Son sonuca göre düzgün yüze yerleştir
+      coin.classList.remove('spin');
+      const finalResult=coinHist[coinHist.length-1];
+      const targetMod=finalResult==='T'?180:0;
+      const currentMod=((coinRot%360)+360)%360;
+      let delta=540+(targetMod-currentMod); // ~1.5 tur daha
+      coinRot+=delta;
+      coin.style.transform=`rotateY(${coinRot}deg)`;
+      playMetal();
+      setTimeout(()=>{
+        updateCoinUI();
+        updateCoinFeedback();
+        coinBusy=false;
+        setCoinButtons(true);
+      },650);
+    }
+  }
+  step();
+}
+
+function setCoinButtons(enabled){
+  ['btnFlip','btnFlip10','btnFlip50'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.disabled=!enabled;
+  });
+}
+
+function resetCoin(){
+  if(coinHist.length===0)return;
+  playClick(350);
+  coinHist=[];
+  coinWonOnce=false;
+  updateCoinUI();
+  updateCoinFeedback();
+}
+
+function updateCoinUI(skipHist=false){
+  const y=coinHist.filter(x=>x==='Y').length;
+  const t=coinHist.filter(x=>x==='T').length;
+  const total=y+t;
+
+  document.getElementById('countY').textContent=y;
+  document.getElementById('countT').textContent=t;
+  document.getElementById('totalFlips').textContent=total;
+  document.getElementById('pctY').textContent=total?'%'+Math.round(y/total*100):'–';
+  document.getElementById('pctT').textContent=total?'%'+Math.round(t/total*100):'–';
+
+  // Oran çubuğu
+  const barY=document.getElementById('barY');
+  const barT=document.getElementById('barT');
+  if(total===0){
+    barY.style.width='50%';barY.textContent='';
+    barT.style.width='50%';barT.textContent='';
+  } else {
+    const yp=y/total*100;
+    barY.style.width=yp+'%';
+    barY.textContent=yp>=14?`Yazı %${Math.round(yp)}`:(yp>=6?'Y':'');
+    barT.style.width=(100-yp)+'%';
+    barT.textContent=(100-yp)>=14?`Tura %${Math.round(100-yp)}`:((100-yp)>=6?'T':'');
+  }
+
+  // Tarihçe
+  if(!skipHist){
+    const strip=document.getElementById('ytHistStrip');
+    if(total===0){
+      strip.innerHTML='<div class="yt-hist-empty">— henüz atış yok —</div>';
+    } else {
+      const last=coinHist.slice(-20);
+      strip.innerHTML=last.map(x=>
+        `<div class="yt-hist-dot ${x==='Y'?'y':'t'}">${x}</div>`
+      ).join('');
+    }
+  }
+}
+
+function updateCoinFeedback(){
+  const fb=document.getElementById('coinFeedback');
+  const total=coinHist.length;
+  const y=coinHist.filter(x=>x==='Y').length;
+
+  if(total===0){
+    fb.className='feedback-box';
+    return;
+  }
+
+  const pctY=y/total;
+  const diff=Math.abs(pctY-0.5);
+
+  if(total<10){
+    fb.className='feedback-box';
+    return;
+  }
+
+  if(diff<0.04){
+    fb.className='feedback-box good show';
+    fb.innerHTML=`<div class="fb-title">🎉 Mükemmel denge!</div>Yazı ve tura oranı %50'ye çok yakın. Büyük sayılar yasası doğrulandı!`;
+  } else if(total<50){
+    fb.className='feedback-box mid show';
+    fb.innerHTML=`<div class="fb-title">📊 Devam et!</div>Daha fazla at — atış sayısı arttıkça oran %50'ye yaklaşacak.`;
+  } else {
+    fb.className='feedback-box';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOD 3: ÇARK ÇEVİR
+   ═══════════════════════════════════════════════════════════ */
+const WHEEL_COLORS=[
+  {n:'Kırmızı', h:'#EF4444'},
+  {n:'Turuncu', h:'#F97316'},
+  {n:'Sarı',    h:'#EAB308'},
+  {n:'Yeşil',   h:'#22C55E'},
+  {n:'Mavi',    h:'#3B82F6'},
+  {n:'Mor',     h:'#A855F7'},
+];
+let wheelCounts=[3,2,2,1,1,1]; // başlangıç
+let wheelHistory=[];
+let wheelResultCounts=new Array(WHEEL_COLORS.length).fill(0);
+let wheelAngle=0;  // current rotation (deg)
+let wheelBusy=false;
+
+function wheelTotal(){return wheelCounts.reduce((a,b)=>a+b,0)}
+
+function buildWheelControls(){
+  const el=document.getElementById('wheelColorRows');
+  el.innerHTML='';
+  WHEEL_COLORS.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='c-row';
+    row.innerHTML=`
+      <div class="c-swatch" style="background:${c.h}"></div>
+      <span class="c-name">${c.n}</span>
+      <div class="c-ctrl">
+        <button class="c-btn" onclick="adjWheel(${i},-1)">−</button>
+        <span class="c-val" id="wcv${i}">${wheelCounts[i]}</span>
+        <button class="c-btn" onclick="adjWheel(${i},1)">+</button>
+      </div>`;
+    el.appendChild(row);
+  });
+  document.getElementById('wheelTotalDisp').textContent=wheelTotal();
+}
+
+function adjWheel(i,d){
+  const nv=Math.max(0,Math.min(20,wheelCounts[i]+d));
+  if(nv===wheelCounts[i])return;
+  wheelCounts[i]=nv;
+  playClick(d>0?700:500);
+  document.getElementById('wcv'+i).textContent=nv;
+  document.getElementById('wheelTotalDisp').textContent=wheelTotal();
+  resetWheelSilent();
+  drawWheel();
+}
+
+function drawWheel(highlight=-1){
+  const canvas=document.getElementById('wheelCanvas');
+  const dpr=window.devicePixelRatio||1;
+  const SIZE=260;
+  canvas.width=SIZE*dpr; canvas.height=SIZE*dpr;
+  canvas.style.width=SIZE+'px'; canvas.style.height=SIZE+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+
+  const cx=SIZE/2, cy=SIZE/2, R=SIZE/2-6;
+  const t=wheelTotal();
+
+  // Gölge
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.18)';
+  ctx.shadowBlur=12;
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+  ctx.fillStyle='#fff';ctx.fill();
+  ctx.restore();
+
+  if(t===0){
+    ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+    ctx.fillStyle='#F0F4F8';ctx.fill();
+    ctx.strokeStyle='var(--border)';ctx.lineWidth=4;ctx.stroke();
+    ctx.fillStyle='#8A95A5';ctx.font='bold 14px Nunito,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('Dilim ekle 😊',cx,cy);
+    return;
+  }
+
+  // Dilimleri çiz
+  let startAngle=wheelAngle*(Math.PI/180)-Math.PI/2;
+  const pool=[];
+  WHEEL_COLORS.forEach((c,i)=>{for(let j=0;j<wheelCounts[i];j++)pool.push({c,i})});
+
+  const sliceAngle=(2*Math.PI)/pool.length;
+  pool.forEach((item,idx)=>{
+    const sa=startAngle+idx*sliceAngle;
+    const ea=sa+sliceAngle;
+    const isHL=(highlight===item.i);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.arc(cx,cy,isHL?R+4:R,sa,ea);
+    ctx.closePath();
+    ctx.fillStyle=item.c.h;
+    if(isHL){ctx.shadowColor='rgba(0,0,0,.3)';ctx.shadowBlur=10;}
+    ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.9)';
+    ctx.lineWidth=2.5;
+    ctx.stroke();
+    ctx.restore();
+
+    // Sayı etiketi
+    const mid=sa+sliceAngle/2;
+    const labelR=R*0.68;
+    ctx.save();
+    ctx.translate(cx+Math.cos(mid)*labelR, cy+Math.sin(mid)*labelR);
+    ctx.rotate(mid+Math.PI/2);
+    ctx.fillStyle='rgba(255,255,255,.95)';
+    ctx.font=`900 ${pool.length<=8?14:pool.length<=14?11:9}px Nunito,sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    if(pool.length<=18){
+      const lbl=item.c.n.slice(0,pool.length>12?1:3);
+      ctx.fillText(lbl,0,0);
+    }
+    ctx.restore();
+  });
+
+  // Merkez daire
+  ctx.save();
+  ctx.beginPath();ctx.arc(cx,cy,18,0,Math.PI*2);
+  ctx.fillStyle=highlight>=0?WHEEL_COLORS[highlight].h:'var(--navy)';
+  ctx.fill();
+  ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.stroke();
+  ctx.restore();
+
+  // Çerçeve
+  ctx.save();
+  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);
+  ctx.strokeStyle='var(--navy)';ctx.lineWidth=4;ctx.stroke();
+  ctx.restore();
+}
+
+function setWheelButtons(en){
+  ['btnWheel','btnWheel10','btnWheel50'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.disabled=!en;
+  });
+}
+
+function spinWheel(){
+  if(wheelBusy||wheelTotal()===0)return;
+  wheelBusy=true;
+  setWheelButtons(false);
+
+  const t=wheelTotal();
+  const targetIdx=Math.floor(Math.random()*t);
+  // Hangi renk?
+  const pool=[];
+  WHEEL_COLORS.forEach((c,i)=>{for(let j=0;j<wheelCounts[i];j++)pool.push(i)});
+  const resultColorIdx=pool[targetIdx];
+
+  // Dönüş hesabı: ok üstte (270° = -90° = pozisyon 0 dilim başlangıcı)
+  // Hedef dilimin orta açısı = targetIdx/t * 360 + sliceAngle/2
+  const sliceDeg=360/t;
+  const targetMidDeg=targetIdx*sliceDeg+sliceDeg/2;
+  // Ok 270° = wheelAngle + targetMidDeg konumuna bakar, yani ekstra dönüş:
+  const extraSpins=360*(5+Math.floor(Math.random()*3));
+  const targetAngle=wheelAngle+extraSpins+(360-((wheelAngle+targetMidDeg)%360));
+
+  const canvas=document.getElementById('wheelCanvas');
+  const startAngle=wheelAngle;
+  const totalRot=targetAngle-startAngle;
+  const duration=3200;
+  const startTime=performance.now();
+
+  function easeOut(t){return 1-Math.pow(1-t,4);}
+
+  function frame(now){
+    const elapsed=now-startTime;
+    const prog=Math.min(elapsed/duration,1);
+    wheelAngle=startAngle+totalRot*easeOut(prog);
+    drawWheel(prog>0.85?resultColorIdx:-1);
+
+    if(prog<1){
+      requestAnimationFrame(frame);
+    } else {
+      wheelAngle=targetAngle%360;
+      wheelHistory.push(resultColorIdx);
+      wheelResultCounts[resultColorIdx]++;
+      updateWheelUI();
+      wheelBusy=false;
+      setWheelButtons(true);
+      playWin();
+    }
+  }
+  playMetal();
+  requestAnimationFrame(frame);
+}
+
+function updateWheelUI(skipHist=false){
+  const td=wheelHistory.length;
+  document.getElementById('wheelTotal').textContent=td;
+
+  if(td>0&&!skipHist){
+    const last=wheelHistory[td-1];
+    const c=WHEEL_COLORS[last];
+    const ball=document.getElementById('wheelLastBall');
+    ball.style.background=c.h;
+    ball.style.borderColor='rgba(0,0,0,.2)';
+    ball.innerHTML='<span class="shine"></span>';
+    ball.classList.add('has-ball');
+    ball.classList.remove('pop');
+    void ball.offsetWidth;
+    ball.classList.add('pop');
+    document.getElementById('wheelLastName').textContent=c.n;
+  }
+
+  // Tarihçe
+  const strip=document.getElementById('wheelHistStrip');
+  strip.innerHTML=wheelHistory.slice(-12).map(i=>
+    `<div class="hist-dot" style="background:${WHEEL_COLORS[i].h}"></div>`
+  ).join('');
+
+  // Grafik
+  const chart=document.getElementById('wheelChart');
+  const body=document.getElementById('wheelChartBody');
+  if(td===0){chart.classList.remove('show');body.innerHTML='';return}
+  chart.classList.add('show');
+  body.innerHTML='';
+  const t=wheelTotal();
+  WHEEL_COLORS.forEach((c,i)=>{
+    if(wheelCounts[i]===0&&wheelResultCounts[i]===0)return;
+    const actual=td>0?wheelResultCounts[i]/td:0;
+    const expected=t>0?wheelCounts[i]/t:0;
+    body.insertAdjacentHTML('beforeend',`
+      <div class="chart-row">
+        <div class="chart-dot" style="background:${c.h}"></div>
+        <div class="chart-name">${c.n}</div>
+        <div class="chart-bar-wrap">
+          <div class="chart-fill" style="width:${Math.round(actual*100)}%;background:${c.h}"></div>
+          ${t>0&&wheelCounts[i]>0?`<div class="chart-expected" style="left:${Math.round(expected*100)}%"></div>`:''}
+        </div>
+        <div class="chart-val">${wheelResultCounts[i]}<span class="chart-pct">/ ${td}</span></div>
+      </div>
+    `);
+  });
+
+  // Geri bildirim
+  const fb=document.getElementById('wheelFeedback');
+  if(td>=20){
+    const diffs=WHEEL_COLORS.map((c,i)=>{
+      if(wheelCounts[i]===0)return 0;
+      return Math.abs(wheelResultCounts[i]/td - wheelCounts[i]/wheelTotal());
+    });
+    const maxDiff=Math.max(...diffs);
+    if(maxDiff<0.06){
+      fb.className='feedback-box good show';
+      fb.innerHTML=`<div class="fb-title">🎉 Harika uyum!</div>Gerçek sonuçlar teorik olasılığa çok yakın. Büyük sayılar yasası işliyor!`;
+    } else {
+      fb.className='feedback-box mid show';
+      fb.innerHTML=`<div class="fb-title">📊 Daha çok çevir!</div>Çevir sayısı arttıkça teorik olasılığa daha çok yaklaşacak.`;
+    }
+  } else {
+    fb.className='feedback-box';
+  }
+}
+
+function spinMany(n){
+  if(wheelBusy||wheelTotal()===0)return;
+  wheelBusy=true;
+  setWheelButtons(false);
+
+  const t=wheelTotal();
+  const pool=[];
+  WHEEL_COLORS.forEach((c,i)=>{for(let j=0;j<wheelCounts[i];j++)pool.push(i)});
+
+  let i=0;
+  const interval=n>=50?18:40;
+
+  function step(){
+    const targetIdx=Math.floor(Math.random()*t);
+    const resultColorIdx=pool[targetIdx];
+    const sliceDeg=360/t;
+    const targetMidDeg=targetIdx*sliceDeg+sliceDeg/2;
+    // quick spin: just 1 full rotation
+    const quickSpins=360*(1+Math.floor(Math.random()*2));
+    wheelAngle+=quickSpins+(360-((wheelAngle+targetMidDeg)%360));
+    wheelHistory.push(resultColorIdx);
+    wheelResultCounts[resultColorIdx]++;
+    i++;
+    if(i%(n>=50?8:3)===0)playClick(500+Math.random()*300);
+    drawWheel(resultColorIdx);
+    updateWheelUI(true);
+    if(i<n){
+      setTimeout(step,interval);
+    } else {
+      // final draw without highlight
+      setTimeout(()=>{
+        drawWheel();
+        updateWheelUI();
+        wheelBusy=false;
+        setWheelButtons(true);
+        playMetal();
+      },300);
+    }
+  }
+  step();
+}
+
+function resetWheelSilent(){
+  wheelHistory=[];
+  wheelResultCounts=new Array(WHEEL_COLORS.length).fill(0);
+}
+
+function resetWheel(){
+  if(wheelHistory.length===0)return;
+  playClick(350);
+  resetWheelSilent();
+  updateWheelUI();
+  drawWheel();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOD 4: ZAR AT
+   ═══════════════════════════════════════════════════════════ */
+const DICE_COLORS=['#EF4444','#F97316','#EAB308','#22C55E','#3B82F6','#A855F7'];
+let diceHistory=[];
+let diceCount=1;
+let diceSumHistory=[];
+let diceCounts=new Array(6).fill(0);
+let diceBusy=false;
+let diceRot={x:0,y:0};
+
+// idle rotation
+let idleAnimId=null;
+let idleAngles=[];  // per-die {x,y}
+
+const DOT_MAP={
+  1:[4],
+  2:[0,8],
+  3:[0,4,8],
+  4:[0,2,6,8],
+  5:[0,2,4,6,8],
+  6:[0,2,3,5,6,8],
+};
+
+const DICE_ROTATIONS={
+  1:{x:0,y:0},
+  2:{x:0,y:180},
+  3:{x:0,y:-90},
+  4:{x:0,y:90},
+  5:{x:-90,y:0},
+  6:{x:90,y:0},
+};
+
+function renderDiceFace(faceEl,val){
+  faceEl.innerHTML='';
+  const positions=DOT_MAP[val]||[];
+  const isOne=(val===1);
+  for(let i=0;i<9;i++){
+    const cell=document.createElement('div');
+    cell.className='dot-cell';
+    if(positions.includes(i)){
+      const dot=document.createElement('div');
+      dot.className='dot'+(isOne?' red':'');
+      cell.appendChild(dot);
+    }
+    faceEl.appendChild(cell);
+  }
+}
+
+// Build 3D dice DOM elements dynamically for diceCount dice
+function buildDiceFaces(){
+  const wrap=document.getElementById('diceWrap');
+  wrap.innerHTML='';
+  // init idle angles
+  idleAngles=[];
+  for(let d=0;d<diceCount;d++){
+    idleAngles.push({x:20+d*5, y:30+d*15});
+    const platform=document.createElement('div');
+    platform.className='dice-platform';
+    platform.style.cssText='position:relative;width:170px;height:170px;display:flex;align-items:center;justify-content:center;flex-shrink:0';
+
+    const cube=document.createElement('div');
+    cube.id='dice3d_'+d;
+    cube.style.cssText='width:130px;height:130px;position:relative;transform-style:preserve-3d;transition:transform .8s cubic-bezier(.32,1.45,.5,1);';
+    // 6 faces
+    for(let v=1;v<=6;v++){
+      const face=document.createElement('div');
+      face.className='dice-face';
+      face.id='df'+d+'_'+v;
+      face.setAttribute('data-val',v);
+      renderDiceFace(face,v);
+      cube.appendChild(face);
+    }
+    // shadow
+    const shadow=document.createElement('div');
+    shadow.style.cssText='position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:90px;height:16px;background:radial-gradient(ellipse,rgba(0,0,0,.22) 0%,transparent 70%);border-radius:50%;pointer-events:none;';
+    platform.appendChild(cube);
+    platform.appendChild(shadow);
+    wrap.appendChild(platform);
+    // apply idle rotation
+    cube.style.transform=`rotateX(${idleAngles[d].x}deg) rotateY(${idleAngles[d].y}deg)`;
+  }
+  startIdleRotation();
+}
+
+let idleT=0;
+function startIdleRotation(){
+  // Idle animasyon devre dışı — zar durduğu yerde sabit kalır
+}
+
+function buildDiceStatGrid(){
+  const grid=document.getElementById('diceStatGrid');
+  grid.innerHTML='';
+  for(let v=1;v<=6;v++){
+    const td=diceHistory.length;
+    const cnt=diceCounts[v-1];
+    const pct=td>0?Math.round(cnt/td*100):null;
+    const card=document.createElement('div');
+    card.className='dice-stat';
+    card.id='dstat'+v;
+    const isOne=(v===1);
+    const dotColor=isOne?'#C41E3A':'#1B1464';
+    const faceCells=Array(9).fill(0).map((_,i)=>
+      DOT_MAP[v].includes(i)
+        ?`<div style="display:flex;align-items:center;justify-content:center"><div style="width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 32% 28%,${isOne?'#FF7070':'#5C4EC4'},${dotColor});box-shadow:0 1px 3px rgba(0,0,0,.5)"></div></div>`
+        :'<div></div>'
+    ).join('');
+    card.innerHTML=`
+      <div style="
+        display:grid;grid-template-columns:repeat(3,8px);grid-template-rows:repeat(3,8px);gap:3px;
+        margin:0 auto 7px;width:fit-content;
+        background:linear-gradient(145deg,#FFFFFF,#EDE8DE);
+        padding:7px;border-radius:8px;
+        box-shadow:inset 0 2px 4px rgba(255,255,255,.9),inset 0 -2px 5px rgba(0,0,0,.18),0 2px 4px rgba(0,0,0,.12);
+      ">
+        ${faceCells}
+      </div>
+      <div class="dice-stat-val" id="dval${v}">${cnt}</div>
+      <div class="dice-stat-pct" id="dpct${v}">${pct!==null?'%'+pct:'–'}</div>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+function buildDiceBars(){
+  const wrap=document.getElementById('diceBarWrap');
+  const td=diceHistory.length;
+  wrap.innerHTML='';
+  for(let v=1;v<=6;v++){
+    const cnt=diceCounts[v-1];
+    const actual=td>0?cnt/td:0;
+    const expected=1/6;
+    wrap.insertAdjacentHTML('beforeend',`
+      <div class="dice-bar-row">
+        <div class="dice-bar-label">${v}</div>
+        <div class="dice-bar-track">
+          <div class="dice-bar-fill" id="dbar${v}" style="width:${Math.round(actual*100)}%"></div>
+          ${td>0?`<div class="dice-bar-exp" style="left:${Math.round(expected*100)}%"></div>`:''}
+        </div>
+        <div class="dice-bar-val" id="dbarval${v}">${cnt}</div>
+      </div>
+    `);
+  }
+}
+
+function adjDiceCount(d){
+  const nv=Math.max(1,Math.min(3,diceCount+d));
+  if(nv===diceCount)return;
+  diceCount=nv;
+  playClick(d>0?700:500);
+  document.getElementById('diceCountDisp').textContent=diceCount;
+  resetDiceSilent();
+  buildDiceFaces();
+  updateDiceUI();
+  updateProbPanel();
+}
+
+/* Olasılık paneli: 2 veya 3 zar için toplam dağılımı */
+function updateProbPanel(){
+  const panel=document.getElementById('diceProbPanel');
+  const barsEl=document.getElementById('diceProbBars');
+  const noteEl=document.getElementById('diceProbNote');
+  const titleEl=document.getElementById('diceProbTitle');
+  const badgeEl=document.getElementById('diceProbBadge');
+
+  if(diceCount<2){panel.style.display='none';return;}
+  panel.style.display='block';
+
+  const td=diceHistory.length;
+  const minSum=diceCount;
+  const maxSum=diceCount*6;
+
+  // theoretical probs
+  function theoreticalProbs(n){
+    // dp approach
+    let dp={};
+    dp[0]=1;
+    for(let d=0;d<n;d++){
+      const ndp={};
+      for(const [s,cnt] of Object.entries(dp)){
+        for(let v=1;v<=6;v++){
+          const ns=parseInt(s)+v;
+          ndp[ns]=(ndp[ns]||0)+cnt;
+        }
+      }
+      dp=ndp;
+    }
+    const total=6**n;
+    const probs={};
+    for(const [s,cnt] of Object.entries(dp)){
+      probs[parseInt(s)]=cnt/total;
+    }
+    return probs;
+  }
+  const probs=theoreticalProbs(diceCount);
+
+  // actual sum counts from history
+  const actualSumCounts={};
+  for(let s=minSum;s<=maxSum;s++)actualSumCounts[s]=0;
+  diceSumHistory.forEach(s=>{if(actualSumCounts[s]!==undefined)actualSumCounts[s]++;});
+
+  badgeEl.textContent=diceCount+' Zar';
+  titleEl.textContent='Toplam Olasılık Dağılımı';
+
+  const maxProb=Math.max(...Object.values(probs));
+  barsEl.innerHTML='';
+
+  for(let s=minSum;s<=maxSum;s++){
+    const p=probs[s]||0;
+    const pct=Math.round(p*100*100)/100;
+    const barW=Math.round(p/maxProb*100);
+    const actual=td>0?actualSumCounts[s]/td:null;
+    const actualW=actual!==null?Math.round(actual/maxProb*100):0;
+
+    const numerator=Math.round(p*(6**diceCount));
+    const denominator=6**diceCount;
+
+    barsEl.insertAdjacentHTML('beforeend',`
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px">
+        <div style="font-family:'Fredoka One',cursive;font-size:13px;color:var(--navy);min-width:22px;text-align:center">${s}</div>
+        <div style="flex:1;position:relative;height:14px;background:#F0F4F8;border-radius:50px;overflow:visible;border:1.5px solid var(--border)">
+          <div style="position:absolute;left:0;top:0;height:100%;width:${barW}%;background:linear-gradient(90deg,#818CF8,#6366F1);border-radius:50px;transition:width .4s"></div>
+          ${td>0?`<div style="position:absolute;left:0;top:-2px;height:calc(100%+4px);width:${actualW}%;background:rgba(16,185,129,.35);border-radius:50px;transition:width .4s"></div>`:''}
+        </div>
+        <div style="font-family:'Fredoka One',cursive;font-size:11px;color:var(--navy);min-width:58px;text-align:right">${numerator}/${denominator}</div>
+      </div>
+    `);
+  }
+
+  // note
+  const modeSums=Object.entries(probs).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([s])=>s);
+  const pctStr=(v)=>Math.round(probs[v]*1000)/10;
+  if(diceCount===2){
+    noteEl.innerHTML=`<b>En olası toplam:</b> 7 (%${pctStr(7)})<br><span style="color:#6366F1">■</span> Mor: teorik &nbsp;<span style="color:#10B981">■</span> Yeşil: gerçek (${td} atış)`;
+  } else {
+    noteEl.innerHTML=`<b>En olası toplamlar:</b> ${modeSums.join(', ')} &nbsp;|&nbsp; <span style="color:#6366F1">■</span> Teorik &nbsp;<span style="color:#10B981">■</span> Gerçek (${td} atış)`;
+  }
+}
+
+function rollDice(){
+  if(diceBusy)return;
+  diceBusy=true;
+  if(idleAnimId){cancelAnimationFrame(idleAnimId);idleAnimId=null;}
+  setDiceButtons(false);
+
+  const results=Array.from({length:diceCount},()=>Math.floor(Math.random()*6)+1);
+
+  // shake all dice
+  let frames=0;
+  const shakeInterval=setInterval(()=>{
+    for(let d=0;d<diceCount;d++){
+      const cube=document.getElementById('dice3d_'+d);
+      if(!cube)continue;
+      const rx=-15+Math.random()*30;
+      const ry=Math.random()*360;
+      cube.style.transition='transform .07s linear';
+      cube.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;
+    }
+    frames++;
+    if(frames>=12){
+      clearInterval(shakeInterval);
+      // settle each die to its result face
+      for(let d=0;d<diceCount;d++){
+        const cube=document.getElementById('dice3d_'+d);
+        if(!cube)continue;
+        const rot=DICE_ROTATIONS[results[d]];
+        cube.style.transition='transform .7s cubic-bezier(.34,1.56,.64,1)';
+        cube.style.transform=`rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
+      }
+      playMetal();
+      setTimeout(()=>{
+        results.forEach(v=>diceCounts[v-1]++);
+        diceHistory.push(results);
+        diceSumHistory.push(results.reduce((a,b)=>a+b,0));
+        updateDiceUI(results);
+        diceBusy=false;
+        setDiceButtons(true);
+        // restart idle but keep result faces visible for a moment
+        setTimeout(()=>startIdleRotation(), 2200);
+      },720);
+    }
+    if(frames%2===0)playClick(500+Math.random()*300);
+  },75);
+}
+
+function rollMany(n){
+  if(diceBusy)return;
+  diceBusy=true;
+  if(idleAnimId){cancelAnimationFrame(idleAnimId);idleAnimId=null;}
+  setDiceButtons(false);
+
+  let i=0;
+  const interval=n>=50?14:35;
+  function step(){
+    const results=Array.from({length:diceCount},()=>Math.floor(Math.random()*6)+1);
+    results.forEach(v=>diceCounts[v-1]++);
+    diceHistory.push(results);
+    diceSumHistory.push(results.reduce((a,b)=>a+b,0));
+    i++;
+    if(i%(n>=50?5:2)===0)playClick(450+Math.random()*300);
+    for(let d=0;d<diceCount;d++){
+      const cube=document.getElementById('dice3d_'+d);
+      if(!cube)continue;
+      const rx=Math.random()*360, ry=Math.random()*360;
+      cube.style.transition='transform .05s linear';
+      cube.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg)`;
+    }
+    updateDiceUI(results,true);
+    if(i<n){
+      setTimeout(step,interval);
+    } else {
+      for(let d=0;d<diceCount;d++){
+        const cube=document.getElementById('dice3d_'+d);
+        if(!cube)continue;
+        const rot=DICE_ROTATIONS[results[d]];
+        cube.style.transition='transform .5s cubic-bezier(.34,1.56,.64,1)';
+        cube.style.transform=`rotateX(${rot.x}deg) rotateY(${rot.y}deg)`;
+      }
+      playMetal();
+      setTimeout(()=>{
+        updateDiceUI(results);
+        diceBusy=false;
+        setDiceButtons(true);
+        setTimeout(()=>startIdleRotation(), 2200);
+      },600);
+    }
+  }
+  step();
+}
+
+function setDiceButtons(en){
+  ['btnDice','btnDice10','btnDice50'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.disabled=!en;
+  });
+}
+
+function updateDiceUI(lastResults=null, skipHist=false){
+  const td=diceHistory.length;
+  document.getElementById('diceTotal').textContent=td;
+
+  // Rebuild if grid/bars don't have the elements yet or on reset
+  if(!document.getElementById('dval1')){buildDiceStatGrid();}
+  if(!document.getElementById('dbar1')){buildDiceBars();}
+
+  // Stat cards
+  for(let v=1;v<=6;v++){
+    const cnt=diceCounts[v-1];
+    const pct=td>0?Math.round(cnt/td*100):null;
+    const valEl=document.getElementById('dval'+v);
+    const pctEl=document.getElementById('dpct'+v);
+    if(valEl)valEl.textContent=cnt;
+    if(pctEl)pctEl.textContent=pct!==null?'%'+pct:'–';
+  }
+
+  // Bars
+  for(let v=1;v<=6;v++){
+    const cnt=diceCounts[v-1];
+    const actual=td>0?cnt/td:0;
+    const bar=document.getElementById('dbar'+v);
+    const bval=document.getElementById('dbarval'+v);
+    if(bar)bar.style.width=Math.round(actual*100)+'%';
+    if(bval)bval.textContent=cnt;
+  }
+
+  // Extra zarlar (eski tek-zar modundan kalma, artık 3D küpler var — güvenli atla)
+  const extra=document.getElementById('extraDice');
+  if(extra){
+    if(lastResults&&diceCount>1){
+      extra.innerHTML=lastResults.slice(1).map(v=>{
+        const isOne=(v===1);
+        const cells=Array(9).fill(0).map((_,i)=>
+          DOT_MAP[v].includes(i)
+            ?`<div class="mini-dot-cell"><div class="mini-dot${isOne?' red':''}"></div></div>`
+            :'<div class="mini-dot-cell"></div>'
+        ).join('');
+        return `<div class="mini-dice">${cells}</div>`;
+      }).join('');
+    } else if(!lastResults||diceCount===1){
+      extra.innerHTML='';
+    }
+  }
+
+  // Tarihçe
+  if(!skipHist){
+    const strip=document.getElementById('diceHistStrip');
+    if(td===0){
+      strip.innerHTML='<div class="yt-hist-empty">— henüz atış yok —</div>';
+    } else {
+      const last=diceHistory.slice(-24);
+      strip.innerHTML=last.map(r=>{
+        const sum=r.reduce((a,b)=>a+b,0);
+        return `<div class="dice-hist-dot" title="${r.join('+')}">${sum}</div>`;
+      }).join('');
+    }
+  }
+
+  // Geri bildirim
+  const fb=document.getElementById('diceFeedback');
+  if(td>=30){
+    const maxDiff=Math.max(...diceCounts.map(c=>Math.abs(c/td-1/6)));
+    if(maxDiff<0.05){
+      fb.className='feedback-box good show';
+      fb.innerHTML=`<div class="fb-title">🎉 Mükemmel dağılım!</div>Her yüz yaklaşık 1/6 oranında çıktı. Büyük sayılar yasası doğrulandı!`;
+    } else if(td<100){
+      fb.className='feedback-box mid show';
+      fb.innerHTML=`<div class="fb-title">📊 Devam et!</div>Daha fazla at — 100 atışta dağılım teoriye yaklaşacak.`;
+    } else {
+      fb.className='feedback-box';
+    }
+  } else {
+    fb.className='feedback-box';
+  }
+}
+
+function resetDiceSilent(){
+  diceHistory=[];
+  diceSumHistory=[];
+  diceCounts=new Array(6).fill(0);
+}
+
+function resetDice(){
+  if(diceHistory.length===0&&diceCounts.every(c=>c===0))return;
+  playClick(350);
+  resetDiceSilent();
+  for(let d=0;d<diceCount;d++){
+    const cube=document.getElementById('dice3d_'+d);
+    if(cube){cube.style.transition='transform .5s ease';cube.style.transform='rotateX(0deg) rotateY(0deg)';}
+  }
+  updateDiceUI();
+  buildDiceStatGrid();
+  buildDiceBars();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOD 5: GALTON TAHTASI
+   ═══════════════════════════════════════════════════════════ */
+let galtonRows = 8;
+let galtonBuckets = [];   // her kutudaki top sayısı
+let galtonTotalDropped = 0;
+let galtonBusy = false;
+let galtonAnimQueue = []; // animasyon kuyruğu: her top için path dizisi
+let galtonAnimRunning = false;
+
+// Canvas sabit boyutları
+const GALTON_W = 400;
+const GALTON_H = 480;
+const GALTON_TOP_PAD = 36;   // top girişi için boşluk
+const GALTON_BOT_PAD = 90;   // kutu alanı
+const GALTON_SIDE = 20;
+
+function galtonInit(){
+  galtonBuckets = new Array(galtonRows + 1).fill(0);
+  galtonTotalDropped = 0;
+  document.getElementById('galtonTotal').textContent = 0;
+  galtonDrawStatic();
+  galtonUpdateBars();
+}
+
+function adjGaltonRows(d){
+  const nv = Math.max(4, Math.min(14, galtonRows + d));
+  if(nv === galtonRows) return;
+  galtonRows = nv;
+  playClick(d > 0 ? 700 : 500);
+  document.getElementById('galtonRowsDisp').textContent = galtonRows;
+  galtonBuckets = new Array(galtonRows + 1).fill(0);
+  galtonTotalDropped = 0;
+  document.getElementById('galtonTotal').textContent = 0;
+  galtonDrawStatic();
+  galtonUpdateBars();
+}
+
+/* ── Canvas çizimi ── */
+function galtonCanvas(){ return document.getElementById('galtonCanvas'); }
+function galtonCtx(){
+  const c = galtonCanvas();
+  const dpr = window.devicePixelRatio || 1;
+  if(!c._galtonReady){
+    c.width  = GALTON_W * dpr;
+    c.height = GALTON_H * dpr;
+    c.style.width  = GALTON_W + 'px';
+    c.style.height = GALTON_H + 'px';
+    const ctx2 = c.getContext('2d');
+    ctx2.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c._galtonReady = true;
+    c._dpr = dpr;
+  }
+  return c.getContext('2d');
+}
+
+function galtonPinPositions(){
+  /* Döndür: satır r (0-based), kolon k (0..r) => (px, py) */
+  const boardH = GALTON_H - GALTON_TOP_PAD - GALTON_BOT_PAD;
+  const rowGap = boardH / (galtonRows + 1);
+  const pins = [];
+  for(let r = 0; r < galtonRows; r++){
+    const py = GALTON_TOP_PAD + rowGap * (r + 1);
+    const cols = r + 1;
+    const totalW = GALTON_W - GALTON_SIDE * 2;
+    const colGap = totalW / cols;
+    for(let k = 0; k <= r; k++){
+      const px = GALTON_SIDE + colGap * (k + 0.5);
+      pins.push({r, k, px, py});
+    }
+  }
+  return {pins, rowGap, boardH};
+}
+
+function galtonBucketX(k){
+  /* k = 0..galtonRows => bucket merkez x */
+  const n = galtonRows + 1;
+  const w = (GALTON_W - GALTON_SIDE * 2) / n;
+  return GALTON_SIDE + w * (k + 0.5);
+}
+
+function galtonDrawStatic(activePath=null, ballPos=null){
+  const ctx = galtonCtx();
+  ctx.clearRect(0, 0, GALTON_W, GALTON_H);
+
+  // Arka plan
+  ctx.fillStyle = '#F8FAFF';
+  ctx.fillRect(0, 0, GALTON_W, GALTON_H);
+
+  const {pins, rowGap, boardH} = galtonPinPositions();
+  const bucketY = GALTON_TOP_PAD + boardH + rowGap * 0.2;
+  const n = galtonRows + 1;
+  const bw = (GALTON_W - GALTON_SIDE * 2) / n;
+
+  // Çivi çizgileri (arka plan kılavuzu)
+  ctx.save();
+  ctx.strokeStyle = 'rgba(99,102,241,.06)';
+  ctx.lineWidth = 1;
+  for(let k = 0; k <= galtonRows; k++){
+    const x = galtonBucketX(k);
+    ctx.beginPath(); ctx.moveTo(x, GALTON_TOP_PAD); ctx.lineTo(x, bucketY); ctx.stroke();
+  }
+  ctx.restore();
+
+  // Çiviler
+  pins.forEach(({px, py, r, k}) => {
+    const isActive = activePath && activePath.some(p => p.r === r && p.k === k);
+    ctx.beginPath();
+    ctx.arc(px, py, isActive ? 6 : 5, 0, Math.PI * 2);
+    ctx.fillStyle = isActive ? '#6366F1' : '#CBD5E1';
+    ctx.fill();
+    ctx.strokeStyle = isActive ? '#4F46E5' : '#94A3B8';
+    ctx.lineWidth = isActive ? 2 : 1.5;
+    ctx.stroke();
+  });
+
+  // Kutular
+  const maxB = Math.max(...galtonBuckets, 1);
+  const maxBarH = GALTON_BOT_PAD - 14;
+
+  for(let k = 0; k <= galtonRows; k++){
+    const bx = GALTON_SIDE + bw * k;
+    const by = bucketY;
+    const bh = GALTON_H - bucketY - 4;
+
+    // Kutu çerçevesi
+    ctx.strokeStyle = '#CBD5E1';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(bx + 1, by, bw - 2, bh);
+
+    // Dolu bar
+    const cnt = galtonBuckets[k];
+    if(cnt > 0){
+      const fillH = Math.round((cnt / maxB) * maxBarH);
+      const gy = ctx.createLinearGradient(0, by + bh - fillH, 0, by + bh);
+      gy.addColorStop(0, '#818CF8');
+      gy.addColorStop(1, '#6366F1');
+      ctx.fillStyle = gy;
+      ctx.fillRect(bx + 2, by + bh - fillH, bw - 4, fillH);
+    }
+
+    // Teorik binom çizgisi (nokta)
+    const p = binomProb(galtonRows, k, 0.5);
+    const thH = Math.round(p / binomMax() * maxBarH);
+    const thY = by + bh - thH;
+    ctx.save();
+    ctx.strokeStyle = '#1B2D4F';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(bx + 2, thY);
+    ctx.lineTo(bx + bw - 2, thY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    // Kutu numarası
+    ctx.fillStyle = '#64748B';
+    ctx.font = `bold ${bw > 28 ? 11 : 9}px Nunito,sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    if(bw > 18) ctx.fillText(k, bx + bw / 2, GALTON_H - 1);
+  }
+
+  // Giriş oku
+  ctx.save();
+  ctx.fillStyle = '#6366F1';
+  ctx.beginPath();
+  ctx.moveTo(GALTON_W / 2 - 7, GALTON_TOP_PAD - 4);
+  ctx.lineTo(GALTON_W / 2 + 7, GALTON_TOP_PAD - 4);
+  ctx.lineTo(GALTON_W / 2, GALTON_TOP_PAD + 6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // Animasyon: topu çiz
+  if(ballPos){
+    ctx.beginPath();
+    ctx.arc(ballPos.x, ballPos.y, 7, 0, Math.PI * 2);
+    const gr = ctx.createRadialGradient(ballPos.x - 2, ballPos.y - 2, 1, ballPos.x, ballPos.y, 7);
+    gr.addColorStop(0, '#A5B4FC');
+    gr.addColorStop(1, '#6366F1');
+    ctx.fillStyle = gr;
+    ctx.fill();
+    ctx.strokeStyle = '#4F46E5';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+  }
+}
+
+/* ── Binom yardımcıları ── */
+function binomCoeff(n, k){
+  if(k < 0 || k > n) return 0;
+  let r = 1;
+  for(let i = 0; i < k; i++) r = r * (n - i) / (i + 1);
+  return r;
+}
+function binomProb(n, k, p){ return binomCoeff(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k); }
+function binomMax(){
+  let m = 0;
+  for(let k = 0; k <= galtonRows; k++) m = Math.max(m, binomProb(galtonRows, k, 0.5));
+  return m;
+}
+
+/* ── Top düşürme: path hesapla ── */
+function galtonComputePath(){
+  /* Her satırda L/R seç, hangi çiviye çarptığını kaydet */
+  const {pins, rowGap, boardH} = galtonPinPositions();
+  const path = [];
+  let col = 0; // başlangıç kolonu (her satır genişleyerek)
+  for(let r = 0; r < galtonRows; r++){
+    const goRight = Math.random() < 0.5;
+    // r. satırda "col" indeksli çivi
+    path.push({r, k: col, goRight});
+    if(goRight) col++;
+    // sola giderse col sabit kalır
+  }
+  return {path, finalBucket: col};
+}
+
+/* ── Animasyon kuyruğu ── */
+function galtonDrop(n){
+  if(galtonBusy && n === 1) return;
+  setGaltonButtons(false);
+
+  if(n === 1){
+    // Tek top — tam animasyonlu
+    galtonBusy = true;
+    const {path, finalBucket} = galtonComputePath();
+    galtonAnimateBall(path, finalBucket, () => {
+      galtonBuckets[finalBucket]++;
+      galtonTotalDropped++;
+      document.getElementById('galtonTotal').textContent = galtonTotalDropped;
+      galtonDrawStatic();
+      galtonUpdateBars();
+      galtonBusy = false;
+      setGaltonButtons(true);
+    });
+  } else {
+    // Çok top — hızlı simüle et
+    for(let i = 0; i < n; i++){
+      const {finalBucket} = galtonComputePath();
+      galtonBuckets[finalBucket]++;
+      galtonTotalDropped++;
+    }
+    document.getElementById('galtonTotal').textContent = galtonTotalDropped;
+    playMetal();
+    // Kısa animasyonlu göster
+    let frame = 0;
+    const totalFrames = Math.min(n, 18);
+    function flashStep(){
+      galtonDrawStatic();
+      frame++;
+      if(frame < totalFrames){
+        setTimeout(flashStep, 30);
+      } else {
+        galtonUpdateBars();
+        setGaltonButtons(true);
+      }
+    }
+    flashStep();
+  }
+}
+
+function galtonAnimateBall(path, finalBucket, onDone){
+  const {rowGap, boardH} = galtonPinPositions();
+  const bucketY = GALTON_TOP_PAD + boardH + rowGap * 0.2;
+  const bw = (GALTON_W - GALTON_SIDE * 2) / (galtonRows + 1);
+
+  /* ── Waypoint'ler: giriş noktası → her çivi → kutu tabanı ── */
+  const waypoints = [];
+  waypoints.push({x: GALTON_W / 2, y: GALTON_TOP_PAD - 12, type:'start'});
+
+  let col = 0;
+  path.forEach(({r, k, goRight}) => {
+    const cols  = r + 1;
+    const totalW = GALTON_W - GALTON_SIDE * 2;
+    const colGap = totalW / cols;
+    const px = GALTON_SIDE + colGap * (k + 0.5);
+    const py = GALTON_TOP_PAD + rowGap * (r + 1);
+    waypoints.push({x: px, y: py, type:'pin', goRight});
+    if(goRight) col++;
+  });
+  const landX = galtonBucketX(finalBucket);
+  // Kutunun mevcut yığın yüksekliği kadar yukarı çık
+  const stackH = Math.min(galtonBuckets[finalBucket] * 5, bucketY - GALTON_TOP_PAD - boardH - 6);
+  const landY  = GALTON_H - 8 - stackH;
+  waypoints.push({x: landX, y: landY, type:'land'});
+
+  /* ── Segment süreleri: satır arasındaki mesafe arttıkça biraz hızlanır (yerçekimi) ── */
+  // Her segment için ms cinsinden süre — üstten aşağı gidildikçe kısalır
+  const segDurations = waypoints.slice(0,-1).map((w,i) => {
+    if(i === 0) return 180; // giriş → ilk çivi biraz yavaş
+    if(waypoints[i+1].type === 'land') return 260; // son düşüş
+    // satır numarasına göre hızlan: 0. satır yavaş, son satır hızlı
+    const row = i - 1;
+    return Math.max(80, 180 - row * 10);
+  });
+
+  /* ── Bezier kontrol noktası: çiviye çarparken yay çizer ── */
+  function bezier(p0, cp, p1, t){
+    return {
+      x: (1-t)*(1-t)*p0.x + 2*(1-t)*t*cp.x + t*t*p1.x,
+      y: (1-t)*(1-t)*p0.y + 2*(1-t)*t*cp.y + t*t*p1.y,
+    };
+  }
+
+  // Yerçekimi easing: yavaş başla hızlı bit (düşüş gibi)
+  function easeGravity(t){ return t * t; }
+  // Çiviye çarpınca hafif bounce: küçük yay
+  function easePin(t){ return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  const activePath = path.map(p => ({r:p.r, k:p.k}));
+
+  let seg = 0;
+  let segStart = null;
+
+  function frame(now){
+    if(!segStart) segStart = now;
+
+    if(seg >= waypoints.length - 1){
+      playClick(320 + Math.random() * 120);
+      onDone();
+      return;
+    }
+
+    const elapsed = now - segStart;
+    const dur     = segDurations[seg];
+    let   rawT    = Math.min(elapsed / dur, 1);
+
+    const from = waypoints[seg];
+    const to   = waypoints[seg + 1];
+
+    let bx, by;
+
+    if(to.type === 'pin'){
+      // Çiviye doğru düşüş: sola/sağa yay çizer
+      const ease = easeGravity(rawT);
+      // Bir sonraki çiviye hangi yönde gidileceğini kullan
+      const nextWp = waypoints[seg + 2];
+      const dir = nextWp
+        ? (nextWp.x > to.x ? 1 : nextWp.x < to.x ? -1 : (Math.random()<0.5?1:-1))
+        : (to.goRight !== undefined ? (to.goRight ? 1 : -1) : 0);
+      const lateralPull = dir * Math.abs(to.x - from.x) * 0.25;
+      const cp = {
+        x: from.x + lateralPull,
+        y: from.y + (to.y - from.y) * 0.55,
+      };
+      const pos = bezier(from, cp, to, ease);
+      bx = pos.x; by = pos.y;
+    } else if(to.type === 'land'){
+      // Son düşüş: hızlanarak aşağı, hafif bounce yok
+      const ease = easeGravity(rawT);
+      bx = from.x + (to.x - from.x) * rawT;
+      by = from.y + (to.y - from.y) * ease;
+    } else {
+      // Start → ilk çivi: düz
+      bx = from.x + (to.x - from.x) * rawT;
+      by = from.y + (to.y - from.y) * easeGravity(rawT);
+    }
+
+    galtonDrawStatic(activePath, {x: bx, y: by});
+
+    if(rawT >= 1){
+      // Segment bitti
+      segStart = now;
+      seg++;
+      if(to.type === 'pin') playClick(540 + Math.random() * 180);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+function galtonUpdateBars(){
+  const el = document.getElementById('galtonBars');
+  el.innerHTML = '';
+  const td = galtonTotalDropped;
+  const maxB = Math.max(...galtonBuckets, 1);
+  const bmax = binomMax();
+  for(let k = 0; k <= galtonRows; k++){
+    const cnt = galtonBuckets[k];
+    const actual = td > 0 ? cnt / td : 0;
+    const theory = binomProb(galtonRows, k, 0.5);
+    const barW = Math.round(actual / Math.max(actual, theory, 0.001) * 100);
+    const thW  = Math.round(theory / Math.max(actual, theory, 0.001) * 100);
+    el.insertAdjacentHTML('beforeend', `
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px">
+        <div style="font-family:'Fredoka One',cursive;font-size:12px;color:var(--navy);min-width:18px;text-align:center">${k}</div>
+        <div style="flex:1;position:relative;height:13px;background:#F0F4F8;border-radius:50px;border:1.5px solid var(--border)">
+          <div style="position:absolute;left:0;top:0;height:100%;width:${barW}%;background:linear-gradient(90deg,#818CF8,#6366F1);border-radius:50px;transition:width .4s"></div>
+          <div style="position:absolute;top:-3px;bottom:-3px;left:${thW}%;width:2px;background:var(--navy);border-radius:1px"></div>
+        </div>
+        <div style="font-family:'Fredoka One',cursive;font-size:11px;color:var(--navy);min-width:28px;text-align:right">${cnt}</div>
+      </div>
+    `);
+  }
+}
+
+function galtonReset(){
+  galtonBuckets = new Array(galtonRows + 1).fill(0);
+  galtonTotalDropped = 0;
+  document.getElementById('galtonTotal').textContent = 0;
+  playClick(350);
+  galtonDrawStatic();
+  galtonUpdateBars();
+}
+
+function setGaltonButtons(en){
+  ['btnGalton','btnGalton10','btnGalton50','btnGalton100'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.disabled = !en;
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   İLK YÜKLEME
+   ═══════════════════════════════════════════════════════════ */
+buildControls();
+refreshBag();
+updateCoinUI();
+updateCoinFeedback();
+buildWheelControls();
+drawWheel();
+buildDiceFaces();
+buildDiceStatGrid();
+buildDiceBars();
+galtonInit();
+</script>
+
+<script>
+/* MFİ: kopyalama / inceleme caydırıcıları */
+(function(){
+  function inField(t){return t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.isContentEditable);}
+  document.addEventListener("contextmenu",function(e){e.preventDefault();});
+  document.addEventListener("copy",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("cut",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("dragstart",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("keydown",function(e){
+    var k=(e.key||"").toLowerCase();
+    if(e.key==="F12"){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==="i"||k==="j"||k==="c")){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&!inField(e.target)&&(k==="u"||k==="s")){e.preventDefault();return false;}
+  });
+})();
+</script>
+</body>
+</html>

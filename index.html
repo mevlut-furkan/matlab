@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Öğrenme Atölyesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F4F5FB;
+  --bg-tint-a:rgba(91,91,240,.10);
+  --bg-tint-b:rgba(139,92,246,.10);
+  --bg-tint-c:rgba(16,185,129,.10);
+  --surface:#FFFFFF;
+  --surface-2:#FBFBFE;
+  --ink:#14183A;
+  --muted:#5A6080;
+  --faint:#8A90B4;
+  --border:rgba(20,24,58,.10);
+  --border-strong:rgba(20,24,58,.16);
+  --shadow:0 1px 2px rgba(20,24,58,.04),0 12px 32px -12px rgba(20,24,58,.18);
+  --shadow-lg:0 2px 4px rgba(20,24,58,.05),0 28px 60px -18px rgba(20,24,58,.30);
+  --indigo:#5B5BF0;
+  --violet:#8B5CF6;
+  --emerald:#10B981;
+  --teal:#0EA5E9;
+  --amber:#F59E0B;
+  --rose:#F43F5E;
+}
+[data-theme="dark"]{
+  --bg:#0A0C1C;
+  --bg-tint-a:rgba(91,91,240,.18);
+  --bg-tint-b:rgba(139,92,246,.16);
+  --bg-tint-c:rgba(16,185,129,.12);
+  --surface:rgba(22,26,52,.72);
+  --surface-2:rgba(28,32,62,.72);
+  --ink:#EEF0FF;
+  --muted:#A6ACD6;
+  --faint:#727aa8;
+  --border:rgba(255,255,255,.10);
+  --border-strong:rgba(255,255,255,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 36px -14px rgba(0,0,0,.6);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.4),0 30px 70px -20px rgba(0,0,0,.7);
+}
+
+html,body{min-height:100%}
+body{
+  font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);
+  line-height:1.5;-webkit-font-smoothing:antialiased;
+  position:relative;overflow-x:hidden;
+  transition:background .4s ease,color .4s ease;
+  user-select:none;-webkit-user-select:none;-ms-user-select:none;
+}
+
+/* ── Ambient aurora (signature backdrop) ── */
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora span{
+  position:absolute;border-radius:50%;filter:blur(70px);opacity:.9;
+  mix-blend-mode:normal;animation:drift 22s ease-in-out infinite;
+}
+.aurora .a1{width:46vmax;height:46vmax;top:-14vmax;left:-10vmax;background:var(--bg-tint-a)}
+.aurora .a2{width:40vmax;height:40vmax;top:8vmax;right:-12vmax;background:var(--bg-tint-b);animation-delay:-7s}
+.aurora .a3{width:38vmax;height:38vmax;bottom:-16vmax;left:30vmax;background:var(--bg-tint-c);animation-delay:-13s}
+@keyframes drift{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(4vmax,3vmax) scale(1.08)}
+  66%{transform:translate(-3vmax,2vmax) scale(.96)}
+}
+
+.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:1.4rem 1.4rem 4rem}
+
+/* ── Top bar ── */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:4.5rem}
+.brand{display:flex;align-items:center;gap:.6rem}
+.brand-mark{
+  width:34px;height:34px;border-radius:9px;display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--indigo),var(--violet));
+  color:#fff;font-family:'Space Mono',monospace;font-weight:700;font-size:1rem;
+  box-shadow:0 6px 16px -4px rgba(91,91,240,.5);
+}
+.brand-name{font-family:'Sora',sans-serif;font-weight:700;font-size:.98rem;letter-spacing:-.01em}
+
+.theme-toggle{
+  appearance:none;border:1px solid var(--border-strong);background:var(--surface);
+  color:var(--ink);width:42px;height:42px;border-radius:12px;cursor:pointer;
+  display:grid;place-items:center;backdrop-filter:blur(10px);
+  transition:transform .15s ease,border-color .2s ease,background .3s ease;
+}
+.theme-toggle:hover{transform:translateY(-2px);border-color:var(--indigo)}
+.theme-toggle:active{transform:translateY(0)}
+.theme-toggle svg{width:19px;height:19px}
+.theme-toggle .moon{display:none}
+[data-theme="dark"] .theme-toggle .sun{display:none}
+[data-theme="dark"] .theme-toggle .moon{display:block}
+
+/* ── Hero ── */
+.hero{margin-bottom:3.4rem;max-width:760px;animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.eyebrow{
+  font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--indigo);
+  display:inline-flex;align-items:center;gap:.55rem;margin-bottom:1.2rem;
+}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--indigo);border-radius:2px}
+.hero h1{
+  font-family:'Sora',sans-serif;font-weight:800;letter-spacing:-.03em;
+  font-size:clamp(2.4rem,6.5vw,4.2rem);line-height:1.02;margin-bottom:1.1rem;
+}
+.hero h1 .grad{
+  background:linear-gradient(100deg,var(--indigo),var(--violet) 55%,var(--teal));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p{font-size:1.08rem;color:var(--muted);max-width:54ch}
+.stats{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.8rem}
+.stat{
+  display:inline-flex;align-items:baseline;gap:.45rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:999px;
+  padding:.5rem 1rem;backdrop-filter:blur(10px);box-shadow:var(--shadow);
+}
+.stat b{font-family:'Space Mono',monospace;font-size:1rem;color:var(--ink)}
+.stat span{font-size:.82rem;color:var(--faint);font-weight:500}
+
+/* ── Subject panels ── */
+.subjects{display:grid;gap:1.4rem}
+@media(min-width:760px){.subjects{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}}
+
+.panel{
+  position:relative;display:flex;flex-direction:column;
+  background:var(--surface);border:1px solid var(--border);border-radius:22px;
+  padding:1.6rem 1.6rem 1.5rem;text-decoration:none;color:inherit;
+  backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;
+  transition:transform .22s cubic-bezier(.2,.7,.2,1),box-shadow .22s,border-color .22s;
+  animation:rise .7s cubic-bezier(.2,.7,.2,1) both;
+}
+.panel.p-prob{animation-delay:.12s}
+.panel.p-algo{animation-delay:.22s}
+.panel.p-math{animation-delay:.32s}
+.panel.p-cebir{animation-delay:.42s}
+.panel::before{
+  content:"";position:absolute;inset:0 0 auto 0;height:4px;
+  background:var(--accent);opacity:.95;
+}
+.panel::after{
+  content:"";position:absolute;width:160px;height:160px;right:-40px;top:-40px;
+  background:radial-gradient(circle,var(--accent),transparent 70%);
+  opacity:.16;transition:opacity .3s,transform .3s;border-radius:50%;
+}
+.panel:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--border-strong)}
+.panel:hover::after{opacity:.28;transform:scale(1.2)}
+.panel:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.p-prob{--accent:linear-gradient(100deg,var(--emerald),var(--teal))}
+.p-algo{--accent:linear-gradient(100deg,var(--indigo),var(--violet))}
+.p-math{--accent:linear-gradient(100deg,var(--amber),var(--rose))}
+.p-cebir{--accent:linear-gradient(100deg,#06B6D4,#3B82F6)}
+
+.panel-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
+.panel-ico{
+  width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:1.7rem;
+  background:var(--surface-2);border:1px solid var(--border);
+}
+.panel-count{
+  font-family:'Space Mono',monospace;font-size:.68rem;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:#fff;padding:.35rem .7rem;border-radius:999px;
+}
+.p-prob .panel-count{background:var(--emerald)}
+.p-algo .panel-count{background:var(--indigo)}
+.p-math .panel-count{background:var(--amber);color:var(--ink)}
+.p-cebir .panel-count{background:#06B6D4}
+
+.panel h2{font-family:'Sora',sans-serif;font-weight:700;font-size:1.35rem;letter-spacing:-.02em;margin-bottom:.35rem}
+.panel-desc{font-size:.9rem;color:var(--muted);margin-bottom:1.1rem}
+
+.acts{list-style:none;display:flex;flex-direction:column;gap:.1rem;margin-bottom:1.3rem;flex:1}
+.acts li{
+  display:flex;align-items:center;gap:.65rem;padding:.5rem .2rem;font-size:.9rem;font-weight:500;
+  border-top:1px solid var(--border);
+}
+.acts li:first-child{border-top:none}
+.acts .dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--accent)}
+.acts .a-tag{
+  margin-left:auto;font-family:'Space Mono',monospace;font-size:.64rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--faint);
+}
+
+.enter{
+  display:inline-flex;align-items:center;gap:.5rem;align-self:flex-start;
+  font-family:'Sora',sans-serif;font-weight:600;font-size:.92rem;
+  color:var(--ink);padding:.7rem 1.2rem;border-radius:12px;
+  background:var(--surface-2);border:1px solid var(--border-strong);
+  transition:gap .2s ease,background .2s ease;
+}
+.panel:hover .enter{gap:.85rem;background:var(--ink);color:var(--surface)}
+.enter svg{width:16px;height:16px}
+
+/* ── Footer ── */
+.footer{
+  margin-top:3.6rem;padding-top:1.6rem;border-top:1px solid var(--border);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.8rem;
+}
+.footer .made{font-size:.82rem;color:var(--muted)}
+.footer .made b{font-family:'Sora',sans-serif;font-weight:700;color:var(--ink)}
+.footer .note{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--faint);letter-spacing:.06em}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body oncontextmenu="return false" ondragstart="return false" oncopy="return false">
+
+<div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">Ö</div>
+      <div class="brand-name">Öğrenme Atölyesi</div>
+    </div>
+    <button class="theme-toggle" id="themeToggle" aria-label="Aydınlık/karanlık modu değiştir" title="Tema değiştir">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+
+  <header class="hero">
+    <span class="eyebrow">İnteraktif Öğrenme Platformu</span>
+    <h1><span class="grad">Matlab</span></h1>
+    <p>Olasılık, algoritma, matematik ve cebir kavramlarını, adım adım çözülen aktivitelerle keşfet. Bir atölye seç ve başla.</p>
+    <div class="stats">
+      <div class="stat"><b>4</b><span>ders alanı</span></div>
+      <div class="stat"><b>8</b><span>aktivite</span></div>
+      <div class="stat"><b>0</b><span>kurulum</span></div>
+    </div>
+  </header>
+
+  <main class="subjects">
+
+    <a class="panel p-prob" href="olasilik_portal.html">
+      <div class="panel-top">
+        <div class="panel-ico">🎲</div>
+        <span class="panel-count">2 Aktivite</span>
+      </div>
+      <h2>Olasılık</h2>
+      <p class="panel-desc">Şans, tahmin ve veri — olasılığın temellerini deneyerek kavra.</p>
+      <ul class="acts">
+        <li><span class="dot"></span>Olasılık Atölyesi<span class="a-tag">Atölye</span></li>
+        <li><span class="dot"></span>Olasılık Maçı<span class="a-tag">Yarışma</span></li>
+      </ul>
+      <span class="enter">Atölyeye gir
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+
+    <a class="panel p-algo" href="algoritma_portal.html">
+      <div class="panel-top">
+        <div class="panel-ico">🤖</div>
+        <span class="panel-count">3 Aktivite</span>
+      </div>
+      <h2>Algoritma &amp; Bilişim</h2>
+      <p class="panel-desc">Adımlar, sıralar ve mantık — bilgisayar gibi düşünmeyi öğren.</p>
+      <ul class="acts">
+        <li><span class="dot"></span>Algoritma Yolculuğu<span class="a-tag">Macera</span></li>
+        <li><span class="dot"></span>Kurt, Kuzu ve Ot<span class="a-tag">Bulmaca</span></li>
+        <li><span class="dot"></span>Algoritma Giriş<span class="a-tag">Keşif</span></li>
+      </ul>
+      <span class="enter">Atölyeye gir
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+
+    <a class="panel p-math" href="yolculuk.html">
+      <div class="panel-top">
+        <div class="panel-ico">📐</div>
+        <span class="panel-count">1 Aktivite</span>
+      </div>
+      <h2>Matematik</h2>
+      <p class="panel-desc">Sayılar ve işlemler — adım adım ilerleyen bir yolculukla matematiği keşfet.</p>
+      <ul class="acts">
+        <li><span class="dot"></span>Matematik Yolculuğu<span class="a-tag">Macera</span></li>
+      </ul>
+      <span class="enter">Yolculuğa çık
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+
+    <a class="panel p-cebir" href="cebir_portal.html">
+      <div class="panel-top">
+        <div class="panel-ico">✖️</div>
+        <span class="panel-count">2 Aktivite</span>
+      </div>
+      <h2>Cebir</h2>
+      <p class="panel-desc">Görsel araçlarla cebir — alanla çarpma ve teraziyle denklem çözme.</p>
+      <ul class="acts">
+        <li><span class="dot"></span>Alan Modeli<span class="a-tag">Model</span></li>
+        <li><span class="dot"></span>Terazi Cebir<span class="a-tag">Denklem</span></li>
+      </ul>
+      <span class="enter">Atölyeye gir
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </span>
+    </a>
+
+  </main>
+
+  <footer class="footer">
+    <div class="made">Hazırlayan <b>Mevlüt Furkan İnce</b></div>
+    <div class="note">Tarayıcında çalışır · Veri kaydedilmez</div>
+  </footer>
+
+</div>
+
+<script>
+/* ── Theme: respect system, allow toggle, persist if possible ── */
+(function(){
+  var root=document.documentElement, KEY="oa-theme", saved=null;
+  try{saved=localStorage.getItem(KEY)}catch(e){}
+  root.setAttribute("data-theme", saved || "dark");
+  document.getElementById("themeToggle").addEventListener("click",function(){
+    var next=root.getAttribute("data-theme")==="dark"?"light":"dark";
+    root.setAttribute("data-theme",next);
+    try{localStorage.setItem(KEY,next)}catch(e){}
+  });
+})();
+
+/* ── Copy / inspection deterrents ── */
+(function(){
+  document.addEventListener("contextmenu",function(e){e.preventDefault()});
+  document.addEventListener("copy",function(e){e.preventDefault()});
+  document.addEventListener("cut",function(e){e.preventDefault()});
+  document.addEventListener("dragstart",function(e){e.preventDefault()});
+  document.addEventListener("keydown",function(e){
+    var k=e.key.toLowerCase();
+    if(e.key==="F12"){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==="i"||k==="j"||k==="c")){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&(k==="u"||k==="s")){e.preventDefault();return false;}
+  });
+})();
+</script>
+</body>
+</html>

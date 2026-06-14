@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Algoritma Atölyesi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F5FB;
+  --bg-tint-a:rgba(91,91,240,.12);
+  --bg-tint-b:rgba(139,92,246,.12);
+  --bg-tint-c:rgba(14,165,233,.10);
+  --surface:#FFFFFF;--surface-2:#FBFBFE;
+  --ink:#14183A;--muted:#5A6080;--faint:#8A90B4;
+  --border:rgba(20,24,58,.10);--border-strong:rgba(20,24,58,.16);
+  --shadow:0 1px 2px rgba(20,24,58,.04),0 12px 32px -12px rgba(20,24,58,.18);
+  --shadow-lg:0 2px 4px rgba(20,24,58,.05),0 28px 60px -18px rgba(20,24,58,.30);
+  --indigo:#5B5BF0;--violet:#8B5CF6;--emerald:#10B981;--teal:#0EA5E9;--amber:#F59E0B;--rose:#F43F5E;
+}
+[data-theme="dark"]{
+  --bg:#0A0C1C;
+  --bg-tint-a:rgba(91,91,240,.18);
+  --bg-tint-b:rgba(139,92,246,.16);
+  --bg-tint-c:rgba(14,165,233,.12);
+  --surface:rgba(22,26,52,.72);--surface-2:rgba(28,32,62,.72);
+  --ink:#EEF0FF;--muted:#A6ACD6;--faint:#727aa8;
+  --border:rgba(255,255,255,.10);--border-strong:rgba(255,255,255,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 36px -14px rgba(0,0,0,.6);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.4),0 30px 70px -20px rgba(0,0,0,.7);
+}
+html,body{min-height:100%}
+body{
+  font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden;
+  transition:background .4s,color .4s;user-select:none;-webkit-user-select:none;-ms-user-select:none;
+}
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora span{position:absolute;border-radius:50%;filter:blur(70px);animation:drift 22s ease-in-out infinite}
+.aurora .a1{width:46vmax;height:46vmax;top:-14vmax;left:-10vmax;background:var(--bg-tint-a)}
+.aurora .a2{width:40vmax;height:40vmax;top:8vmax;right:-12vmax;background:var(--bg-tint-b);animation-delay:-7s}
+.aurora .a3{width:38vmax;height:38vmax;bottom:-16vmax;left:30vmax;background:var(--bg-tint-c);animation-delay:-13s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vmax,3vmax) scale(1.08)}66%{transform:translate(-3vmax,2vmax) scale(.96)}}
+.wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:1.4rem 1.4rem 4rem}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:3rem}
+.back-btn{
+  display:inline-flex;align-items:center;gap:.55rem;text-decoration:none;
+  font-family:'Sora',sans-serif;font-weight:600;font-size:.88rem;color:var(--ink);
+  background:var(--surface);border:1px solid var(--border-strong);border-radius:12px;
+  padding:.6rem 1rem;backdrop-filter:blur(10px);box-shadow:var(--shadow);
+  transition:transform .15s,gap .2s,border-color .2s;
+}
+.back-btn:hover{transform:translateY(-2px);gap:.8rem;border-color:var(--indigo)}
+.back-btn svg{width:16px;height:16px}
+.theme-toggle{
+  appearance:none;border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);
+  width:42px;height:42px;border-radius:12px;cursor:pointer;display:grid;place-items:center;
+  backdrop-filter:blur(10px);transition:transform .15s,border-color .2s,background .3s;
+}
+.theme-toggle:hover{transform:translateY(-2px);border-color:var(--indigo)}
+.theme-toggle svg{width:19px;height:19px}
+.theme-toggle .moon{display:none}
+[data-theme="dark"] .theme-toggle .sun{display:none}
+[data-theme="dark"] .theme-toggle .moon{display:block}
+.hero{margin-bottom:2.6rem;max-width:700px;animation:rise .7s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--indigo);display:inline-flex;align-items:center;gap:.55rem;margin-bottom:1rem}
+.eyebrow::before{content:"";width:26px;height:2px;background:var(--indigo);border-radius:2px}
+.hero h1{font-family:'Sora',sans-serif;font-weight:800;letter-spacing:-.03em;font-size:clamp(2.1rem,5.5vw,3.4rem);line-height:1.04;margin-bottom:.9rem}
+.hero h1 .grad{background:linear-gradient(100deg,var(--indigo),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{font-size:1.04rem;color:var(--muted);max-width:52ch}
+.cards{display:grid;gap:1.3rem;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{
+  position:relative;display:flex;flex-direction:column;text-decoration:none;color:inherit;
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:1.5rem 1.5rem 1.4rem;backdrop-filter:blur(12px);box-shadow:var(--shadow);overflow:hidden;
+  transition:transform .22s cubic-bezier(.2,.7,.2,1),box-shadow .22s,border-color .22s;
+  animation:rise .7s cubic-bezier(.2,.7,.2,1) both;
+}
+.card:nth-child(1){animation-delay:.1s}.card:nth-child(2){animation-delay:.2s}.card:nth-child(3){animation-delay:.3s}
+.card::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--accent)}
+.card::after{content:"";position:absolute;width:150px;height:150px;right:-40px;top:-40px;background:radial-gradient(circle,var(--accent),transparent 70%);opacity:.16;border-radius:50%;transition:opacity .3s,transform .3s}
+.card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg);border-color:var(--border-strong)}
+.card:hover::after{opacity:.3;transform:scale(1.2)}
+.card:focus-visible{outline:3px solid var(--indigo);outline-offset:3px}
+.c-yol{--accent:linear-gradient(100deg,var(--indigo),var(--violet))}
+.c-kurt{--accent:linear-gradient(100deg,var(--amber),var(--rose))}
+.c-giris{--accent:linear-gradient(100deg,var(--emerald),var(--teal))}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.card-ico{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;font-size:1.7rem;background:var(--surface-2);border:1px solid var(--border)}
+.card-tag{font-family:'Space Mono',monospace;font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#fff;padding:.35rem .7rem;border-radius:999px}
+.c-yol .card-tag{background:var(--indigo)}
+.c-kurt .card-tag{background:var(--amber);color:var(--ink)}
+.c-giris .card-tag{background:var(--emerald)}
+.card h2{font-family:'Sora',sans-serif;font-weight:700;font-size:1.22rem;letter-spacing:-.02em;margin-bottom:.4rem}
+.card p{font-size:.88rem;color:var(--muted);margin-bottom:1.2rem;flex:1}
+.enter{display:inline-flex;align-items:center;gap:.5rem;align-self:flex-start;font-family:'Sora',sans-serif;font-weight:600;font-size:.9rem;color:var(--ink);padding:.65rem 1.15rem;border-radius:12px;background:var(--surface-2);border:1px solid var(--border-strong);transition:gap .2s,background .2s,color .2s}
+.card:hover .enter{gap:.85rem;background:var(--ink);color:var(--surface)}
+.enter svg{width:16px;height:16px}
+.footer{margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.8rem}
+.footer .made{font-size:.82rem;color:var(--muted)}
+.footer .made b{font-family:'Sora',sans-serif;font-weight:700;color:var(--ink)}
+.footer .note{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--faint);letter-spacing:.06em}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body oncontextmenu="return false" ondragstart="return false" oncopy="return false">
+<div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+<div class="wrap">
+
+  <div class="topbar">
+    <a class="back-btn" href="index.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      Ana Sayfaya Dön
+    </a>
+    <button class="theme-toggle" id="themeToggle" aria-label="Tema değiştir" title="Tema değiştir">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+
+  <header class="hero">
+    <span class="eyebrow">Algoritma &amp; Bilişim</span>
+    <h1>Algoritma <span class="grad">Atölyesi</span></h1>
+    <p>Üç eğlenceli aktiviteyle adım adım düşünmeyi öğren. Bir aktivite seç ve başla.</p>
+  </header>
+
+  <main class="cards">
+    <a class="card c-yol" href="algoritma-yolculugu.html">
+      <div class="card-top"><div class="card-ico">🗺️</div><span class="card-tag">Macera 🎵</span></div>
+      <h2>Algoritma Yolculuğu</h2>
+      <p>Harita üzerinde şehirden şehre ilerle, algoritma sorularını çöz. Müzikle daha eğlenceli!</p>
+      <span class="enter">Yolculuğa çık <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card c-kurt" href="kurt-kuzu-ot.html">
+      <div class="card-top"><div class="card-ico">🐺</div><span class="card-tag">Bulmaca</span></div>
+      <h2>Kurt, Kuzu ve Ot</h2>
+      <p>Nehri geçiş bulmacasını çöz. Doğru sırayla taşıyarak herkesi karşıya geçir.</p>
+      <span class="enter">Oynamaya başla <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a class="card c-giris" href="algoritma_giris.html">
+      <div class="card-top"><div class="card-ico">🔍</div><span class="card-tag">Keşif</span></div>
+      <h2>Algoritma Giriş</h2>
+      <p>Algoritmayı ilk kez mi duyuyorsun? Merak adımlarıyla algoritma dünyasına gir.</p>
+      <span class="enter">Keşfetmeye başla <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </main>
+
+  <footer class="footer">
+    <div class="made">Hazırlayan <b>Mevlüt Furkan İnce</b></div>
+    <div class="note">Tarayıcında çalışır · Veri kaydedilmez</div>
+  </footer>
+</div>
+<script>
+(function(){
+  var root=document.documentElement,KEY="oa-theme",saved=null;
+  try{saved=localStorage.getItem(KEY)}catch(e){}
+  root.setAttribute("data-theme",saved||"dark");
+  document.getElementById("themeToggle").addEventListener("click",function(){
+    var next=root.getAttribute("data-theme")==="dark"?"light":"dark";
+    root.setAttribute("data-theme",next);
+    try{localStorage.setItem(KEY,next)}catch(e){}
+  });
+})();
+(function(){
+  document.addEventListener("contextmenu",function(e){e.preventDefault()});
+  document.addEventListener("copy",function(e){e.preventDefault()});
+  document.addEventListener("cut",function(e){e.preventDefault()});
+  document.addEventListener("dragstart",function(e){e.preventDefault()});
+  document.addEventListener("keydown",function(e){
+    var k=e.key.toLowerCase();
+    if(e.key==="F12"){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==="i"||k==="j"||k==="c")){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&(k==="u"||k==="s")){e.preventDefault();return false;}
+  });
+})();
+</script>
+</body>
+</html>

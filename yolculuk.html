@@ -1,0 +1,2215 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Matematik Yolculuğu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,700;1,9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:    #1A2332;
+    --paper:  #FAF3E7;
+    --cream:  #F0E4CC;
+    --gold:   #E8A93D;
+    --red:    #D94F30;
+    --green:  #5B8C5A;
+    --teal:   #1F6E7E;
+    --shadow: 4px 4px 0 var(--ink);
+  }
+
+  body {
+    height: 100vh;
+    overflow: hidden;
+    background: radial-gradient(ellipse at top, #FFF6E5 0%, #FAF3E7 40%, #F0E4CC 100%);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--ink);
+    padding: .5rem .75rem;
+  }
+
+  .wrap { max-width: 100%; height: 100%; display: grid; grid-template-rows: auto 1fr; gap: .45rem; }
+
+  /* ── HEADER ── */
+  .header { display: flex; align-items: center; justify-content: space-between; flex-wrap: nowrap; gap: .5rem; }
+  .header-left { display: flex; align-items: baseline; gap: .75rem; min-width: 0; }
+  .header-label { font-size: .55rem; letter-spacing: .2em; text-transform: uppercase; color: var(--red); font-weight: 800; white-space: nowrap; }
+  .header h1 { font-family: 'Fraunces', serif; font-style: italic; font-weight: 800; font-size: 1.35rem; line-height: 1; white-space: nowrap; }
+  .header-sub { color: var(--teal); font-size: .7rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stats { display: flex; align-items: center; gap: .35rem; flex-wrap: nowrap; flex-shrink: 0; }
+  .stat-box { background: white; padding: .3rem .6rem; border-radius: .65rem; border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); text-align: center; }
+  .stat-num { font-size: 1rem; font-weight: 800; line-height: 1; }
+  .stat-num.green { color: var(--green); }
+  .stat-label { font-size: .5rem; text-transform: uppercase; letter-spacing: .08em; color: var(--ink); opacity: .65; }
+  .btn-pill { display: flex; align-items: center; gap: .3rem; color: var(--paper); padding: .35rem .7rem; border-radius: .65rem; border: none; font-family: inherit; font-weight: 700; font-size: .7rem; cursor: pointer; transition: background .2s, transform .1s; white-space: nowrap; }
+  .btn-pill:hover { transform: translateY(-1px); }
+  .btn-pill svg { width: .85rem; height: .85rem; }
+  .btn-restart { background: var(--ink); }
+  .btn-restart:hover { background: var(--red); }
+  .btn-pool { background: var(--teal); }
+  .btn-pool:hover { background: #2A8FA0; }
+  .btn-route { background: var(--gold); color: var(--ink); }
+  .btn-route:hover { background: #D49628; }
+
+  /* ── GAME AREA (side by side) ── */
+  .game-area {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: .5rem;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  /* ── MAP ── */
+  .map-wrap {
+    grid-column: 1;
+    grid-row: 1;
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    background: #2C7E92;
+    min-height: 0;
+    height: 100%;
+  }
+  .map-wrap svg#map-svg { display: block; width: 100%; height: 100%; }
+
+  /* CAR */
+  .car {
+    position: absolute;
+    pointer-events: none;
+    z-index: 10;
+    transform: translate(-50%, -135%);
+    transition: left 1.4s cubic-bezier(.4,.1,.2,1), top 1.4s cubic-bezier(.4,.1,.2,1);
+  }
+  .car-bubble {
+    background: var(--gold);
+    border-radius: 50%;
+    padding: .4rem;
+    border: 2px solid var(--ink);
+    box-shadow: 2px 2px 0 var(--ink);
+    animation: bounce-car 1.6s ease-in-out infinite;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .car-bubble svg { width: 1rem; height: 1rem; color: var(--ink); }
+  .car-shadow { width: .4rem; height: .4rem; border-radius: 50%; background: rgba(26,35,50,.4); margin: .15rem auto 0; filter: blur(1px); }
+
+  /* WIN OVERLAY */
+  .win-overlay {
+    position: absolute; inset: 0;
+    background: rgba(26,35,50,.72);
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+    z-index: 20;
+    opacity: 0; pointer-events: none;
+    transition: opacity .4s;
+  }
+  .win-overlay.show { opacity: 1; pointer-events: all; }
+  .win-card {
+    background: linear-gradient(135deg, #E8A93D, #D94F30, #A33B22);
+    border-radius: 1.5rem;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    border: 4px solid var(--paper);
+    max-width: 360px;
+    margin: 1rem;
+    animation: pop .55s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .win-card svg.trophy { width: 5rem; height: 5rem; color: var(--paper); margin-bottom: .75rem; }
+  .win-sparkle { display: flex; align-items: center; justify-content: center; gap: .5rem; font-size: .65rem; letter-spacing: .3em; text-transform: uppercase; color: rgba(250,243,231,.85); font-weight: 800; }
+  .win-title { font-family: 'Fraunces', serif; font-style: italic; font-weight: 800; font-size: 2rem; color: var(--paper); margin: .5rem 0; line-height: 1.1; }
+  .win-info { color: rgba(250,243,231,.9); font-size: .95rem; font-weight: 500; margin: .5rem 0 1.2rem; }
+  .btn-win { background: var(--paper); color: #A33B22; border: none; font-family: inherit; font-weight: 800; font-size: .95rem; padding: .75rem 1.8rem; border-radius: 2rem; cursor: pointer; transition: transform .15s; box-shadow: 0 4px 12px rgba(0,0,0,.25); }
+  .btn-win:hover { transform: scale(1.05); }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    grid-column: 2;
+    grid-row: 1;
+    background: var(--paper);
+    border-radius: 1rem;
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    min-height: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: opacity .4s, transform .4s;
+  }
+  .q-card.hidden { opacity: 0; transform: translateY(1rem); pointer-events: none; }
+
+  .q-strip {
+    background: var(--ink);
+    padding: .45rem 1rem;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .3rem;
+    flex-shrink: 0;
+  }
+  .q-leg { display: flex; align-items: center; gap: .4rem; color: var(--paper); font-size: .7rem; font-weight: 700; letter-spacing: .06em; }
+  .q-leg svg { width: .85rem; height: .85rem; color: var(--gold); }
+  .q-meta { display: flex; align-items: center; gap: .4rem; }
+  .q-std { background: var(--gold); color: var(--ink); font-size: .55rem; font-weight: 800; padding: .2rem .55rem; border-radius: 2rem; letter-spacing: .06em; }
+  .q-num { font-size: .6rem; color: rgba(250,243,231,.65); font-weight: 500; }
+
+  .q-body { padding: .75rem 1rem; flex: 1; overflow-y: auto; min-height: 0; }
+  .q-topic { font-family: 'Fraunces', serif; font-weight: 800; font-size: 1.25rem; margin-bottom: .35rem; }
+  .q-story { font-size: .88rem; line-height: 1.55; color: rgba(26,35,50,.82); }
+
+  .q-board {
+    margin: .65rem 0;
+    background: var(--ink);
+    border-radius: .65rem;
+    padding: .75rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .q-board::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(45deg, #fff 0, #fff 1px, transparent 1px, transparent 8px);
+    opacity: .08;
+  }
+  .q-expr {
+    font-family: 'Fraunces', serif;
+    font-style: italic; font-weight: 700;
+    font-size: 2rem;
+    color: var(--paper);
+    position: relative;
+    letter-spacing: .04em;
+  }
+
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem; }
+  @media(max-width:520px){ .options { grid-template-columns: 1fr; } }
+
+  .opt-btn {
+    display: flex; align-items: center; gap: .5rem;
+    background: white;
+    border: 2px solid var(--ink);
+    border-radius: .55rem;
+    padding: .45rem .65rem;
+    text-align: left;
+    font-family: inherit; font-size: .88rem; font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, transform .15s;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .opt-btn:hover:not(:disabled) { background: #FFE9C7; transform: translateY(-2px); }
+  .opt-btn:disabled { cursor: not-allowed; }
+  .opt-btn.correct { background: var(--green); color: white; }
+  .opt-btn.wrong   { background: var(--red); color: white; }
+  .opt-btn.dimmed  { opacity: .5; }
+
+  .opt-letter {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.5rem; height: 1.5rem; border-radius: 50%;
+    background: var(--ink); color: var(--paper);
+    font-size: .65rem; font-weight: 800;
+    flex-shrink: 0; border: 2px solid var(--ink);
+    transition: background .15s, color .15s;
+  }
+  .opt-btn.correct .opt-letter,
+  .opt-btn.wrong   .opt-letter { background: white; color: var(--ink); }
+
+  .opt-text { flex: 1; }
+  .opt-icon { flex-shrink: 0; width: 1.2rem; height: 1.2rem; }
+
+  /* FEEDBACK */
+  .feedback {
+    margin-top: .65rem;
+    padding: .55rem .75rem;
+    border-radius: .65rem;
+    border: 2px solid;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok  { border-color: var(--green); background: rgba(91,140,90,.1); }
+  .feedback.err { border-color: var(--red);   background: rgba(217,79,48,.1); }
+  .fb-row { display: flex; align-items: flex-start; gap: .5rem; }
+  .fb-icon { flex-shrink: 0; width: 1.2rem; height: 1.2rem; }
+  .fb-title {
+    font-family: 'Fraunces', serif; font-weight: 800;
+    font-size: .85rem; margin-bottom: .15rem;
+  }
+  .feedback.ok  .fb-title { color: #3F6A3F; }
+  .feedback.err .fb-title { color: #A33B22; }
+  .fb-exp { font-size: .8rem; line-height: 1.5; color: rgba(26,35,50,.82); }
+  .btn-continue {
+    margin-top: .45rem;
+    padding: .4rem 1rem;
+    border-radius: 2rem; border: 2px solid var(--ink);
+    font-family: inherit; font-weight: 800; font-size: .75rem;
+    cursor: pointer;
+    transition: transform .15s;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .btn-continue:hover { transform: scale(1.02); }
+  .btn-continue.ok  { background: var(--green); color: white; }
+  .btn-continue.err { background: var(--ink); color: var(--paper); }
+
+  /* FOOTER */
+  .footer { text-align: center; font-size: .7rem; color: rgba(26,35,50,.45); font-weight: 500; margin-top: 1.5rem; }
+
+  /* ── CREDITS ── */
+  .credits-bar {
+    margin-top: .45rem;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--ink) 0%, #2a3a50 100%);
+    border-top: 2px solid rgba(232,169,61,.4);
+    border-radius: 0 0 .85rem .85rem;
+    padding: .45rem .9rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+  }
+  .credits-label {
+    font-size: .48rem;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 800;
+    white-space: nowrap;
+    opacity: .9;
+  }
+  .credits-divider {
+    width: 1px; height: .9rem;
+    background: rgba(232,169,61,.3);
+    flex-shrink: 0;
+  }
+  .credits-names {
+    display: flex;
+    align-items: center;
+    gap: .35rem;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .credit-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: .28rem;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(232,169,61,.25);
+    border-radius: 2rem;
+    padding: .2rem .55rem;
+    transition: background .2s;
+  }
+  .credit-chip:hover { background: rgba(232,169,61,.12); }
+  .credit-chip-dot {
+    width: .38rem; height: .38rem;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: .8;
+    flex-shrink: 0;
+  }
+  .credit-chip span {
+    font-size: .6rem;
+    font-weight: 700;
+    color: rgba(250,243,231,.85);
+    white-space: nowrap;
+    letter-spacing: .02em;
+  }
+
+  /* ── MODAL (POOL & EDITOR) ── */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(26,35,50,.65);
+    backdrop-filter: blur(5px);
+    z-index: 100;
+    display: none;
+    align-items: flex-start; justify-content: center;
+    padding: 2rem 1rem;
+    overflow-y: auto;
+  }
+  .modal-bg.show { display: flex; }
+  .modal-card {
+    background: var(--paper);
+    border: 4px solid var(--ink);
+    border-radius: 1.5rem;
+    box-shadow: 8px 8px 0 var(--ink);
+    width: 100%; max-width: 720px;
+    overflow: hidden;
+    animation: pop .35s cubic-bezier(.34,1.56,.64,1) both;
+    margin: auto;
+  }
+  .modal-head {
+    background: var(--ink); color: var(--paper);
+    padding: 1rem 1.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-head h2 {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 800;
+    font-size: 1.5rem;
+  }
+  .btn-close {
+    background: transparent; border: none; color: var(--paper);
+    font-size: 1.8rem; cursor: pointer; line-height: 1;
+    padding: 0 .3rem; font-weight: 300;
+  }
+  .btn-close:hover { color: var(--gold); }
+
+  .modal-body { padding: 1.5rem; max-height: 70vh; overflow-y: auto; }
+
+  .pool-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: .75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px dashed rgba(26,35,50,.2);
+  }
+  .pool-count {
+    font-size: .8rem; font-weight: 700; color: var(--teal);
+    letter-spacing: .05em;
+  }
+  .pool-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .btn-mini {
+    padding: .55rem 1rem;
+    border-radius: 2rem; border: 2px solid var(--ink);
+    font-family: inherit; font-weight: 700; font-size: .8rem;
+    cursor: pointer; transition: transform .1s;
+  }
+  .btn-mini:hover { transform: translateY(-1px); }
+  .btn-add { background: var(--green); color: white; box-shadow: 2px 2px 0 var(--ink); }
+  .btn-reset { background: white; color: var(--ink); }
+  .btn-cancel { background: white; color: var(--ink); }
+  .btn-save { background: var(--gold); color: var(--ink); box-shadow: 2px 2px 0 var(--ink); }
+  .btn-delete { background: var(--red); color: white; padding: .35rem .75rem; font-size: .75rem; border: 2px solid var(--ink); border-radius: 2rem; cursor: pointer; font-family: inherit; font-weight: 700; }
+  .btn-edit { background: var(--teal); color: white; padding: .35rem .75rem; font-size: .75rem; border: 2px solid var(--ink); border-radius: 2rem; cursor: pointer; font-family: inherit; font-weight: 700; margin-right: .35rem; }
+
+  .pool-list { display: flex; flex-direction: column; gap: .65rem; }
+  .pool-item {
+    background: white; border: 2px solid var(--ink);
+    border-radius: .75rem; padding: .85rem 1rem;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: .75rem; flex-wrap: wrap;
+    box-shadow: 2px 2px 0 var(--ink);
+  }
+  .pool-item-info { flex: 1; min-width: 200px; }
+  .pool-item-topic { font-weight: 800; font-size: .9rem; margin-bottom: .15rem; }
+  .pool-item-expr {
+    font-family: 'Fraunces', serif; font-style: italic;
+    color: var(--teal); font-size: .85rem; font-weight: 700;
+  }
+  .pool-item-meta { font-size: .65rem; color: rgba(26,35,50,.55); margin-top: .2rem; letter-spacing: .05em; text-transform: uppercase; font-weight: 600; }
+
+  /* EDITOR FORM */
+  .editor-form { display: flex; flex-direction: column; gap: 1rem; }
+  .editor-form label {
+    display: flex; flex-direction: column; gap: .35rem;
+    font-size: .75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: rgba(26,35,50,.7);
+  }
+  .editor-form input[type="text"],
+  .editor-form textarea {
+    font-family: inherit;
+    font-size: .9rem; font-weight: 500;
+    padding: .65rem .85rem;
+    border: 2px solid var(--ink);
+    border-radius: .6rem;
+    background: white;
+    color: var(--ink);
+    text-transform: none; letter-spacing: normal;
+    width: 100%;
+    resize: vertical;
+  }
+  .editor-form input[type="text"]:focus,
+  .editor-form textarea:focus {
+    outline: none; border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(232,169,61,.25);
+  }
+  .editor-options-section {
+    border: 2px dashed rgba(26,35,50,.25);
+    border-radius: .75rem;
+    padding: .85rem;
+    background: rgba(255,255,255,.5);
+  }
+  .editor-options-section h4 {
+    font-size: .75rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--ink); margin-bottom: .65rem;
+  }
+  .editor-opt-row {
+    display: flex; align-items: center; gap: .5rem; margin-bottom: .5rem;
+  }
+  .editor-opt-row input[type="radio"] { width: 1.2rem; height: 1.2rem; accent-color: var(--green); cursor: pointer; }
+  .editor-opt-row input[type="text"] { flex: 1; }
+  .editor-opt-letter {
+    width: 1.6rem; text-align: center;
+    font-weight: 800; color: var(--ink);
+  }
+  .editor-actions {
+    display: flex; gap: .65rem; justify-content: flex-end;
+    margin-top: .5rem;
+    padding-top: 1rem;
+    border-top: 2px dashed rgba(26,35,50,.2);
+  }
+
+  /* ROUTE BUILDER (side panel, replaces q-card) */
+  .rb-panel-wrap[hidden] { display: none !important; }
+  .rb-panel-wrap {
+    grid-column: 2;
+    grid-row: 1;
+    background: var(--ink);
+    border-radius: 1rem;
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    height: 100%;
+    min-height: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .rb-panel-inner {
+    padding: 1rem;
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+    flex: 1;
+  }
+  .rb-title {
+    font-family: 'Fraunces', serif; font-style: italic; font-weight: 800;
+    font-size: 1.15rem; letter-spacing: .02em;
+  }
+  .rb-instr {
+    font-size: .78rem; opacity: .85;
+  }
+  .rb-instr b { color: var(--gold); }
+  .rb-pills {
+    display: flex; flex-direction: column; gap: .45rem;
+  }
+  .rb-pill {
+    display: flex; align-items: center; gap: .45rem;
+    background: rgba(255,255,255,.1);
+    border: 2px solid transparent;
+    border-radius: .65rem;
+    padding: .45rem .65rem;
+    font-size: .78rem;
+  }
+  .rb-pill-start { border-color: var(--green); }
+  .rb-pill-end { border-color: var(--red); }
+  .rb-pill-dot {
+    width: .65rem; height: .65rem; border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .rb-dot-start { background: var(--green); box-shadow: 0 0 0 2px var(--paper); }
+  .rb-dot-end { background: var(--red); box-shadow: 0 0 0 2px var(--paper); }
+  .rb-pill-label { font-size: .65rem; opacity: .7; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+  .rb-pill-val { flex: 1; font-weight: 800; font-family: 'Fraunces', serif; font-style: italic; }
+  .rb-pill-clear {
+    background: transparent; border: none; color: var(--paper);
+    font-size: 1rem; line-height: 1; cursor: pointer; padding: 0 .25rem;
+    opacity: .55;
+  }
+  .rb-pill-clear:hover { opacity: 1; color: var(--gold); }
+  .rb-sliders { }
+  .rb-slider-row {
+    display: flex; flex-direction: column; gap: .2rem;
+    background: rgba(255,255,255,.07);
+    padding: .35rem .55rem;
+    border-radius: .55rem;
+  }
+  .rb-slider-label { font-size: .65rem; opacity: .75; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
+  .rb-slider-grp { display: flex; align-items: center; gap: .5rem; }
+  .rb-slider-grp input[type="range"] { flex: 1; accent-color: var(--gold); cursor: pointer; }
+  .rb-slider-val {
+    background: var(--gold); color: var(--ink);
+    padding: .15rem .55rem;
+    border-radius: 1rem;
+    font-weight: 800; font-size: .8rem;
+    min-width: 2rem; text-align: center;
+  }
+  .rb-actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: auto; }
+
+  /* In-map city pickers (visible only while building a route) */
+  .city-pick {
+    cursor: pointer;
+    transition: transform .15s, fill .15s;
+  }
+  .city-pick:hover circle { stroke-width: 2.5; }
+  .city-pick.dimmed { opacity: .25; pointer-events: none; }
+  .city-pick.in-route circle { stroke: var(--ink); stroke-width: 2.5; }
+  .city-pick.is-start circle { fill: var(--green); }
+  .city-pick.is-end circle { fill: var(--red); }
+  .city-pick.is-mid circle { fill: var(--gold); }
+  .city-pick text { paint-order: stroke; stroke: var(--paper); stroke-width: 2.5px; stroke-linejoin: round; }
+  @keyframes bounce-car {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+  }
+  @keyframes pop {
+    0%   { transform: scale(.85); opacity: 0; }
+    60%  { transform: scale(1.04); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+</style>
+
+<!-- ===== MFI BULUT (Firebase) : sorular kalici olarak buluta kaydedilir ===== -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+/* ===================================================================
+   AYAR: Firebase proje bilgilerini buraya yapistir (README'ye bak).
+   Doldurmazsan uygulama yine calisir; sadece sorular yerel kaydedilir.
+   =================================================================== */
+var FIREBASE_CONFIG = {
+  apiKey: "BURAYA_API_KEY",
+  authDomain: "BURAYA.firebaseapp.com",
+  projectId: "BURAYA_PROJECT_ID",
+  storageBucket: "BURAYA.appspot.com",
+  messagingSenderId: "BURAYA_SENDER_ID",
+  appId: "BURAYA_APP_ID"
+};
+var APP_ID = "matematik-yolculugu";   // bu uygulamanin kimligi (degistirme)
+/* =================================================================== */
+(function(){
+  var ok = FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey.indexOf("BURAYA") === -1;
+  if (!ok || !window.firebase) { console.info("MFI: Bulut kapali - yerel kayit kullaniliyor."); return; }
+  try {
+    firebase.initializeApp(FIREBASE_CONFIG);
+    var db = firebase.firestore();
+    var auth = firebase.auth();
+    var ref = db.collection("apps").doc(APP_ID);
+    window.__cloudGetQuestions = async function(){
+      var snap = await ref.get();
+      if (snap.exists) { var d = snap.data(); if (d && Array.isArray(d.questions)) return d.questions; }
+      return null;
+    };
+    window.__cloudSaveQuestions = async function(qs){
+      await ref.set({ questions: qs, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    };
+    window.__cloudAuth = auth;
+  } catch(e){ console.warn("MFI: Firebase baslatilamadi:", e); }
+})();
+</script>
+</head>
+<body>
+<!-- MFİ: Geri tuşu + kopyalama engeli -->
+<a href="index.html" class="mfi-back" aria-label="Ana Sayfaya Dön">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex:none"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+  <span class="mfi-back-txt">Ana Sayfaya Dön</span>
+</a>
+<style id="mfi-style">
+.mfi-back{position:fixed!important;top:12px!important;left:12px!important;z-index:2147483000!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:0!important;width:38px!important;height:38px!important;padding:0!important;border-radius:50%!important;text-decoration:none!important;background:rgba(20,24,58,.78)!important;color:#EEF0FF!important;border:1px solid rgba(255,255,255,.22)!important;box-shadow:0 4px 14px -4px rgba(0,0,0,.5)!important;cursor:pointer!important;-webkit-backdrop-filter:blur(6px)!important;backdrop-filter:blur(6px)!important;opacity:.72!important;transition:opacity .2s ease,transform .15s ease,background .2s ease!important;-webkit-user-select:none!important;user-select:none!important;}
+.mfi-back:hover{opacity:1!important;transform:translateY(-1px)!important;background:#14183A!important;}
+.mfi-back:active{transform:translateY(0)!important;}
+.mfi-back:focus-visible{outline:3px solid #5B5BF0!important;outline-offset:3px!important;opacity:1!important;}
+.mfi-back-txt{display:none!important;}
+html,body{-webkit-user-select:none!important;-ms-user-select:none!important;user-select:none!important;}
+input,textarea,[contenteditable="true"]{-webkit-user-select:text!important;user-select:text!important;}
+</style>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Matematik Yolculuğu</h1>
+      <div class="header-sub">Çarpanlara Ayırma &amp; Eşitsizlikler</div>
+    </div>
+    <div class="stats">
+      <div class="stat-box">
+        <div class="stat-num green" id="stat-score">0</div>
+        <div class="stat-label">Doğru</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num" id="stat-city">0 <span style="opacity:.4;font-size:.75rem">/ 9</span></div>
+        <div class="stat-label">Şehir</div>
+      </div>
+      <button class="btn-pill btn-pool" onclick="openPool()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 6h16M4 12h16M4 18h10"/>
+        </svg>
+        Sorular
+      </button>
+      <button class="btn-pill btn-route" onclick="openRouteBuilder()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="6" cy="19" r="2"/><circle cx="18" cy="5" r="2"/><path d="M8 19h8a4 4 0 0 0 0-8h-8a4 4 0 0 1 0-8h2"/>
+        </svg>
+        Rota
+      </button>
+      <button class="btn-pill btn-restart" onclick="restart()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="game-area">
+  <div class="map-wrap" id="map-wrap">
+    <svg id="map-svg" viewBox="0 0 800 440" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="waves" x="0" y="0" width="42" height="22" patternUnits="userSpaceOnUse">
+          <path d="M 0 11 Q 10 5, 21 11 T 42 11" stroke="#FAF3E7" stroke-opacity=".18" stroke-width="1.4" fill="none"/>
+        </pattern>
+        <filter id="shdw">
+          <feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".28"/>
+        </filter>
+      </defs>
+
+      <!-- sea -->
+      <rect width="800" height="440" fill="#2C7E92"/>
+      <rect width="800" height="440" fill="url(#waves)"/>
+
+      <!-- sea labels -->
+      <text x="200" y="40" fill="#FAF3E7" fill-opacity=".7" font-size="14" letter-spacing="6"
+            font-family="Fraunces,serif" font-style="italic" font-weight="600">KARADENİZ</text>
+      <text x="20"  y="320" fill="#FAF3E7" fill-opacity=".7" font-size="13" letter-spacing="4"
+            font-family="Fraunces,serif" font-style="italic" font-weight="600">EGE</text>
+      <text x="380" y="425" fill="#FAF3E7" fill-opacity=".7" font-size="14" letter-spacing="6"
+            font-family="Fraunces,serif" font-style="italic" font-weight="600">AKDENİZ</text>
+
+      <!-- Province polygons (loaded from GeoJSON at runtime) -->
+      <g id="provinces-layer" filter="url(#shdw)"></g>
+
+      <!-- Province name labels -->
+      <g id="province-labels"></g>
+
+      <!-- route dashed -->
+      <path id="route-path" stroke="#D94F30" stroke-width="3.5" stroke-dasharray="7 7" fill="none" stroke-linecap="round"/>
+
+      <!-- city dots rendered by JS -->
+      <g id="city-layer"></g>
+
+      <!-- picker dots (visible only during route building) -->
+      <g id="picker-layer"></g>
+
+      <!-- map loading message (hidden once GeoJSON loads) -->
+      <text id="map-loading" x="400" y="220" text-anchor="middle" fill="#FAF3E7" fill-opacity=".85"
+            font-size="20" font-weight="700" font-family="Plus Jakarta Sans, sans-serif">
+        Harita yükleniyor…
+      </text>
+
+      <!-- compass -->
+      <g transform="translate(755 405)" opacity=".88">
+        <circle cx="0" cy="0" r="20" fill="#FAF3E7" stroke="#1A2332" stroke-width="2"/>
+        <path d="M0-14 L3.5 0 L0 14 L-3.5 0 Z" fill="#D94F30" stroke="#1A2332" stroke-width="1"/>
+        <text x="0" y="-22" text-anchor="middle" font-size="8" font-weight="800" fill="#1A2332">K</text>
+        <text x="0" y="30"  text-anchor="middle" font-size="8" font-weight="800" fill="#1A2332">G</text>
+      </g>
+    </svg>
+
+    <!-- car element -->
+    <div class="car" id="car">
+      <div class="car-bubble">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+      </div>
+      <div class="car-shadow"></div>
+    </div>
+
+    <!-- win overlay -->
+    <div class="win-overlay" id="win-overlay">
+      <div class="win-card">
+        <svg class="trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+          <path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+          <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+          <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/>
+        </svg>
+        <div class="win-sparkle">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.09 6.26L20 9l-6.91.74L12 16l-1.09-5.26L4 9l6.91-.74z"/></svg>
+          Tebrikler
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.09 6.26L20 9l-6.91.74L12 16l-1.09-5.26L4 9l6.91-.74z"/></svg>
+        </div>
+        <div class="win-title" id="win-title">Hedefe Vardık!</div>
+        <div class="win-info" id="win-info"></div>
+        <button class="btn-win" onclick="restart()">Yeniden Yolculuğa Çık →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTION CARD -->
+  <div class="q-card" id="q-card">
+    <div class="q-strip">
+      <div class="q-leg">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span id="q-leg-label"></span>
+      </div>
+      <div class="q-meta">
+        <span class="q-std" id="q-std"></span>
+        <span class="q-num" id="q-num"></span>
+      </div>
+    </div>
+    <div class="q-body">
+      <div class="q-topic" id="q-topic"></div>
+      <div class="q-story" id="q-story"></div>
+      <div class="q-board"><div class="q-expr" id="q-expr"></div></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback">
+        <div class="fb-row">
+          <svg class="fb-icon" id="fb-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></svg>
+          <div>
+            <div class="fb-title" id="fb-title"></div>
+            <div class="fb-exp" id="fb-exp"></div>
+          </div>
+        </div>
+        <button class="btn-continue" id="btn-continue" onclick="handleContinue()"></button>
+      </div>
+    </div>
+    <!-- CREDITS BAR -->
+    <div class="credits-bar">
+      <span class="credits-label">Yapanlar</span>
+      <div class="credits-divider"></div>
+      <div class="credits-names">
+        <div class="credit-chip">
+          <div class="credit-chip-dot"></div>
+          <span>Mevlüt Furkan İnce</span>
+        </div>
+        <div class="credit-chip">
+          <div class="credit-chip-dot"></div>
+          <span>Özge Zehra Başara</span>
+        </div>
+        <div class="credit-chip">
+          <div class="credit-chip-dot"></div>
+          <span>Esma Mutlu</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUTE BUILDER PANEL (replaces q-card when active) -->
+  <div id="route-builder" class="rb-panel-wrap" hidden>
+    <div class="rb-panel-inner">
+      <div class="rb-title">Rota Oluştur</div>
+      <div class="rb-instr" id="rb-instr">Haritada <b>başlangıç</b> şehrini seç</div>
+      <div class="rb-pills">
+        <div class="rb-pill rb-pill-start">
+          <span class="rb-pill-dot rb-dot-start"></span>
+          <span class="rb-pill-label">Başlangıç</span>
+          <span class="rb-pill-val" id="rb-start-val">—</span>
+          <button class="rb-pill-clear" id="rb-clear-start" title="Sil">×</button>
+        </div>
+        <div class="rb-pill rb-pill-end">
+          <span class="rb-pill-dot rb-dot-end"></span>
+          <span class="rb-pill-label">Bitiş</span>
+          <span class="rb-pill-val" id="rb-end-val">—</span>
+          <button class="rb-pill-clear" id="rb-clear-end" title="Sil">×</button>
+        </div>
+      </div>
+      <div class="rb-sliders">
+        <label class="rb-slider-row">
+          <span class="rb-slider-label">Ara şehir sayısı</span>
+          <div class="rb-slider-grp">
+            <input type="range" id="rb-mid" min="1" max="15" value="8">
+            <span class="rb-slider-val" id="rb-mid-val">8</span>
+          </div>
+        </label>
+      </div>
+      <div class="rb-actions">
+        <button class="btn-mini btn-cancel" onclick="closeRouteBuilder()">İptal</button>
+        <button class="btn-mini btn-save" id="rb-confirm" onclick="confirmRoute()" disabled>Rotayı Oluştur</button>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /game-area -->
+</div><!-- /wrap -->
+
+<!-- ───── POOL MODAL ───── -->
+<div class="modal-bg" id="pool-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2>Soru Havuzu</h2>
+      <button class="btn-close" onclick="closePool()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="pool-toolbar">
+        <span class="pool-count" id="pool-count">0 soru</span>
+        <div class="pool-actions">
+          <button class="btn-mini btn-reset" onclick="resetPool()">↺ Varsayılana dön</button>
+          <button class="btn-mini btn-add" onclick="openEditor(-1)">+ Yeni Soru</button>
+        </div>
+      </div>
+      <div class="pool-list" id="pool-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ───── EDITOR MODAL ───── -->
+<div class="modal-bg" id="editor-modal">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="editor-title">Soru Düzenle</h2>
+      <button class="btn-close" onclick="closeEditor()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="editor-form">
+        <label>Etap (örn: Konya → Antalya)
+          <input type="text" id="ed-leg" placeholder="Şehir → Şehir">
+        </label>
+        <label>Konu Başlığı
+          <input type="text" id="ed-topic" placeholder="Örn: Tam Kare Ayırma">
+        </label>
+        <label>Etiket / Standart (kısa)
+          <input type="text" id="ed-standard" placeholder="Örn: 8.2.4.1">
+        </label>
+        <label>Hikaye / Soru Metni
+          <textarea id="ed-story" rows="3" placeholder="Yolculukla ilgili kısa bir hikaye veya soru metni..."></textarea>
+        </label>
+        <label>Matematiksel İfade (büyük gösterilecek)
+          <input type="text" id="ed-expr" placeholder="Örn: x² + 6x + 9">
+        </label>
+
+        <div class="editor-options-section">
+          <h4>Seçenekler — doğru olanı işaretle</h4>
+          <div class="editor-opt-row">
+            <input type="radio" name="ed-correct" value="0" id="ed-r-0">
+            <span class="editor-opt-letter">A</span>
+            <input type="text" id="ed-opt-0" placeholder="A şıkkı">
+          </div>
+          <div class="editor-opt-row">
+            <input type="radio" name="ed-correct" value="1" id="ed-r-1">
+            <span class="editor-opt-letter">B</span>
+            <input type="text" id="ed-opt-1" placeholder="B şıkkı">
+          </div>
+          <div class="editor-opt-row">
+            <input type="radio" name="ed-correct" value="2" id="ed-r-2">
+            <span class="editor-opt-letter">C</span>
+            <input type="text" id="ed-opt-2" placeholder="C şıkkı">
+          </div>
+          <div class="editor-opt-row">
+            <input type="radio" name="ed-correct" value="3" id="ed-r-3">
+            <span class="editor-opt-letter">D</span>
+            <input type="text" id="ed-opt-3" placeholder="D şıkkı">
+          </div>
+        </div>
+
+        <label>Açıklama (cevaptan sonra gösterilir)
+          <textarea id="ed-explanation" rows="3" placeholder="Doğru cevabın neden doğru olduğunu kısaca açıklayın..."></textarea>
+        </label>
+
+        <div class="editor-actions">
+          <button type="button" class="btn-mini btn-cancel" onclick="closeEditor()">İptal</button>
+          <button type="button" class="btn-mini btn-save" onclick="saveQuestion()">Kaydet</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  MAP CONFIG — pastel palette for province coloring
+// ═══════════════════════════════════════════════════════
+const PROVINCE_COLORS = [
+  '#FFD278', '#FFB876', '#F09060', '#E48A6B',
+  '#B5D886', '#76B898', '#76C8D0', '#98B8D8',
+  '#B898D0', '#F098B0', '#FFE078', '#F4C26B',
+  '#A8D8B9', '#FFA08C', '#C9B6E6', '#FFC58A'
+];
+
+// jsDelivr CDN url for Turkey provinces GeoJSON (CORS-enabled).
+// Fallback to GitHub raw if CDN fails.
+const GEOJSON_URLS = [
+  'https://cdn.jsdelivr.net/gh/alpers/Turkey-Maps-GeoJSON@master/tr-cities.json',
+  'https://raw.githubusercontent.com/alpers/Turkey-Maps-GeoJSON/master/tr-cities.json'
+];
+
+// ═══════════════════════════════════════════════════════
+//  CITIES (route stops) — 10 cities, 9 legs
+//  Coords are real lat/lng; SVG x,y filled in after projection
+// ═══════════════════════════════════════════════════════
+const STOPS = [
+  { name:'Giresun',  lat:40.9128, lng:38.3895, x:0, y:0 },
+  { name:'Ordu',     lat:40.9839, lng:37.8764, x:0, y:0 },
+  { name:'Samsun',   lat:41.2867, lng:36.3300, x:0, y:0 },
+  { name:'Amasya',   lat:40.6499, lng:35.8353, x:0, y:0 },
+  { name:'Çorum',    lat:40.5499, lng:34.9531, x:0, y:0 },
+  { name:'Yozgat',   lat:39.8181, lng:34.8147, x:0, y:0 },
+  { name:'Ankara',   lat:39.9334, lng:32.8597, x:0, y:0 },
+  { name:'Aksaray',  lat:38.3687, lng:34.0370, x:0, y:0 },
+  { name:'Konya',    lat:37.8746, lng:32.4932, x:0, y:0 },
+  { name:'Antalya',  lat:36.8841, lng:30.7056, x:0, y:0 }
+];
+
+// ═══════════════════════════════════════════════════════
+//  DEFAULT QUESTION POOL — 20 questions
+//  Editable via the in-page editor; stored in localStorage
+// ═══════════════════════════════════════════════════════
+const DEFAULT_QUESTIONS = [
+  {
+    leg:'Yol Üzerinde', topic:'Ortak Çarpan Parantezine Alma', standard:'Kolay',
+    story:'Aile yola çıktı! İlk molada lokantanın hesap fişi 6x + 12 TL geldi. Garson "İsterseniz çarpanlarına ayırarak yazayım" dedi. Aşağıdakilerden hangisi doğru bir çarpanlara ayırmadır?',
+    expression:'6x + 12',
+    options:[
+      {text:'6 · (x + 2)', correct:true},
+      {text:'2 · (3x + 6)', correct:false},
+      {text:'6 · (x + 12)', correct:false},
+      {text:'3 · (2x + 4)', correct:false}
+    ],
+    explanation:'6 ile 12\'nin EBOB\'u 6\'dır. Dolayısıyla: 6x + 12 = 6·x + 6·2 = 6(x + 2). Diğer seçeneklerde ya hâlâ ortak çarpan vardır, ya da çarpım açıldığında ifadeyi vermez.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'İki Kare Farkı', standard:'Orta',
+    story:'Yol kenarındaki tarlanın alanı x² − 49 m² olarak yazıyor. Bu tarla, kenarları farklı uzunluklarda iki dikdörtgenin çarpımı şeklinde yazılırsa hangi ifade doğrudur?',
+    expression:'x² − 49',
+    options:[
+      {text:'(x − 7)(x + 7)', correct:true},
+      {text:'(x − 49)(x + 1)', correct:false},
+      {text:'(x − 7)²', correct:false},
+      {text:'(x + 7)²', correct:false}
+    ],
+    explanation:'İki kare farkı kuralı: a² − b² = (a − b)(a + b). Burada a = x, b = 7\'dir (7² = 49). Sonuç: x² − 49 = (x − 7)(x + 7).'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Tam Kare Ayırma', standard:'Orta',
+    story:'Başkente vardılar. Bagajın tabanının alanı x² + 6x + 9 cm² ve bavul bagaja TAM olarak sığıyor. Buna göre bavulun bir kenarı kaç cm\'dir?',
+    expression:'x² + 6x + 9',
+    options:[
+      {text:'(x + 3) cm', correct:true},
+      {text:'(x + 9) cm', correct:false},
+      {text:'(x − 3) cm', correct:false},
+      {text:'(x + 6) cm', correct:false}
+    ],
+    explanation:'Tam kare açılımı: (a + b)² = a² + 2ab + b². Burada x² + 2·x·3 + 3² = (x + 3)². Bavul kare olduğundan bir kenarı (x + 3) cm\'dir.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Birinci Dereceden Eşitsizlik', standard:'Kolay',
+    story:'Konya yolunda baba dedi ki: "Mola harcamamız EN AZ 11 TL olmalı: 2x + 3 ≥ 11." Buna göre x\'in alabileceği EN KÜÇÜK tam sayı değeri kaçtır?',
+    expression:'2x + 3 ≥ 11',
+    options:[
+      {text:'4', correct:true},
+      {text:'5', correct:false},
+      {text:'7', correct:false},
+      {text:'8', correct:false}
+    ],
+    explanation:'2x + 3 ≥ 11 → 2x ≥ 8 → x ≥ 4. Her iki tarafı POZİTİF bir sayı (2) ile böldüğümüz için yön DEĞİŞMEZ. En küçük tam sayı 4\'tür.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Eşitsizlikte Yön Değişimi', standard:'Zor',
+    story:'Son etap! Toroslar uzaktan göründü. Yol kenarındaki tabelada bir bilmece: "−3x > 12 eşitsizliğini sağlayan x değerleri hangisidir?"',
+    expression:'−3x > 12',
+    options:[
+      {text:'x < −4', correct:true},
+      {text:'x > −4', correct:false},
+      {text:'x < 4',  correct:false},
+      {text:'x > 4',  correct:false}
+    ],
+    explanation:'DİKKAT! Eşitsizliğin her iki tarafını NEGATİF bir sayıya (−3) böldüğümüzde eşitsizlik YÖN DEĞİŞTİRİR. −3x > 12 → x < 12/(−3) → x < −4.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Ortak Çarpan Parantezine Alma', standard:'Kolay',
+    story:'Benzincide bir kampanya tabelası var: "4x + 8 TL\'lik alışverişe özel indirim!" Bu ifadenin çarpanlarına ayrılmış hâli hangisidir?',
+    expression:'4x + 8',
+    options:[
+      {text:'4(x + 2)', correct:true},
+      {text:'2(2x + 8)', correct:false},
+      {text:'4(x + 8)', correct:false},
+      {text:'2(x + 4)', correct:false}
+    ],
+    explanation:'4 ile 8\'in EBOB\'u 4\'tür. 4x + 8 = 4·x + 4·2 = 4(x + 2). Parantez içinde artık ortak çarpan kalmamalıdır.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'İki Kare Farkı', standard:'Orta',
+    story:'Yol kenarında bir bahçenin kapısı kare şeklindeydi. Üzerinde "x² − 25" yazıyordu. Bunu iki çarpanın çarpımı olarak yazarsak hangisi doğru olur?',
+    expression:'x² − 25',
+    options:[
+      {text:'(x − 5)(x + 5)', correct:true},
+      {text:'(x − 5)²', correct:false},
+      {text:'(x + 5)²', correct:false},
+      {text:'(x − 25)(x + 1)', correct:false}
+    ],
+    explanation:'25 = 5² olduğundan x² − 25 = x² − 5² formundadır. İki kare farkı: a² − b² = (a − b)(a + b) → (x − 5)(x + 5).'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Tam Kare Ayırma', standard:'Orta',
+    story:'Mola yerinde kare şeklinde bir avlu vardı. Avlunun alanı x² + 10x + 25 m². Avlunun bir kenar uzunluğu kaç metredir?',
+    expression:'x² + 10x + 25',
+    options:[
+      {text:'(x + 5) m', correct:true},
+      {text:'(x + 10) m', correct:false},
+      {text:'(x + 25) m', correct:false},
+      {text:'(x − 5) m', correct:false}
+    ],
+    explanation:'x² + 10x + 25 = x² + 2·x·5 + 5² = (x + 5)². Kare olduğundan bir kenar (x + 5) m\'dir.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Birinci Dereceden Eşitsizlik', standard:'Kolay',
+    story:'Annenin bütçe hesabı: "Bir mola harcaması 7 TL\'den AZ olmalı: 3x − 5 < 7". Buna göre x en fazla kaç tam sayı değeri alabilir?',
+    expression:'3x − 5 < 7',
+    options:[
+      {text:'3', correct:true},
+      {text:'4', correct:false},
+      {text:'5', correct:false},
+      {text:'2', correct:false}
+    ],
+    explanation:'3x − 5 < 7 → 3x < 12 → x < 4. En büyük tam sayı 3\'tür (4 dahil değildir, çünkü < işareti var).'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Eşitsizlikte Yön Değişimi', standard:'Zor',
+    story:'Yol kenarındaki bir levhada: "−2x ≥ 8" yazıyordu. Bu eşitsizliği sağlayan x değerlerinin kümesini bulun.',
+    expression:'−2x ≥ 8',
+    options:[
+      {text:'x ≤ −4', correct:true},
+      {text:'x ≥ −4', correct:false},
+      {text:'x ≤ 4',  correct:false},
+      {text:'x ≥ 4',  correct:false}
+    ],
+    explanation:'Her iki tarafı NEGATİF (−2) ile böldüğümüzde eşitsizlik YÖN DEĞİŞTİRİR. −2x ≥ 8 → x ≤ −4.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Ortak Çarpan Parantezine Alma', standard:'Orta',
+    story:'Tarladaki çiftçi mahsulün satış değerini 9x² − 6x TL olarak hesapladı. Bu ifadenin EN SADE çarpanlara ayrılmış hâli nedir?',
+    expression:'9x² − 6x',
+    options:[
+      {text:'3x(3x − 2)', correct:true},
+      {text:'3(3x² − 2x)', correct:false},
+      {text:'x(9x − 6)', correct:false},
+      {text:'9x(x − 6)', correct:false}
+    ],
+    explanation:'9x² ve 6x ifadelerinin ortak çarpanı 3x\'tir (sayısal EBOB 3, ortak değişken x). 9x² − 6x = 3x·3x − 3x·2 = 3x(3x − 2). En sade hâl budur.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'İki Kare Farkı', standard:'Orta',
+    story:'Bir mağaza tabelasında "4x² − 9" indirim formülü vardı. Bu ifadeyi iki çarpanın çarpımı olarak nasıl yazarız?',
+    expression:'4x² − 9',
+    options:[
+      {text:'(2x − 3)(2x + 3)', correct:true},
+      {text:'(2x − 3)²', correct:false},
+      {text:'(4x − 3)(x + 3)', correct:false},
+      {text:'(2x − 9)(2x + 1)', correct:false}
+    ],
+    explanation:'4x² = (2x)² ve 9 = 3² olduğundan 4x² − 9 = (2x)² − 3² = (2x − 3)(2x + 3) iki kare farkı kuralıyla bulunur.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Tam Kare Ayırma', standard:'Orta',
+    story:'Bir oto park alanı kare şeklinde ve alanı x² − 8x + 16 m². Bu park alanının bir kenarı kaç metredir?',
+    expression:'x² − 8x + 16',
+    options:[
+      {text:'(x − 4) m', correct:true},
+      {text:'(x + 4) m', correct:false},
+      {text:'(x − 8) m', correct:false},
+      {text:'(x − 16) m', correct:false}
+    ],
+    explanation:'x² − 8x + 16 = x² − 2·x·4 + 4² = (x − 4)². Tam kare çıkmış olur. Kenar (x − 4) m\'dir.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Birinci Dereceden Eşitsizlik', standard:'Kolay',
+    story:'Bir biletçi: "Geziye katılmak için yaşın 12\'den büyük olmalı: 5x + 2 > 12." Bu eşitsizliği sağlayan en küçük tam sayı x kaçtır?',
+    expression:'5x + 2 > 12',
+    options:[
+      {text:'3', correct:true},
+      {text:'2', correct:false},
+      {text:'5', correct:false},
+      {text:'4', correct:false}
+    ],
+    explanation:'5x + 2 > 12 → 5x > 10 → x > 2. x\'in 2\'den BÜYÜK olması gerektiği için en küçük tam sayı 3\'tür (2 dahil değil).'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Birinci Dereceden Eşitsizlik', standard:'Orta',
+    story:'Otobüs şoförü dedi ki: "Verdiğim paranın üçte biri 4 TL\'yi geçmemeli: x/3 ≤ 4." x en fazla kaç olabilir?',
+    expression:'x/3 ≤ 4',
+    options:[
+      {text:'12', correct:true},
+      {text:'4', correct:false},
+      {text:'7', correct:false},
+      {text:'1', correct:false}
+    ],
+    explanation:'x/3 ≤ 4 → her iki tarafı POZİTİF 3 ile çarparız (yön değişmez): x ≤ 12. x en fazla 12 olabilir.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Ortak Çarpan Parantezine Alma', standard:'Kolay',
+    story:'Bir manav tezgâhında "12x + 18" TL\'lik özel sepet vardı. Bu ifadeyi sadeleştirilmiş şekilde çarpanlara ayırırsak hangisi doğru olur?',
+    expression:'12x + 18',
+    options:[
+      {text:'6(2x + 3)', correct:true},
+      {text:'3(4x + 6)', correct:false},
+      {text:'2(6x + 9)', correct:false},
+      {text:'12(x + 18)', correct:false}
+    ],
+    explanation:'12 ve 18\'in EBOB\'u 6\'dır. 12x + 18 = 6·2x + 6·3 = 6(2x + 3). Diğer seçeneklerde parantez içinde hâlâ ortak çarpan vardır, EN SADE hâl 6(2x+3).'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'İki Kare Farkı', standard:'Orta',
+    story:'Bir halı mağazasının vitrininde "16 − x²" formülü yazıyordu. Bu ifadeyi çarpanlarına ayırırsak hangisi doğrudur?',
+    expression:'16 − x²',
+    options:[
+      {text:'(4 − x)(4 + x)', correct:true},
+      {text:'(x − 4)(x + 4)', correct:false},
+      {text:'(4 − x)²', correct:false},
+      {text:'(x + 4)²', correct:false}
+    ],
+    explanation:'16 = 4². Yani 16 − x² = 4² − x². İki kare farkı: a² − b² = (a − b)(a + b) → (4 − x)(4 + x). Sıralamaya dikkat: önce büyük olan yazılır.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Tam Kare Ayırma', standard:'Zor',
+    story:'Bir inşaatçının elinde 4x² + 12x + 9 m² alanlı kare şeklinde bir taban vardı. Tabanın bir kenarı kaç metredir?',
+    expression:'4x² + 12x + 9',
+    options:[
+      {text:'(2x + 3) m', correct:true},
+      {text:'(2x + 9) m', correct:false},
+      {text:'(4x + 3) m', correct:false},
+      {text:'(x + 3) m', correct:false}
+    ],
+    explanation:'4x² = (2x)² ve 9 = 3². Orta terim 2·(2x)·3 = 12x ✓ uyuyor. Yani 4x² + 12x + 9 = (2x + 3)². Kenar (2x + 3) m\'dir.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Eşitsizlik Çözümü', standard:'Orta',
+    story:'Bir otopark levhasında "2(x + 1) ≤ 8" yazıyordu. x en fazla kaç tam sayı değeri alabilir?',
+    expression:'2(x + 1) ≤ 8',
+    options:[
+      {text:'3', correct:true},
+      {text:'4', correct:false},
+      {text:'2', correct:false},
+      {text:'7', correct:false}
+    ],
+    explanation:'Önce parantezi açarız: 2x + 2 ≤ 8 → 2x ≤ 6 → x ≤ 3. ≤ olduğundan 3 dahildir. En büyük tam sayı 3\'tür.'
+  },
+  {
+    leg:'Yol Üzerinde', topic:'Eşitsizlikte Yön Değişimi', standard:'Zor',
+    story:'Otomobilin yakıt göstergesindeki bir formül: "−x/2 > 3". Bu eşitsizliği sağlayan x değerlerini belirleyin.',
+    expression:'−x/2 > 3',
+    options:[
+      {text:'x < −6', correct:true},
+      {text:'x > −6', correct:false},
+      {text:'x < 6',  correct:false},
+      {text:'x > 6',  correct:false}
+    ],
+    explanation:'Her iki tarafı NEGATİF olan (−2) ile çarptığımızda eşitsizlik YÖN DEĞİŞTİRİR. −x/2 > 3 → x < −6 (çarpıp yönü çevirdik).'
+  }
+];
+
+// ═══════════════════════════════════════════════════════
+//  STORAGE — load/save question pool
+// ═══════════════════════════════════════════════════════
+const STORAGE_KEY = 'matematikYolculuguQuestions_v1';
+let QUESTIONS = [];
+
+async function loadPool() {
+  // 1) Bulut (Firestore) — varsa en guncel sorular buradan gelir
+  if (window.__cloudGetQuestions) {
+    try {
+      const cloud = await window.__cloudGetQuestions();
+      if (Array.isArray(cloud) && cloud.length > 0) {
+        QUESTIONS = cloud;
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(QUESTIONS)); } catch(e) {}
+        return;
+      }
+    } catch(e) { console.warn('Bulut okuma hatasi:', e); }
+  }
+  // 2) Yerel onbellek
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) { QUESTIONS = parsed; return; }
+    }
+  } catch(e) {}
+  // 3) Varsayilan sorular
+  QUESTIONS = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+}
+async function savePool() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(QUESTIONS)); } catch(e) {}
+  if (window.__cloudSaveQuestions) {
+    try {
+      await window.__cloudSaveQuestions(QUESTIONS);
+      if (window.__cloudToast) window.__cloudToast('Buluta kaydedildi \u2713');
+    } catch(e) {
+      alert('Buluta kaydedilemedi. Once "\ud83d\udd11 Yonetici Girisi" yapmalisin.\n\nDetay: ' + (e && e.message ? e.message : e));
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let stopIdx = 0;            // current city index
+let activeQuestions = [];   // questions selected for THIS playthrough
+let qIdx = 0;
+let score = 0, attempts = 0;
+let shuffled = [], correctShuffledIdx = -1;
+let selected = null, answered = false, seed = 1;
+let editingIdx = -1;        // -1 = new question
+
+// ═══════════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════════
+function seededRnd(n, s) {
+  const x = Math.sin(s * 31 + n * 137) * 10000;
+  return x - Math.floor(x);
+}
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function shuffleQuestion(q, s) {
+  const opts = q.options.map((o, i) => ({ ...o, origIdx: i }));
+  opts.sort((a, b) => seededRnd(a.origIdx, s) - seededRnd(b.origIdx, s));
+  const ci = opts.findIndex(o => o.correct);
+  return { shuffled: opts.map(o => o.text), correctIdx: ci };
+}
+
+function pickActiveQuestions() {
+  const needed = Math.max(1, STOPS.length - 1);
+  if (QUESTIONS.length >= needed) {
+    activeQuestions = shuffleArray(QUESTIONS).slice(0, needed);
+  } else {
+    const shuffled = shuffleArray(QUESTIONS);
+    activeQuestions = [];
+    for (let i = 0; i < needed; i++) {
+      activeQuestions.push(shuffled[i % shuffled.length]);
+    }
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  ROUTE CONFIG — start/end city + intermediate count + question count
+// ═══════════════════════════════════════════════════════
+const ROUTE_KEY = 'matematikYolculugu_routeConfig_v1';
+let ALL_CITIES = []; // populated after GeoJSON loads: [{name, lat, lng}]
+
+const DEFAULT_ROUTE_CONFIG = {
+  start: 'Giresun',
+  end: 'Antalya',
+  intermediate: 8
+};
+
+function loadRouteConfig() {
+  try {
+    const s = localStorage.getItem(ROUTE_KEY);
+    if (s) {
+      const parsed = JSON.parse(s);
+      return Object.assign({}, DEFAULT_ROUTE_CONFIG, parsed);
+    }
+  } catch (e) {}
+  return Object.assign({}, DEFAULT_ROUTE_CONFIG);
+}
+
+function saveRouteConfig(cfg) {
+  try { localStorage.setItem(ROUTE_KEY, JSON.stringify(cfg)); } catch (e) {}
+}
+
+// Project city p onto the line from s to e. Returns {t (progress 0..1), d (perp distance in degrees)}.
+function projectAlongLine(s, e, p) {
+  const ax = e.lng - s.lng, ay = e.lat - s.lat;
+  const bx = p.lng - s.lng, by = p.lat - s.lat;
+  const lenSq = ax * ax + ay * ay;
+  if (lenSq === 0) return { t: 0, d: Infinity };
+  const t = (ax * bx + ay * by) / lenSq;
+  const projX = s.lng + ax * t, projY = s.lat + ay * t;
+  const dx = p.lng - projX, dy = p.lat - projY;
+  return { t, d: Math.sqrt(dx * dx + dy * dy) };
+}
+
+// Generate a route of cities from startName to endName with N intermediate stops.
+// Picks cities that lie roughly along the line from start to end.
+function generateRoute(startName, endName, nIntermediate) {
+  if (!ALL_CITIES.length) return [];
+  const start = ALL_CITIES.find(c => c.name === startName);
+  const end = ALL_CITIES.find(c => c.name === endName);
+  if (!start || !end || start.name === end.name) return [start || ALL_CITIES[0]];
+
+  const lineLen = Math.sqrt(
+    Math.pow(end.lng - start.lng, 2) + Math.pow(end.lat - start.lat, 2)
+  );
+  // corridor width scales with line length but with a sensible minimum
+  const corridor = Math.max(1.2, lineLen * 0.5);
+
+  // Build candidate list: cities lying inside corridor, with progress strictly between 0 and 1
+  const candidates = ALL_CITIES
+    .filter(c => c.name !== startName && c.name !== endName)
+    .map(c => {
+      const pr = projectAlongLine(start, end, c);
+      return { name: c.name, lat: c.lat, lng: c.lng, t: pr.t, d: pr.d };
+    })
+    .filter(c => c.t > 0.04 && c.t < 0.96 && c.d < corridor)
+    .sort((a, b) => a.t - b.t);
+
+  // If we don't have enough candidates, relax the corridor
+  if (candidates.length < nIntermediate) {
+    const relaxed = ALL_CITIES
+      .filter(c => c.name !== startName && c.name !== endName)
+      .map(c => {
+        const pr = projectAlongLine(start, end, c);
+        return { name: c.name, lat: c.lat, lng: c.lng, t: pr.t, d: pr.d };
+      })
+      .filter(c => c.t > 0.04 && c.t < 0.96)
+      .sort((a, b) => a.t - b.t);
+    while (candidates.length < nIntermediate && relaxed.length) {
+      const next = relaxed.shift();
+      if (!candidates.find(x => x.name === next.name)) candidates.push(next);
+    }
+    candidates.sort((a, b) => a.t - b.t);
+  }
+
+  // Pick N cities trying to space them evenly along progress t
+  const picked = [];
+  const usedNames = new Set();
+  for (let i = 1; i <= nIntermediate; i++) {
+    const targetT = i / (nIntermediate + 1);
+    let best = null, bestScore = Infinity;
+    for (const c of candidates) {
+      if (usedNames.has(c.name)) continue;
+      // score = distance from target progress + small penalty for being far from line
+      const score = Math.abs(c.t - targetT) + c.d * 0.15;
+      if (score < bestScore) { bestScore = score; best = c; }
+    }
+    if (best) {
+      picked.push(best);
+      usedNames.add(best.name);
+    }
+  }
+  picked.sort((a, b) => a.t - b.t);
+
+  return [start, ...picked, end];
+}
+
+function applyRouteConfig() {
+  const cfg = loadRouteConfig();
+  const route = generateRoute(cfg.start, cfg.end, cfg.intermediate);
+  if (!route.length) return;
+  STOPS.length = 0;
+  for (const c of route) {
+    const stop = { name: c.name, lat: c.lat, lng: c.lng, x: 0, y: 0 };
+    if (projectFn) {
+      const [x, y] = projectFn(c.lng, c.lat);
+      stop.x = x; stop.y = y;
+    }
+    STOPS.push(stop);
+  }
+  const sub = document.querySelector('.header-sub');
+  if (sub && STOPS.length >= 2) {
+    const legs = STOPS.length - 1;
+    sub.textContent = `${STOPS[0].name} → ${STOPS[STOPS.length-1].name} · ${STOPS.length} şehir · ${legs} soru`;
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  ROUTE BUILDER — interactive city picker on the map
+// ═══════════════════════════════════════════════════════
+let rbState = { open: false, start: null, end: null, mid: 8 };
+
+function openRouteBuilder() {
+  if (!ALL_CITIES.length || !projectFn) {
+    alert('Harita henüz yüklenmedi. Lütfen biraz bekleyin.');
+    return;
+  }
+  const cfg = loadRouteConfig();
+  rbState = { open: true, start: cfg.start, end: cfg.end, mid: cfg.intermediate };
+
+  // Hide game route + car, show picker dots
+  document.getElementById('route-path').setAttribute('opacity', '0');
+  document.getElementById('city-layer').setAttribute('opacity', '0');
+  const carEl = document.getElementById('car');
+  if (carEl) carEl.style.opacity = '0';
+
+  // Swap q-card → route builder panel
+  document.getElementById('q-card').style.display = 'none';
+  document.getElementById('route-builder').removeAttribute('hidden');
+
+  // Sync slider
+  document.getElementById('rb-mid').value = rbState.mid;
+  document.getElementById('rb-mid-val').textContent = rbState.mid;
+
+  renderPickerDots();
+  updateRouteBuilderUI();
+}
+
+function closeRouteBuilder() {
+  rbState.open = false;
+  // Swap back: route builder → q-card
+  document.getElementById('route-builder').setAttribute('hidden', '');
+  document.getElementById('q-card').style.display = '';
+  document.getElementById('picker-layer').innerHTML = '';
+  // Restore game route + car
+  document.getElementById('route-path').removeAttribute('opacity');
+  document.getElementById('city-layer').removeAttribute('opacity');
+  const carEl = document.getElementById('car');
+  if (carEl) carEl.style.opacity = '';
+}
+
+function renderPickerDots() {
+  const layer = document.getElementById('picker-layer');
+  layer.innerHTML = '';
+
+  // Compute which cities are along the picked route (for highlighting)
+  let routeNames = new Set();
+  if (rbState.start && rbState.end) {
+    const route = generateRoute(rbState.start, rbState.end, rbState.mid);
+    route.forEach(c => routeNames.add(c.name));
+  }
+
+  ALL_CITIES.forEach(city => {
+    const [x, y] = projectFn(city.lng, city.lat);
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'city-pick');
+    g.setAttribute('transform', `translate(${x.toFixed(2)} ${y.toFixed(2)})`);
+    g.dataset.name = city.name;
+
+    const isStart = city.name === rbState.start;
+    const isEnd = city.name === rbState.end;
+    const inRoute = routeNames.has(city.name);
+    const isMid = inRoute && !isStart && !isEnd;
+
+    if (isStart) g.classList.add('is-start');
+    else if (isEnd) g.classList.add('is-end');
+    else if (isMid) g.classList.add('is-mid');
+
+    if (rbState.start && rbState.end) {
+      // After both endpoints chosen: highlight route, dim others
+      if (inRoute) g.classList.add('in-route');
+      else g.classList.add('dimmed');
+    }
+
+    const r = (isStart || isEnd) ? 6 : (isMid ? 4.5 : 3.5);
+    const fill = isStart ? '#5B8C5A'
+               : isEnd   ? '#D94F30'
+               : isMid   ? '#E8A93D'
+               : '#FAF3E7';
+
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '0'); circle.setAttribute('cy', '0');
+    circle.setAttribute('r', r);
+    circle.setAttribute('fill', fill);
+    circle.setAttribute('stroke', '#1A2332');
+    circle.setAttribute('stroke-width', '1.5');
+    g.appendChild(circle);
+
+    // Show name on hover OR if in route
+    if (inRoute || isStart || isEnd) {
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('y', -r - 3);
+      t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('font-size', '7');
+      t.setAttribute('font-weight', '800');
+      t.setAttribute('fill', '#1A2332');
+      t.setAttribute('font-family', 'Plus Jakarta Sans, sans-serif');
+      t.setAttribute('pointer-events', 'none');
+      t.textContent = city.name;
+      g.appendChild(t);
+    }
+
+    g.addEventListener('click', () => onPickerClick(city.name));
+    layer.appendChild(g);
+  });
+}
+
+function onPickerClick(cityName) {
+  // Click logic: if no start, set start; else if no end, set end; else replace start.
+  if (!rbState.start) {
+    rbState.start = cityName;
+  } else if (!rbState.end && cityName !== rbState.start) {
+    rbState.end = cityName;
+  } else if (cityName === rbState.start) {
+    // Click on start to clear it
+    rbState.start = rbState.end; rbState.end = null;
+  } else if (cityName === rbState.end) {
+    rbState.end = null;
+  } else {
+    // Both set, user clicked another city → make it new endpoint (replaces end)
+    rbState.end = cityName;
+  }
+  renderPickerDots();
+  updateRouteBuilderUI();
+}
+
+function updateRouteBuilderUI() {
+  document.getElementById('rb-start-val').textContent = rbState.start || '—';
+  document.getElementById('rb-end-val').textContent = rbState.end || '—';
+  const instr = document.getElementById('rb-instr');
+  const totalQ = rbState.mid + 2; // start + mid + end = toplam şehir, soru = mid + 1
+  const soruSayisi = rbState.mid + 1;
+  if (!rbState.start) {
+    instr.innerHTML = 'Haritada <b>başlangıç</b> şehrini seç';
+  } else if (!rbState.end) {
+    instr.innerHTML = 'Haritada <b>bitiş</b> şehrini seç';
+  } else {
+    instr.innerHTML = `Rota: <b>${rbState.start}</b> → <b>${rbState.end}</b><br><small style="opacity:.75">${totalQ} şehir · <b>${soruSayisi} soru</b> · ara şehir sayısını ayarlayıp onayla</small>`;
+  }
+  document.getElementById('rb-confirm').disabled = !(rbState.start && rbState.end);
+}
+
+function confirmRoute() {
+  if (!rbState.start || !rbState.end) return;
+  const cfg = {
+    start: rbState.start,
+    end: rbState.end,
+    intermediate: parseInt(document.getElementById('rb-mid').value, 10)
+  };
+  saveRouteConfig(cfg);
+  closeRouteBuilder();
+  applyRouteConfig();
+  // Restart playthrough with new route
+  stopIdx = 0;
+  qIdx = 0;
+  score = 0;
+  attempts = 0;
+  document.getElementById('win-overlay').classList.remove('show');
+  pickActiveQuestions();
+  updateStats();
+  buildRoutePath();
+  renderCities();
+  moveCar(0);
+  renderQuestion();
+}
+
+// ═══════════════════════════════════════════════════════
+//  MAP RENDERING — load real Turkey GeoJSON and project
+// ═══════════════════════════════════════════════════════
+
+// Mercator projection helpers (operates on plain lng/lat in radians-equivalent)
+function mercatorXY(lng, lat) {
+  const x = lng * Math.PI / 180;
+  const y = Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+  return [x, y];
+}
+
+let projectFn = null; // populated after GeoJSON loads
+
+// Convert a GeoJSON geometry to an SVG path "d" string using projectFn
+function geometryToPath(geom) {
+  const ringToPath = (ring) =>
+    'M' + ring.map(c => projectFn(c[0], c[1]).map(n => n.toFixed(2)).join(',')).join('L') + 'Z';
+  if (geom.type === 'Polygon') {
+    return geom.coordinates.map(ringToPath).join(' ');
+  } else if (geom.type === 'MultiPolygon') {
+    return geom.coordinates.map(poly => poly.map(ringToPath).join(' ')).join(' ');
+  }
+  return '';
+}
+
+// Compute geometric centroid of a feature (for placing province labels)
+function geomCentroid(geom) {
+  let sx = 0, sy = 0, n = 0;
+  const visit = coords => {
+    if (typeof coords[0] === 'number') {
+      sx += coords[0]; sy += coords[1]; n++;
+    } else {
+      coords.forEach(visit);
+    }
+  };
+  visit(geom.coordinates);
+  return n ? [sx / n, sy / n] : null;
+}
+
+// Stable color picker: hash province name to a color in the palette
+function colorForName(name) {
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) >>> 0;
+  return PROVINCE_COLORS[h % PROVINCE_COLORS.length];
+}
+
+async function loadAndRenderMap() {
+  let geojson = null;
+  for (const url of GEOJSON_URLS) {
+    try {
+      const r = await fetch(url);
+      if (!r.ok) continue;
+      geojson = await r.json();
+      break;
+    } catch (err) { /* try next URL */ }
+  }
+  const loadingEl = document.getElementById('map-loading');
+  if (!geojson) {
+    if (loadingEl) loadingEl.textContent = 'Harita yüklenemedi (internet?)';
+    return false;
+  }
+
+  // Compute Mercator bounding box across all features
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  const visit = coords => {
+    if (typeof coords[0] === 'number') {
+      const [mx, my] = mercatorXY(coords[0], coords[1]);
+      if (mx < minX) minX = mx; if (mx > maxX) maxX = mx;
+      if (my < minY) minY = my; if (my > maxY) maxY = my;
+    } else { coords.forEach(visit); }
+  };
+  geojson.features.forEach(f => visit(f.geometry.coordinates));
+
+  // Build projection that fits bbox into the SVG viewBox with padding
+  const W = 800, H = 440;
+  const padX = 40, padTop = 60, padBot = 50;
+  const sx = (W - 2 * padX) / (maxX - minX);
+  const sy = (H - padTop - padBot) / (maxY - minY);
+  const scale = Math.min(sx, sy);
+  const offX = (W - (maxX - minX) * scale) / 2;
+  const offY = padTop;
+  projectFn = (lng, lat) => {
+    const [mx, my] = mercatorXY(lng, lat);
+    return [
+      (mx - minX) * scale + offX,
+      (maxY - my) * scale + offY  // flip Y (north is up)
+    ];
+  };
+
+  // Render provinces
+  const layer = document.getElementById('provinces-layer');
+  const labels = document.getElementById('province-labels');
+  layer.innerHTML = ''; labels.innerHTML = '';
+
+  geojson.features.forEach(feat => {
+    // Only process province polygons; skip Points (e.g. airport markers in this dataset)
+    if (!feat.geometry || (feat.geometry.type !== 'Polygon' && feat.geometry.type !== 'MultiPolygon')) return;
+    const name = (feat.properties && (feat.properties.name || feat.properties.Name || feat.properties.NAME)) || '';
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', geometryToPath(feat.geometry));
+    path.setAttribute('fill', colorForName(name));
+    path.setAttribute('stroke', '#1A2332');
+    path.setAttribute('stroke-width', '0.6');
+    path.setAttribute('stroke-opacity', '0.55');
+    path.setAttribute('stroke-linejoin', 'round');
+    layer.appendChild(path);
+
+    // Province label at centroid
+    const c = geomCentroid(feat.geometry);
+    if (c && name) {
+      // Add to ALL_CITIES list (used for route configuration)
+      ALL_CITIES.push({ name, lat: c[1], lng: c[0] });
+
+      const [cx, cy] = projectFn(c[0], c[1]);
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', cx); t.setAttribute('y', cy + 1.5);
+      t.setAttribute('text-anchor', 'middle');
+      t.setAttribute('font-size', '4');
+      t.setAttribute('font-weight', '700');
+      t.setAttribute('fill', '#1A2332');
+      t.setAttribute('fill-opacity', '0.55');
+      t.setAttribute('font-family', 'Plus Jakarta Sans, sans-serif');
+      t.setAttribute('pointer-events', 'none');
+      t.textContent = name.toLocaleUpperCase('tr-TR');
+      labels.appendChild(t);
+    }
+  });
+
+  if (loadingEl) loadingEl.remove();
+  return true;
+}
+
+function renderProvinces() {
+  // Kept as a no-op shim for backward-compat with restart() flow.
+  // Actual rendering is done once in loadAndRenderMap() at init.
+}
+
+function buildRoutePath() {
+  let d = `M ${STOPS[0].x} ${STOPS[0].y}`;
+  for (let i = 1; i < STOPS.length; i++) {
+    const p = STOPS[i-1], c = STOPS[i];
+    const mx = (p.x + c.x)/2 + (i%2===0 ? 14 : -14);
+    const my = (p.y + c.y)/2 + (i%2===0 ? -8 : 10);
+    d += ` Q ${mx} ${my}, ${c.x} ${c.y}`;
+  }
+  document.getElementById('route-path').setAttribute('d', d);
+}
+
+function renderCities() {
+  const g = document.getElementById('city-layer');
+  g.innerHTML = '';
+  STOPS.forEach((s, i) => {
+    const visited = i < stopIdx;
+    const current = i === stopIdx;
+    const isEnd   = i === STOPS.length - 1;
+    const isStart = i === 0;
+
+    if (current) {
+      const pulse = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      pulse.setAttribute('cx', s.x); pulse.setAttribute('cy', s.y);
+      pulse.setAttribute('r','10'); pulse.setAttribute('fill','none');
+      pulse.setAttribute('stroke','#E8A93D'); pulse.setAttribute('stroke-width','3');
+      const a1 = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      a1.setAttribute('attributeName','r'); a1.setAttribute('from','10'); a1.setAttribute('to','22');
+      a1.setAttribute('dur','1.4s'); a1.setAttribute('repeatCount','indefinite');
+      const a2 = document.createElementNS('http://www.w3.org/2000/svg','animate');
+      a2.setAttribute('attributeName','opacity'); a2.setAttribute('from','0.8'); a2.setAttribute('to','0');
+      a2.setAttribute('dur','1.4s'); a2.setAttribute('repeatCount','indefinite');
+      pulse.appendChild(a1); pulse.appendChild(a2);
+      g.appendChild(pulse);
+    }
+
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', s.x); dot.setAttribute('cy', s.y);
+    dot.setAttribute('r', isStart||isEnd ? 8 : 6);
+    dot.setAttribute('fill', visited ? '#5B8C5A' : current ? '#E8A93D' : isEnd ? '#D94F30' : '#FAF3E7');
+    dot.setAttribute('stroke','#1A2332'); dot.setAttribute('stroke-width','2.2');
+    g.appendChild(dot);
+
+    if (visited) {
+      const check = document.createElementNS('http://www.w3.org/2000/svg','path');
+      check.setAttribute('d',`M ${s.x-3} ${s.y} L ${s.x-1} ${s.y+2} L ${s.x+3} ${s.y-2}`);
+      check.setAttribute('stroke','#FAF3E7'); check.setAttribute('stroke-width','2');
+      check.setAttribute('fill','none'); check.setAttribute('stroke-linecap','round'); check.setAttribute('stroke-linejoin','round');
+      g.appendChild(check);
+    }
+
+    const fontSize = 7;
+    const nw = s.name.length * fontSize * 0.68 + 8;
+    const labelH = 12;
+    const labelY = s.y - (isStart||isEnd ? 10 : 7.5) - labelH - 3;
+    const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+    rect.setAttribute('x', s.x - nw/2); rect.setAttribute('y', labelY);
+    rect.setAttribute('width', nw); rect.setAttribute('height', labelH);
+    rect.setAttribute('rx','5'); rect.setAttribute('fill','#FAF3E7');
+    rect.setAttribute('stroke','#1A2332'); rect.setAttribute('stroke-width','1.2');
+    g.appendChild(rect);
+
+    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+    txt.setAttribute('x', s.x); txt.setAttribute('y', labelY + labelH - 3);
+    txt.setAttribute('text-anchor','middle'); txt.setAttribute('font-size', fontSize);
+    txt.setAttribute('font-weight','800'); txt.setAttribute('fill','#1A2332');
+    txt.setAttribute('font-family','Plus Jakarta Sans, sans-serif');
+    txt.textContent = s.name.toUpperCase();
+    g.appendChild(txt);
+  });
+}
+
+function moveCar(toIdx) {
+  const s = STOPS[toIdx];
+  const car = document.getElementById('car');
+  const wrap = document.getElementById('map-wrap');
+  const svgW = 800, svgH = 440;
+  const wW = wrap.clientWidth, wH = wrap.clientHeight;
+
+  // Calculate how viewBox maps to container with preserveAspectRatio="meet"
+  const scaleX = wW / svgW, scaleY = wH / svgH;
+  const scale = Math.min(scaleX, scaleY);
+  const offX = (wW - svgW * scale) / 2;
+  const offY = (wH - svgH * scale) / 2;
+
+  car.style.left = (offX + s.x * scale) + 'px';
+  car.style.top  = (offY + s.y * scale) + 'px';
+}
+
+// ═══════════════════════════════════════════════════════
+//  QUESTION GAME LOGIC
+// ═══════════════════════════════════════════════════════
+function renderQuestion() {
+  const q = activeQuestions[qIdx];
+  if (!q) return;
+  const sh = shuffleQuestion(q, seed + qIdx * 7);
+  shuffled = sh.shuffled;
+  correctShuffledIdx = sh.correctIdx;
+
+  // Auto-build leg from current cities
+  const fromCity = STOPS[stopIdx]?.name || '';
+  const toCity = STOPS[stopIdx + 1]?.name || '';
+  const legText = (fromCity && toCity) ? `${fromCity} → ${toCity}` : (q.leg || 'Yolculuk');
+
+  document.getElementById('q-leg-label').textContent = legText.toUpperCase();
+  document.getElementById('q-std').textContent = q.standard || '';
+  document.getElementById('q-num').textContent = `Soru ${qIdx+1} / ${activeQuestions.length}`;
+  document.getElementById('q-topic').textContent = q.topic || '';
+  document.getElementById('q-story').textContent = q.story || '';
+  document.getElementById('q-expr').textContent = q.expression || '';
+
+  const optWrap = document.getElementById('options');
+  optWrap.innerHTML = '';
+  shuffled.forEach((text, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `
+      <span class="opt-letter">${String.fromCharCode(65+idx)}</span>
+      <span class="opt-text"></span>
+    `;
+    btn.querySelector('.opt-text').textContent = text;
+    btn.onclick = () => selectAnswer(idx);
+    optWrap.appendChild(btn);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  selected = null; answered = false;
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true; selected = idx;
+  attempts++;
+
+  const isCorrect = idx === correctShuffledIdx;
+  if (isCorrect) score++;
+  updateStats();
+
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === correctShuffledIdx) { b.classList.add('correct'); addIcon(b, true); }
+    else if (i === idx && !isCorrect) { b.classList.add('wrong'); addIcon(b, false); }
+    else b.classList.add('dimmed');
+  });
+
+  const q = activeQuestions[qIdx];
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (isCorrect ? 'ok' : 'err');
+
+  document.getElementById('fb-icon').innerHTML = isCorrect
+    ? '<polyline points="20 6 9 17 4 12" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="10" stroke="currentColor" fill="none" stroke-width="2"/>'
+    : '<circle cx="12" cy="12" r="10" stroke="currentColor" fill="none" stroke-width="2"/><line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>';
+  document.getElementById('fb-icon').style.color = isCorrect ? '#5B8C5A' : '#D94F30';
+
+  document.getElementById('fb-title').textContent = isCorrect
+    ? 'Doğru! Bir sonraki şehre geçiyoruz.'
+    : 'Yanlış. Bir önceki şehre dönüyoruz, tekrar deneyin.';
+  document.getElementById('fb-exp').textContent = q.explanation || '';
+
+  const cont = document.getElementById('btn-continue');
+  cont.textContent = isCorrect ? 'Devam et →' : 'Tekrar dene';
+  cont.className = 'btn-continue ' + (isCorrect ? 'ok' : 'err');
+}
+
+function addIcon(btn, correct) {
+  const ic = document.createElement('span');
+  ic.className = 'opt-icon';
+  ic.innerHTML = correct
+    ? `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+  btn.appendChild(ic);
+}
+
+function handleContinue() {
+  const isCorrect = selected === correctShuffledIdx;
+  hideQuestion();
+
+  if (isCorrect) {
+    setTimeout(() => {
+      stopIdx++;
+      updateStats();
+      renderCities();
+      moveCar(stopIdx);
+      if (stopIdx === STOPS.length - 1) {
+        setTimeout(() => showWin(), 1400);
+      } else {
+        setTimeout(() => {
+          qIdx++;
+          seed += 3;
+          showQuestion();
+        }, 1400);
+      }
+    }, 100);
+  } else {
+    // Go back 1 stop, then return
+    const orig = stopIdx;
+    const back = Math.max(0, orig - 1);
+    setTimeout(() => {
+      stopIdx = back;
+      renderCities();
+      moveCar(back);
+    }, 100);
+    setTimeout(() => {
+      stopIdx = orig;
+      renderCities();
+      moveCar(orig);
+    }, 1700);
+    setTimeout(() => {
+      seed += 5;
+      // Havuzdan rastgele farklı bir soru seç
+      const currentQ = activeQuestions[qIdx];
+      const pool = QUESTIONS.filter(q => q !== currentQ);
+      if (pool.length > 0) {
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+        activeQuestions[qIdx] = pick;
+      }
+      showQuestion();
+    }, 3000);
+  }
+}
+
+function hideQuestion() {
+  document.getElementById('q-card').classList.add('hidden');
+}
+function showQuestion() {
+  renderQuestion();
+  document.getElementById('q-card').classList.remove('hidden');
+}
+function showWin() {
+  const endCity = STOPS.length ? STOPS[STOPS.length - 1].name : 'Hedefe';
+  document.getElementById('win-title').textContent = `${endCity}'ya Vardık!`;
+  document.getElementById('win-info').innerHTML = `${score} doğru cevapla yolculuk tamamlandı.<br>Toplam deneme: ${attempts}`;
+  document.getElementById('win-overlay').classList.add('show');
+}
+
+function updateStats() {
+  const totalLegs = STOPS.length - 1;
+  document.getElementById('stat-score').textContent = score;
+  document.getElementById('stat-city').innerHTML = `${stopIdx} <span style="opacity:.4;font-size:.9rem">/ ${totalLegs}</span>`;
+  const qNumEl = document.getElementById('q-num');
+  if (qNumEl) {
+    qNumEl.textContent = `Soru ${qIdx+1} / ${activeQuestions.length}`;
+  }
+}
+
+function restart() {
+  stopIdx = 0; qIdx = 0; score = 0; attempts = 0; seed = 1;
+  selected = null; answered = false;
+  pickActiveQuestions();
+  document.getElementById('win-overlay').classList.remove('show');
+  updateStats();
+  renderCities();
+  moveCar(0);
+  showQuestion();
+}
+
+// ═══════════════════════════════════════════════════════
+//  POOL MODAL
+// ═══════════════════════════════════════════════════════
+function openPool() {
+  renderPool();
+  document.getElementById('pool-modal').classList.add('show');
+}
+function closePool() {
+  document.getElementById('pool-modal').classList.remove('show');
+}
+function renderPool() {
+  document.getElementById('pool-count').textContent = `${QUESTIONS.length} soru`;
+  const list = document.getElementById('pool-list');
+  list.innerHTML = '';
+  if (QUESTIONS.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:2rem;color:rgba(26,35,50,.5);font-style:italic;">Havuz boş. "+ Yeni Soru" ile ekleyebilirsiniz.</div>';
+    return;
+  }
+  QUESTIONS.forEach((q, i) => {
+    const item = document.createElement('div');
+    item.className = 'pool-item';
+    const info = document.createElement('div');
+    info.className = 'pool-item-info';
+    const topic = document.createElement('div');
+    topic.className = 'pool-item-topic';
+    topic.textContent = `${i+1}. ${q.topic || '(başlıksız)'}`;
+    const expr = document.createElement('div');
+    expr.className = 'pool-item-expr';
+    expr.textContent = q.expression || '';
+    const meta = document.createElement('div');
+    meta.className = 'pool-item-meta';
+    meta.textContent = q.standard || '';
+    info.appendChild(topic);
+    info.appendChild(expr);
+    if (q.standard) info.appendChild(meta);
+
+    const actions = document.createElement('div');
+    const editBtn = document.createElement('button');
+    editBtn.className = 'btn-edit'; editBtn.textContent = 'Düzenle';
+    editBtn.onclick = () => openEditor(i);
+    const delBtn = document.createElement('button');
+    delBtn.className = 'btn-delete'; delBtn.textContent = 'Sil';
+    delBtn.onclick = () => deleteQuestion(i);
+    actions.appendChild(editBtn);
+    actions.appendChild(delBtn);
+
+    item.appendChild(info);
+    item.appendChild(actions);
+    list.appendChild(item);
+  });
+}
+
+function deleteQuestion(i) {
+  const q = QUESTIONS[i];
+  if (!confirm(`"${q.topic || 'Bu soru'}" silinsin mi?`)) return;
+  QUESTIONS.splice(i, 1);
+  savePool();
+  renderPool();
+}
+
+function resetPool() {
+  if (!confirm('Tüm sorular silinip varsayılan 20 soruya geri dönülecek. Emin misiniz?')) return;
+  QUESTIONS = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+  savePool();
+  renderPool();
+}
+
+// ═══════════════════════════════════════════════════════
+//  EDITOR MODAL
+// ═══════════════════════════════════════════════════════
+function openEditor(idx) {
+  editingIdx = idx;
+  const isNew = idx === -1;
+  document.getElementById('editor-title').textContent = isNew ? 'Yeni Soru Ekle' : 'Soru Düzenle';
+
+  const q = isNew
+    ? { leg:'Yol Üzerinde', topic:'', standard:'', story:'', expression:'',
+        options:[{text:'',correct:true},{text:'',correct:false},{text:'',correct:false},{text:'',correct:false}],
+        explanation:'' }
+    : QUESTIONS[idx];
+
+  document.getElementById('ed-leg').value = q.leg || '';
+  document.getElementById('ed-topic').value = q.topic || '';
+  document.getElementById('ed-standard').value = q.standard || '';
+  document.getElementById('ed-story').value = q.story || '';
+  document.getElementById('ed-expr').value = q.expression || '';
+  document.getElementById('ed-explanation').value = q.explanation || '';
+
+  for (let i = 0; i < 4; i++) {
+    const opt = q.options[i] || { text:'', correct:false };
+    document.getElementById('ed-opt-' + i).value = opt.text || '';
+    document.getElementById('ed-r-' + i).checked = !!opt.correct;
+  }
+
+  document.getElementById('editor-modal').classList.add('show');
+}
+
+function closeEditor() {
+  document.getElementById('editor-modal').classList.remove('show');
+}
+
+function saveQuestion() {
+  // Validate
+  const topic = document.getElementById('ed-topic').value.trim();
+  const expression = document.getElementById('ed-expr').value.trim();
+  const story = document.getElementById('ed-story').value.trim();
+  const opts = [];
+  let correctIdx = -1;
+  for (let i = 0; i < 4; i++) {
+    const text = document.getElementById('ed-opt-' + i).value.trim();
+    const isCorrect = document.getElementById('ed-r-' + i).checked;
+    opts.push({ text, correct: isCorrect });
+    if (isCorrect) correctIdx = i;
+  }
+
+  if (!topic) return alert('Lütfen bir konu başlığı girin.');
+  if (!expression && !story) return alert('Lütfen bir hikaye veya matematiksel ifade girin.');
+  if (opts.some(o => !o.text)) return alert('Lütfen tüm 4 seçeneği doldurun.');
+  if (correctIdx === -1) return alert('Lütfen doğru olan seçeneği işaretleyin.');
+
+  const q = {
+    leg: document.getElementById('ed-leg').value.trim() || 'Yol Üzerinde',
+    topic,
+    standard: document.getElementById('ed-standard').value.trim(),
+    story,
+    expression,
+    options: opts,
+    explanation: document.getElementById('ed-explanation').value.trim()
+  };
+
+  if (editingIdx === -1) {
+    QUESTIONS.push(q);
+  } else {
+    QUESTIONS[editingIdx] = q;
+  }
+  savePool();
+  closeEditor();
+  renderPool();
+}
+
+// Close modals when clicking the dim background
+document.getElementById('pool-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'pool-modal') closePool();
+});
+document.getElementById('editor-modal').addEventListener('click', (e) => {
+  if (e.target.id === 'editor-modal') closeEditor();
+});
+
+// Route builder slider updates
+document.getElementById('rb-mid').addEventListener('input', (e) => {
+  document.getElementById('rb-mid-val').textContent = e.target.value;
+  rbState.mid = parseInt(e.target.value, 10);
+  if (rbState.start && rbState.end) renderPickerDots();
+  updateRouteBuilderUI();
+});
+document.getElementById('rb-clear-start').addEventListener('click', () => {
+  rbState.start = rbState.end; rbState.end = null;
+  renderPickerDots(); updateRouteBuilderUI();
+});
+document.getElementById('rb-clear-end').addEventListener('click', () => {
+  rbState.end = null;
+  renderPickerDots(); updateRouteBuilderUI();
+});
+
+// ═══════════════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════════════
+(async () => {
+  await loadPool();   // bulut -> yerel -> varsayilan
+  pickActiveQuestions();
+  renderQuestion();
+
+  // Load Turkey GeoJSON, then build route and cities (which depend on projected coords)
+  await loadAndRenderMap();
+  applyRouteConfig();
+  buildRoutePath();
+  renderCities();
+  moveCar(0);
+})();
+
+// Reposition car on window resize
+window.addEventListener('resize', () => {
+  if (typeof stopIdx !== 'undefined' && STOPS.length) moveCar(stopIdx);
+});
+</script>
+
+<script>
+(function(){
+  function inField(t){return t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.isContentEditable);}
+  document.addEventListener("contextmenu",function(e){e.preventDefault();});
+  document.addEventListener("copy",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("cut",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("dragstart",function(e){if(!inField(e.target))e.preventDefault();});
+  document.addEventListener("keydown",function(e){
+    var k=(e.key||"").toLowerCase();
+    if(e.key==="F12"){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==="i"||k==="j"||k==="c")){e.preventDefault();return false;}
+    if((e.ctrlKey||e.metaKey)&&!inField(e.target)&&(k==="u"||k==="s")){e.preventDefault();return false;}
+  });
+})();
+</script>
+
+<!-- ===== MFI Yonetici Girisi (yalnizca bulut acikken gorunur) ===== -->
+<div id="mfiAdmin"></div>
+<script>
+(function(){
+  if (!window.__cloudAuth) { return; }
+  var auth = window.__cloudAuth;
+  var host = document.getElementById('mfiAdmin');
+  host.innerHTML =
+    '<button id="mfiAdminBtn" title="Yonetici Girisi">\ud83d\udd11</button>' +
+    '<div id="mfiAdminModal"><div id="mfiAdminCard">' +
+      '<h3>Yonetici Girisi</h3>' +
+      '<p id="mfiAdminStatus">Sorulari duzenleyip buluta kaydetmek icin giris yap.</p>' +
+      '<input id="mfiEmail" type="email" placeholder="E-posta" autocomplete="username">' +
+      '<input id="mfiPass" type="password" placeholder="Sifre" autocomplete="current-password">' +
+      '<div class="mfiRow"><button id="mfiLogin">Giris</button><button id="mfiLogout" style="display:none">Cikis</button><button id="mfiClose">Kapat</button></div>' +
+    '</div></div><div id="mfiToast"></div>';
+  var st = document.createElement('style');
+  st.textContent =
+   '#mfiAdminBtn{position:fixed;right:16px;bottom:16px;z-index:2147483000;width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:#14183A;color:#fff;font-size:20px;cursor:pointer;box-shadow:0 8px 22px -6px rgba(0,0,0,.5);transition:transform .15s}'+
+   '#mfiAdminBtn:hover{transform:translateY(-2px)}'+
+   '#mfiAdminModal{position:fixed;inset:0;z-index:2147483001;display:none;align-items:center;justify-content:center;background:rgba(6,8,20,.6);backdrop-filter:blur(4px);padding:20px}'+
+   '#mfiAdminModal.show{display:flex}'+
+   '#mfiAdminCard{width:100%;max-width:340px;background:#14183A;color:#EEF0FF;border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:22px;font-family:Inter,system-ui,sans-serif;box-shadow:0 30px 70px -20px rgba(0,0,0,.7)}'+
+   '#mfiAdminCard h3{margin:0 0 6px;font-size:18px;font-weight:800}'+
+   '#mfiAdminStatus{margin:0 0 14px;font-size:13px;color:#A6ACD6;line-height:1.5}'+
+   '#mfiAdminCard input{width:100%;margin-bottom:10px;padding:11px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-size:14px;-webkit-user-select:text;user-select:text}'+
+   '#mfiAdminCard input::placeholder{color:#727aa8}'+
+   '.mfiRow{display:flex;gap:8px;margin-top:4px}'+
+   '.mfiRow button{flex:1;padding:10px;border-radius:10px;border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}'+
+   '#mfiLogin{background:#5B5BF0;color:#fff}#mfiLogout{background:#F43F5E;color:#fff}#mfiClose{background:rgba(255,255,255,.1);color:#EEF0FF}'+
+   '#mfiToast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(20px);z-index:2147483002;background:#10B981;color:#06281d;font-weight:800;font-size:13px;padding:10px 18px;border-radius:999px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}'+
+   '#mfiToast.show{opacity:1;transform:translateX(-50%) translateY(0)}';
+  document.head.appendChild(st);
+  var modal=document.getElementById('mfiAdminModal'), status=document.getElementById('mfiAdminStatus');
+  var loginBtn=document.getElementById('mfiLogin'), logoutBtn=document.getElementById('mfiLogout');
+  var emailEl=document.getElementById('mfiEmail'), passEl=document.getElementById('mfiPass'), btn=document.getElementById('mfiAdminBtn');
+  window.__cloudToast=function(m){var t=document.getElementById('mfiToast');t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2200);};
+  btn.addEventListener('click',function(){modal.classList.add('show');});
+  document.getElementById('mfiClose').addEventListener('click',function(){modal.classList.remove('show');});
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.classList.remove('show');});
+  loginBtn.addEventListener('click',function(){
+    var em=emailEl.value.trim(), pw=passEl.value;
+    if(!em||!pw){status.textContent='E-posta ve sifre gerekli.';return;}
+    status.textContent='Giris yapiliyor...';
+    auth.signInWithEmailAndPassword(em,pw).then(function(){passEl.value='';})
+      .catch(function(e){status.textContent='Giris basarisiz: '+e.message;});
+  });
+  logoutBtn.addEventListener('click',function(){auth.signOut();});
+  auth.onAuthStateChanged(function(u){
+    if(u){
+      status.textContent='Giris yapildi: '+u.email+'. Artik "Sorular" panelinden duzenleyip kaydedebilirsin.';
+      loginBtn.style.display='none';logoutBtn.style.display='';emailEl.style.display='none';passEl.style.display='none';btn.textContent='\ud83d\udd13';
+    } else {
+      status.textContent='Sorulari duzenleyip buluta kaydetmek icin giris yap.';
+      loginBtn.style.display='';logoutBtn.style.display='none';emailEl.style.display='';passEl.style.display='';btn.textContent='\ud83d\udd11';
+    }
+  });
+})();
+</script>
+</body>
+</html>

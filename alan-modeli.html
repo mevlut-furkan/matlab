@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alan Modeli · Cebir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4F5FB;--bg-a:rgba(6,182,212,.12);--bg-b:rgba(59,130,246,.12);--bg-c:rgba(236,72,153,.10);
+  --surface:#FFFFFF;--surface-2:#FBFBFE;--ink:#14183A;--muted:#5A6080;--faint:#8A90B4;
+  --border:rgba(20,24,58,.10);--border-strong:rgba(20,24,58,.16);
+  --shadow:0 1px 2px rgba(20,24,58,.04),0 12px 32px -12px rgba(20,24,58,.18);
+  --cyan:#06B6D4;--blue:#3B82F6;--violet:#8B5CF6;--emerald:#10B981;--amber:#F59E0B;--rose:#F43F5E;
+}
+[data-theme="dark"]{
+  --bg:#0A0C1C;--bg-a:rgba(6,182,212,.18);--bg-b:rgba(59,130,246,.16);--bg-c:rgba(236,72,153,.12);
+  --surface:rgba(22,26,52,.72);--surface-2:rgba(28,32,62,.72);--ink:#EEF0FF;--muted:#A6ACD6;--faint:#727aa8;
+  --border:rgba(255,255,255,.10);--border-strong:rgba(255,255,255,.18);
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 36px -14px rgba(0,0,0,.6);
+}
+html,body{min-height:100%}
+body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;
+  -webkit-font-smoothing:antialiased;position:relative;overflow-x:hidden;transition:background .4s,color .4s;
+  user-select:none;-webkit-user-select:none;}
+.aurora{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.aurora span{position:absolute;border-radius:50%;filter:blur(70px);animation:drift 22s ease-in-out infinite}
+.aurora .a1{width:46vmax;height:46vmax;top:-14vmax;left:-10vmax;background:var(--bg-a)}
+.aurora .a2{width:40vmax;height:40vmax;top:8vmax;right:-12vmax;background:var(--bg-b);animation-delay:-7s}
+.aurora .a3{width:38vmax;height:38vmax;bottom:-16vmax;left:30vmax;background:var(--bg-c);animation-delay:-13s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vmax,3vmax) scale(1.08)}66%{transform:translate(-3vmax,2vmax) scale(.96)}}
+.wrap{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:1.2rem 1.2rem 4rem}
+
+.back-btn{position:fixed;top:12px;left:12px;z-index:60;display:inline-flex;align-items:center;justify-content:center;
+  width:38px;height:38px;border-radius:50%;text-decoration:none;background:rgba(20,24,58,.78);color:#EEF0FF;
+  border:1px solid rgba(255,255,255,.22);box-shadow:0 4px 14px -4px rgba(0,0,0,.5);backdrop-filter:blur(6px);
+  opacity:.72;transition:opacity .2s,transform .15s,background .2s}
+.back-btn:hover{opacity:1;transform:translateY(-1px);background:#14183A}
+.back-btn svg{width:16px;height:16px}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:60;width:38px;height:38px;border-radius:50%;
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);cursor:pointer;
+  display:grid;place-items:center;backdrop-filter:blur(8px);transition:transform .15s}
+.theme-toggle:hover{transform:translateY(-1px)}
+.theme-toggle svg{width:18px;height:18px}.theme-toggle .moon{display:none}
+[data-theme="dark"] .theme-toggle .sun{display:none}[data-theme="dark"] .theme-toggle .moon{display:block}
+
+.hero{text-align:center;margin:2.6rem 0 1.4rem;animation:rise .6s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.eyebrow{font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan)}
+.hero h1{font-family:'Sora',sans-serif;font-weight:800;letter-spacing:-.03em;font-size:clamp(1.9rem,5vw,2.8rem);margin:.4rem 0 .3rem}
+.hero h1 .g{background:linear-gradient(100deg,var(--cyan),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--muted);max-width:48ch;margin:0 auto;font-size:.98rem}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);
+  backdrop-filter:blur(12px);padding:1.4rem;margin-bottom:1.2rem;animation:rise .6s ease both}
+.tabs{display:flex;gap:.5rem;background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:.35rem;margin-bottom:1.2rem}
+.tab{flex:1;padding:.65rem;border:none;border-radius:10px;background:transparent;color:var(--muted);
+  font-family:'Sora',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;transition:.2s}
+.tab.active{background:linear-gradient(100deg,var(--cyan),var(--blue));color:#fff;box-shadow:0 6px 16px -6px var(--blue)}
+.panel{display:none}.panel.active{display:block;animation:rise .4s ease both}
+.tip{font-size:.88rem;color:var(--muted);text-align:center;margin-bottom:1rem}
+.tip b{color:var(--cyan)}
+
+/* ---- RESIZE MODE ---- */
+.stage{position:relative;margin:0 auto;touch-action:none;
+  width:min(100%,420px);height:300px;border-radius:12px;
+  background:repeating-linear-gradient(0deg,transparent 0 13px,rgba(127,127,140,.08) 13px 14px),
+             repeating-linear-gradient(90deg,transparent 0 13px,rgba(127,127,140,.08) 13px 14px);
+  border:1px dashed var(--border-strong)}
+.rect{position:absolute;left:0;top:0;border-radius:6px;overflow:visible}
+.region{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#06121f;font-weight:800;font-family:'Sora',sans-serif;border:1px solid rgba(255,255,255,.5);border-radius:4px;
+  text-align:center;overflow:hidden}
+.region .d{font-size:.6rem;opacity:.8;font-family:'Space Mono',monospace}
+.region .a{font-size:.95rem}
+.r0{background:var(--cyan)}.r1{background:var(--blue)}.r2{background:var(--violet)}.r3{background:var(--amber)}
+.handle{position:absolute;background:var(--ink);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);z-index:5;touch-action:none;cursor:grab}
+.handle:active{cursor:grabbing}
+.handle.h-w{width:16px;height:40px;border-radius:6px;cursor:ew-resize}
+.handle.h-h{width:40px;height:16px;border-radius:6px;cursor:ns-resize}
+.dimlab{position:absolute;font-family:'Space Mono',monospace;font-weight:700;font-size:.8rem;color:var(--cyan);background:var(--surface);padding:1px 6px;border-radius:6px;border:1px solid var(--border)}
+.readout{text-align:center;margin-top:1rem;font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1rem,3.4vw,1.35rem)}
+.readout .sum{color:var(--emerald)}
+
+/* ---- TILES MODE ---- */
+.palette{display:flex;gap:.7rem;justify-content:center;align-items:flex-end;margin-bottom:.9rem;flex-wrap:wrap}
+.psrc{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#06121f;font-family:'Sora',sans-serif;font-weight:800;border:1px solid rgba(255,255,255,.5);border-radius:6px;
+  cursor:grab;touch-action:none;user-select:none}
+.psrc:active{cursor:grabbing}
+.psrc.t-x2{width:56px;height:56px;background:var(--cyan)}
+.psrc.t-x{width:56px;height:26px;background:var(--blue);color:#fff}
+.psrc.t-1{width:26px;height:26px;background:var(--amber)}
+.psrc .lab{font-size:.6rem;position:absolute;bottom:-16px;color:var(--faint);white-space:nowrap}
+.canvas{position:relative;width:100%;height:260px;border-radius:12px;border:1px dashed var(--border-strong);
+  background:repeating-linear-gradient(0deg,transparent 0 13px,rgba(127,127,140,.06) 13px 14px),
+             repeating-linear-gradient(90deg,transparent 0 13px,rgba(127,127,140,.06) 13px 14px);
+  overflow:hidden;touch-action:none}
+.tile{position:absolute;display:flex;align-items:center;justify-content:center;color:#06121f;font-family:'Sora',sans-serif;
+  font-weight:800;border:1px solid rgba(255,255,255,.55);border-radius:6px;cursor:grab;touch-action:none;
+  box-shadow:0 3px 10px -3px rgba(0,0,0,.4);animation:pop .2s ease both}
+@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+.tile:active{cursor:grabbing}
+.tile.t-x2{width:54px;height:54px;background:var(--cyan)}
+.tile.t-x{width:54px;height:24px;background:var(--blue);color:#fff;font-size:.85rem}
+.tile.t-1{width:24px;height:24px;background:var(--amber);font-size:.8rem}
+.trash{display:inline-flex;align-items:center;gap:.4rem;margin-top:.8rem;padding:.5rem .9rem;border-radius:11px;
+  border:1px dashed var(--border-strong);background:var(--surface-2);color:var(--muted);font-size:.82rem;font-weight:700}
+.trash.over{border-color:var(--rose);color:var(--rose)}
+.tilebar{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap;margin-top:.9rem}
+.poly{font-family:'Sora',sans-serif;font-weight:800;font-size:clamp(1rem,3.4vw,1.35rem)}
+.poly .v{color:var(--cyan)}
+.ghost{position:fixed;z-index:999;pointer-events:none;opacity:.85;border-radius:6px;display:flex;align-items:center;justify-content:center;color:#06121f;font-family:'Sora',sans-serif;font-weight:800}
+
+.footer{margin-top:2rem;text-align:center;font-size:.78rem;color:var(--muted)}
+.footer b{font-family:'Sora',sans-serif;color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+
+<a class="back-btn" href="cebir_portal.html" aria-label="Cebir Portalına Dön">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+</a>
+<button class="theme-toggle" id="themeToggle" aria-label="Tema değiştir" title="Tema değiştir">
+  <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+  <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+</button>
+
+<div class="wrap">
+  <div class="hero">
+    <span class="eyebrow">Cebir · Sürükle ve Keşfet</span>
+    <h1>Alan <span class="g">Modeli</span></h1>
+    <p>Elinle sürükleyerek dene. Çarpma bir dikdörtgenin alanıdır — büyüt, küçült, parçalara ayır.</p>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" data-p="resize" onclick="setTab('resize')">↔️ Kenarı Sürükle</button>
+      <button class="tab" data-p="tiles" onclick="setTab('tiles')">🧩 Karoları Sürükle</button>
+    </div>
+
+    <!-- RESIZE -->
+    <div class="panel active" id="p-resize">
+      <p class="tip">Mavi ve dikey tutamakları <b>sürükle</b>; dikdörtgen büyüyüp küçülürken alan parçaları değişsin.</p>
+      <div class="stage" id="stage">
+        <div class="rect" id="rect"></div>
+        <div class="handle h-w" id="hw"></div>
+        <div class="handle h-h" id="hh"></div>
+        <div class="dimlab" id="labW"></div>
+        <div class="dimlab" id="labH"></div>
+      </div>
+      <div class="readout" id="readout"></div>
+    </div>
+
+    <!-- TILES -->
+    <div class="panel" id="p-tiles">
+      <p class="tip">Karoları <b>tepsiye sürükle</b>. İstediğini geri çöp kutusuna sürükleyerek sil. Oluşturduğun ifadeyi izle!</p>
+      <div class="palette">
+        <div class="psrc t-x2" data-t="x2">x²<span class="lab">x² karosu</span></div>
+        <div class="psrc t-x"  data-t="x">x<span class="lab">x karosu</span></div>
+        <div class="psrc t-1"  data-t="1">1<span class="lab">birim</span></div>
+      </div>
+      <div class="canvas" id="canvas"></div>
+      <div class="tilebar">
+        <span class="trash" id="trash">🗑️ Silmek için buraya sürükle</span>
+        <span class="poly" id="poly"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Hazırlayan <b>Mevlüt Furkan İnce</b></div>
+</div>
+
+<script>
+/* tema + kopyalama engeli (sürükleme korunur) */
+(function(){var r=document.documentElement,K="oa-theme",s=null;try{s=localStorage.getItem(K)}catch(e){}
+  r.setAttribute("data-theme",s||"dark");
+  document.getElementById("themeToggle").addEventListener("click",function(){
+    var n=r.getAttribute("data-theme")==="dark"?"light":"dark";r.setAttribute("data-theme",n);try{localStorage.setItem(K,n)}catch(e){}});})();
+(function(){function inF(t){return t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.isContentEditable);}
+  document.addEventListener("contextmenu",e=>e.preventDefault());
+  document.addEventListener("copy",e=>{if(!inF(e.target))e.preventDefault();});
+  document.addEventListener("keydown",function(e){var k=(e.key||"").toLowerCase();
+    if(e.key==="F12"){e.preventDefault();}
+    if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==="i"||k==="j"||k==="c")){e.preventDefault();}
+    if((e.ctrlKey||e.metaKey)&&!inF(e.target)&&(k==="u"||k==="s")){e.preventDefault();}});})();
+
+function setTab(p){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.p===p));
+  document.querySelectorAll('.panel').forEach(el=>el.classList.toggle('active',el.id==='p-'+p));
+  if(p==='resize') drawRect();
+}
+
+/* ============ RESIZE MODE ============ */
+const UNIT=14, MINA=2, MAXA=19, MINB=2, MAXB=16;
+let A=8, B=6;
+const stage=document.getElementById('stage'), rect=document.getElementById('rect'),
+      hw=document.getElementById('hw'), hh=document.getElementById('hh'),
+      labW=document.getElementById('labW'), labH=document.getElementById('labH'),
+      readout=document.getElementById('readout');
+
+function partsOf(n){
+  if(n<10) return [n];
+  const t=Math.floor(n/10)*10, o=n%10;
+  return o>0?[t,o]:[t];
+}
+function drawRect(){
+  const w=A*UNIT, h=B*UNIT;
+  rect.style.width=w+'px'; rect.style.height=h+'px';
+  const cols=partsOf(A), rows=partsOf(B);
+  let html='', ci=0, yOff=0;
+  rows.forEach((rv,ri)=>{
+    let xOff=0;
+    cols.forEach((cv,k)=>{
+      const cls='r'+((ri*2+k)%4);
+      html+=`<div class="region ${cls}" style="left:${xOff}px;top:${yOff}px;width:${cv*UNIT}px;height:${rv*UNIT}px">
+        <span class="d">${cv}×${rv}</span><span class="a">${cv*rv}</span></div>`;
+      xOff+=cv*UNIT; ci++;
+    });
+    yOff+=rv*UNIT;
+  });
+  rect.innerHTML=html;
+  // handles
+  hw.style.left=(w-8)+'px'; hw.style.top=(h/2-20)+'px';
+  hh.style.left=(w/2-20)+'px'; hh.style.top=(h-8)+'px';
+  labW.textContent=A; labW.style.left=(w/2-10)+'px'; labW.style.top='-22px';
+  labH.textContent=B; labH.style.left=(w+6)+'px'; labH.style.top=(h/2-12)+'px';
+  // readout: full sum
+  const cellsSum=[]; rows.forEach(rv=>cols.forEach(cv=>cellsSum.push(cv*rv)));
+  readout.innerHTML=`${A} × ${B} = ${cellsSum.join(' + ')} = <span class="sum">${A*B}</span>`;
+}
+function dragHandle(handle,axis){
+  handle.addEventListener('pointerdown',e=>{
+    e.preventDefault(); handle.setPointerCapture(e.pointerId);
+    const move=ev=>{
+      const r=stage.getBoundingClientRect();
+      if(axis==='w'){A=Math.max(MINA,Math.min(MAXA,Math.round((ev.clientX-r.left)/UNIT)));}
+      else{B=Math.max(MINB,Math.min(MAXB,Math.round((ev.clientY-r.top)/UNIT)));}
+      drawRect();
+    };
+    const up=ev=>{handle.releasePointerCapture(e.pointerId);handle.removeEventListener('pointermove',move);handle.removeEventListener('pointerup',up);};
+    handle.addEventListener('pointermove',move);
+    handle.addEventListener('pointerup',up);
+  });
+}
+dragHandle(hw,'w'); dragHandle(hh,'h');
+drawRect();
+
+/* ============ TILES MODE ============ */
+const canvas=document.getElementById('canvas'), trash=document.getElementById('trash'), poly=document.getElementById('poly');
+const SIZES={x2:[54,54],x:[54,24],'1':[24,24]};
+const LABELS={x2:'x²',x:'x','1':'1'};
+let counts={x2:0,x:0,'1':0};
+
+function updatePoly(){
+  const a=counts.x2,b=counts.x,c=counts['1'];
+  let parts=[];
+  if(a>0)parts.push(`<span class="v">${a===1?'':a}x²</span>`);
+  if(b>0)parts.push(`<span class="v">${b===1?'':b}x</span>`);
+  if(c>0)parts.push(`<span class="v">${c}</span>`);
+  poly.innerHTML = parts.length? 'İfade: '+parts.join(' + ') : 'İfade: —';
+}
+function makeTile(type,x,y){
+  const [w,h]=SIZES[type];
+  const t=document.createElement('div');
+  t.className='tile t-'+type; t.textContent=LABELS[type]; t.dataset.t=type;
+  t.style.left=Math.max(0,Math.min(canvas.clientWidth-w,x-w/2))+'px';
+  t.style.top =Math.max(0,Math.min(canvas.clientHeight-h,y-h/2))+'px';
+  canvas.appendChild(t);
+  counts[type]++; updatePoly();
+  attachTileDrag(t);
+}
+function removeTile(t){counts[t.dataset.t]--; t.remove(); updatePoly();}
+
+let ghost=null;
+function startGhost(type,x,y){
+  const [w,h]=SIZES[type];
+  ghost=document.createElement('div'); ghost.className='ghost t-'+type;
+  ghost.textContent=LABELS[type];
+  ghost.style.width=w+'px';ghost.style.height=h+'px';
+  ghost.style.background=getComputedStyle(document.querySelector('.psrc.t-'+type)).backgroundColor;
+  document.body.appendChild(ghost); moveGhost(x,y);
+}
+function moveGhost(x,y){if(ghost){ghost.style.left=(x-ghost.offsetWidth/2)+'px';ghost.style.top=(y-ghost.offsetHeight/2)+'px';}}
+function endGhost(){if(ghost){ghost.remove();ghost=null;}}
+function overEl(el,x,y){const r=el.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;}
+
+/* palette: drag to create */
+document.querySelectorAll('.psrc').forEach(src=>{
+  src.addEventListener('pointerdown',e=>{
+    e.preventDefault(); const type=src.dataset.t;
+    src.setPointerCapture(e.pointerId);
+    startGhost(type,e.clientX,e.clientY);
+    const move=ev=>{moveGhost(ev.clientX,ev.clientY);trash.classList.toggle('over',overEl(trash,ev.clientX,ev.clientY));};
+    const up=ev=>{
+      src.releasePointerCapture(e.pointerId);
+      src.removeEventListener('pointermove',move);src.removeEventListener('pointerup',up);
+      endGhost(); trash.classList.remove('over');
+      if(overEl(canvas,ev.clientX,ev.clientY)){
+        const r=canvas.getBoundingClientRect();
+        makeTile(type,ev.clientX-r.left,ev.clientY-r.top);
+      }
+    };
+    src.addEventListener('pointermove',move);
+    src.addEventListener('pointerup',up);
+  });
+});
+
+/* placed tile: drag to move / trash to delete */
+function attachTileDrag(t){
+  t.addEventListener('pointerdown',e=>{
+    e.preventDefault(); e.stopPropagation(); t.setPointerCapture(e.pointerId);
+    const r=canvas.getBoundingClientRect();
+    const ox=e.clientX-(r.left+t.offsetLeft), oy=e.clientY-(r.top+t.offsetTop);
+    const move=ev=>{
+      let nx=ev.clientX-r.left-ox, ny=ev.clientY-r.top-oy;
+      t.style.left=Math.max(0,Math.min(canvas.clientWidth-t.offsetWidth,nx))+'px';
+      t.style.top =Math.max(0,Math.min(canvas.clientHeight-t.offsetHeight,ny))+'px';
+      trash.classList.toggle('over',overEl(trash,ev.clientX,ev.clientY));
+    };
+    const up=ev=>{
+      t.releasePointerCapture(e.pointerId);
+      t.removeEventListener('pointermove',move);t.removeEventListener('pointerup',up);
+      trash.classList.remove('over');
+      if(overEl(trash,ev.clientX,ev.clientY) || !overEl(canvas,ev.clientX,ev.clientY)){removeTile(t);}
+    };
+    t.addEventListener('pointermove',move);
+    t.addEventListener('pointerup',up);
+  });
+}
+updatePoly();
+</script>
+</body>
+</html>
