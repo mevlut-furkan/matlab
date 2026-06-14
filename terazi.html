@@ -15,12 +15,14 @@
   --border:rgba(20,24,58,.10);--border-strong:rgba(20,24,58,.16);
   --shadow:0 1px 2px rgba(20,24,58,.04),0 12px 32px -12px rgba(20,24,58,.18);
   --violet:#8B5CF6;--indigo:#5B5BF0;--rose:#F43F5E;--amber:#F59E0B;--emerald:#10B981;--blue:#3B82F6;
+  --wood1:#B07A4B;--wood2:#8A5A33;--metal1:#E7ECF5;--metal2:#AAB4CC;
 }
 [data-theme="dark"]{
   --bg:#0A0C1C;--bg-a:rgba(139,92,246,.18);--bg-b:rgba(244,63,94,.16);--bg-c:rgba(59,130,246,.12);
   --surface:rgba(22,26,52,.72);--surface-2:rgba(28,32,62,.72);--ink:#EEF0FF;--muted:#A6ACD6;--faint:#727aa8;
   --border:rgba(255,255,255,.10);--border-strong:rgba(255,255,255,.18);
   --shadow:0 1px 2px rgba(0,0,0,.3),0 14px 36px -14px rgba(0,0,0,.6);
+  --wood1:#9A6A40;--wood2:#6F4628;--metal1:#C6CFE0;--metal2:#7A86A6;
 }
 html,body{min-height:100%}
 body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;
@@ -36,59 +38,89 @@ body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-h
 
 .back-btn{position:fixed;top:12px;left:12px;z-index:60;display:inline-flex;align-items:center;justify-content:center;
   width:38px;height:38px;border-radius:50%;text-decoration:none;background:rgba(20,24,58,.78);color:#EEF0FF;
-  border:1px solid rgba(255,255,255,.22);box-shadow:0 4px 14px -4px rgba(0,0,0,.5);backdrop-filter:blur(6px);
-  opacity:.72;transition:opacity .2s,transform .15s,background .2s}
-.back-btn:hover{opacity:1;transform:translateY(-1px);background:#14183A}
-.back-btn svg{width:16px;height:16px}
+  border:1px solid rgba(255,255,255,.22);box-shadow:0 4px 14px -4px rgba(0,0,0,.5);backdrop-filter:blur(6px);opacity:.8}
+.back-btn:hover{opacity:1}.back-btn svg{width:16px;height:16px}
 .theme-toggle{position:fixed;top:12px;right:12px;z-index:60;width:38px;height:38px;border-radius:50%;
-  border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);cursor:pointer;
-  display:grid;place-items:center;backdrop-filter:blur(8px);transition:transform .15s}
-.theme-toggle:hover{transform:translateY(-1px)}
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--ink);cursor:pointer;display:grid;place-items:center;backdrop-filter:blur(8px)}
 .theme-toggle svg{width:18px;height:18px}.theme-toggle .moon{display:none}
 [data-theme="dark"] .theme-toggle .sun{display:none}[data-theme="dark"] .theme-toggle .moon{display:block}
 
-.hero{text-align:center;margin:2.6rem 0 1.2rem;animation:rise .6s ease both}
-@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.hero{text-align:center;margin:2.6rem 0 1rem}
 .eyebrow{font-family:'Space Mono',monospace;font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--violet)}
 .hero h1{font-family:'Sora',sans-serif;font-weight:800;letter-spacing:-.03em;font-size:clamp(1.9rem,5vw,2.8rem);margin:.4rem 0 .3rem}
 .hero h1 .g{background:linear-gradient(100deg,var(--violet),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{color:var(--muted);max-width:48ch;margin:0 auto;font-size:.98rem}
+.hero p{color:var(--muted);max-width:48ch;margin:0 auto;font-size:.96rem}
 
 .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);
-  backdrop-filter:blur(12px);padding:1.4rem;margin-bottom:1.2rem;animation:rise .6s ease both}
+  backdrop-filter:blur(12px);padding:1.4rem;margin-bottom:1.2rem}
 
-.xrow{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:.4rem;flex-wrap:wrap}
-.xrow .lab{font-family:'Space Mono',monospace;font-size:.78rem;color:var(--faint);letter-spacing:.06em}
-.xstep{display:flex;align-items:center;gap:.6rem}
-.xstep button{width:34px;height:34px;border-radius:10px;border:1px solid var(--border-strong);background:var(--surface-2);
-  color:var(--ink);font-size:1.2rem;font-weight:800;cursor:pointer;line-height:1}
-.xstep button:hover{border-color:var(--violet)}
-.xstep .v{min-width:2.4rem;text-align:center;font-family:'Sora',sans-serif;font-weight:800;font-size:1.2rem;color:var(--violet)}
-.status{text-align:center;font-family:'Sora',sans-serif;font-weight:800;font-size:1.1rem;min-height:1.5rem;margin-bottom:.4rem}
+/* x kontrol paneli */
+.xpanel{display:flex;align-items:center;justify-content:center;gap:.7rem;flex-wrap:wrap;margin-bottom:.5rem}
+.xbox{display:inline-flex;align-items:center;gap:.5rem;background:var(--surface-2);border:1px solid var(--border-strong);
+  border-radius:13px;padding:.4rem .7rem}
+.xbox .lab{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--faint)}
+.xbox .v{min-width:2.2rem;text-align:center;font-family:'Sora',sans-serif;font-weight:800;font-size:1.25rem;color:var(--violet)}
+.xbox button{width:30px;height:30px;border-radius:9px;border:1px solid var(--border-strong);background:var(--surface);
+  color:var(--ink);font-size:1.1rem;font-weight:800;cursor:pointer;line-height:1}
+.xbox button:hover{border-color:var(--violet)}
+.xbox button:disabled{opacity:.35;cursor:not-allowed}
+.minibtn{display:inline-flex;align-items:center;gap:.35rem;padding:.5rem .8rem;border-radius:11px;border:1px solid var(--border-strong);
+  background:var(--surface-2);color:var(--ink);font-family:'Sora',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer}
+.minibtn:hover{border-color:var(--violet)}
+.minibtn.on{background:linear-gradient(100deg,var(--violet),var(--indigo));color:#fff;border-color:transparent}
+
+.status{text-align:center;font-family:'Sora',sans-serif;font-weight:800;font-size:1.1rem;min-height:1.5rem;margin:.3rem 0 .2rem}
 .status.bal{color:var(--emerald)}.status.l{color:var(--violet)}.status.r{color:var(--rose)}
 
-.scale{position:relative;height:240px;margin:0 auto;max-width:560px}
-.beam-wrap{position:absolute;top:16px;left:50%;transform:translateX(-50%);width:90%;
-  display:flex;flex-direction:column;align-items:center;transition:transform .45s cubic-bezier(.34,1.3,.6,1);transform-origin:center top}
-.beam{width:100%;height:10px;border-radius:6px;background:linear-gradient(90deg,var(--violet),var(--rose));box-shadow:0 4px 14px -4px rgba(0,0,0,.4)}
-.pivot{width:0;height:0;border-left:24px solid transparent;border-right:24px solid transparent;border-top:44px solid var(--border-strong);margin-top:-1px}
-.base{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:130px;height:14px;border-radius:8px;background:var(--border-strong)}
-.pans{position:absolute;top:40px;left:0;right:0;display:flex;justify-content:space-between;padding:0 1%}
-.panbox{width:46%;display:flex;flex-direction:column;align-items:center;gap:.4rem;transition:transform .45s cubic-bezier(.34,1.3,.6,1)}
-.string{width:2px;height:24px;background:var(--border-strong)}
-.pan{width:100%;min-height:96px;border-radius:14px;border:2px dashed var(--border-strong);background:var(--surface-2);
-  display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:6px;padding:10px;transition:border-color .2s,box-shadow .2s;touch-action:none}
-.pan.glow{border-color:var(--emerald);box-shadow:0 0 0 3px rgba(16,185,129,.25)}
-.pan.over{border-color:var(--violet);box-shadow:0 0 0 3px rgba(139,92,246,.25)}
+/* ====== SÜSLÜ TERAZİ ====== */
+.scale{position:relative;height:260px;margin:0 auto;max-width:580px}
+.ground{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);width:200px;height:18px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(0,0,0,.28),transparent 70%);filter:blur(2px)}
+.stand{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);width:22px;height:150px;border-radius:8px;
+  background:linear-gradient(90deg,var(--wood2),var(--wood1),var(--wood2));box-shadow:inset 0 0 6px rgba(0,0,0,.3)}
+.base{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:150px;height:18px;border-radius:10px;
+  background:linear-gradient(180deg,var(--wood1),var(--wood2));box-shadow:0 6px 14px -6px rgba(0,0,0,.5)}
+.base::before,.base::after{content:"";position:absolute;bottom:-6px;width:26px;height:10px;border-radius:0 0 8px 8px;background:var(--wood2)}
+.base::before{left:14px}.base::after{right:14px}
+.pivot{position:absolute;top:54px;left:50%;transform:translateX(-50%);width:0;height:0;
+  border-left:18px solid transparent;border-right:18px solid transparent;border-bottom:56px solid var(--wood1);z-index:1}
+.knob{position:absolute;top:46px;left:50%;transform:translateX(-50%);width:20px;height:20px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff6,transparent 55%),linear-gradient(135deg,var(--metal1),var(--metal2));
+  border:1px solid rgba(0,0,0,.15);z-index:4;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+.beam-wrap{position:absolute;top:50px;left:50%;transform:translateX(-50%) rotate(0deg);width:88%;height:14px;z-index:3;
+  transform-origin:center center;transition:transform .5s cubic-bezier(.34,1.3,.6,1)}
+.beam{width:100%;height:12px;border-radius:8px;
+  background:linear-gradient(180deg,#fff3,transparent 40%),linear-gradient(90deg,var(--metal2),var(--metal1) 50%,var(--metal2));
+  box-shadow:0 3px 10px -3px rgba(0,0,0,.5)}
+.beam::before,.beam::after{content:"";position:absolute;top:1px;width:10px;height:10px;border-radius:50%;
+  background:linear-gradient(135deg,var(--metal1),var(--metal2));border:1px solid rgba(0,0,0,.15)}
+.beam::before{left:-3px}.beam::after{right:-3px}
+
+.pans{position:absolute;top:64px;left:0;right:0;display:flex;justify-content:space-between;padding:0 1%}
+.panbox{width:46%;display:flex;flex-direction:column;align-items:center;transition:transform .5s cubic-bezier(.34,1.3,.6,1)}
+.chains{width:78%;height:26px;margin-bottom:-2px}
+.chains line{stroke:var(--metal2);stroke-width:2}
+.hook{width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,var(--metal1),var(--metal2));
+  border:1px solid rgba(0,0,0,.2);margin:-7px auto 0;position:relative;z-index:2}
+.pan{width:100%;min-height:96px;border-radius:16px;
+  background:radial-gradient(ellipse at 50% 18%,var(--surface-2),var(--surface));
+  border:2px solid var(--border-strong);box-shadow:0 8px 18px -10px rgba(0,0,0,.5),inset 0 2px 6px rgba(255,255,255,.06);
+  display:flex;flex-wrap:wrap;align-content:center;justify-content:center;gap:6px;padding:10px;touch-action:none;
+  transition:border-color .2s,box-shadow .2s}
+.pan.glow{border-color:var(--emerald);box-shadow:0 0 0 3px rgba(16,185,129,.3),0 8px 18px -10px rgba(0,0,0,.5)}
+.pan.over{border-color:var(--violet);box-shadow:0 0 0 3px rgba(139,92,246,.3)}
+.pan-lab{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--faint);margin-top:.35rem}
+
 .chip{display:flex;align-items:center;justify-content:center;border-radius:9px;font-family:'Sora',sans-serif;font-weight:800;
-  color:#fff;cursor:grab;touch-action:none;animation:drop .25s ease both}
+  color:#fff;cursor:grab;touch-action:none;border:1.5px solid rgba(255,255,255,.5);box-shadow:0 3px 8px -3px rgba(0,0,0,.4);
+  animation:drop .25s ease both}
 @keyframes drop{from{opacity:0;transform:translateY(-10px) scale(.8)}to{opacity:1;transform:none}}
 .chip:active{cursor:grabbing}
-.chip.x{width:50px;height:38px;font-size:1.05rem;background:linear-gradient(135deg,var(--violet),var(--indigo))}
-.chip.u{width:30px;height:30px;font-size:.85rem;color:#3a2400;background:linear-gradient(135deg,var(--amber),#fbbf24)}
-.pan-lab{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--faint)}
+.chip.x2{width:46px;height:46px;font-size:1rem;background:linear-gradient(135deg,var(--indigo),#3730A3)}
+.chip.x{width:48px;height:30px;font-size:1rem;background:linear-gradient(135deg,var(--violet),var(--indigo))}
+.chip.u{width:28px;height:28px;font-size:.82rem;color:#3a2400;background:linear-gradient(135deg,var(--amber),#fbbf24)}
 
-.palette{display:flex;align-items:center;justify-content:center;gap:1.2rem;margin-top:1.2rem}
+.palette{display:flex;align-items:center;justify-content:center;gap:1rem;margin-top:1.3rem;flex-wrap:wrap}
 .palette .ttl{font-family:'Space Mono',monospace;font-size:.72rem;color:var(--faint)}
 .src{cursor:grab;touch-action:none}
 .eqline{text-align:center;margin-top:1rem;font-family:'Space Mono',monospace;font-size:.85rem;color:var(--muted)}
@@ -97,11 +129,11 @@ body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-h
 .reset{padding:.55rem 1.1rem;border:1px solid var(--border-strong);border-radius:11px;background:var(--surface-2);
   color:var(--muted);font-family:'Sora',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer}
 .reset:hover{color:var(--ink);border-color:var(--violet)}
-.ghost{position:fixed;z-index:999;pointer-events:none;opacity:.88;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;color:#fff}
+.ghost{position:fixed;z-index:999;pointer-events:none;opacity:.9;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Sora',sans-serif;font-weight:800;color:#fff;border:1.5px solid rgba(255,255,255,.5)}
 
 .footer{margin-top:2rem;text-align:center;font-size:.78rem;color:var(--muted)}
 .footer b{font-family:'Sora',sans-serif;color:var(--ink)}
-@media (prefers-reduced-motion:reduce){*{animation:none!important}.beam-wrap,.panbox{transition:none!important}}
+@media (prefers-reduced-motion:reduce){.aurora span{animation:none}.beam-wrap,.panbox{transition:none}}
 </style>
 </head>
 <body>
@@ -119,31 +151,39 @@ body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-h
   <div class="hero">
     <span class="eyebrow">Cebir · Serbest Deneme</span>
     <h1>Terazi <span class="g">Cebir</span></h1>
-    <p>Blokları elinle iki kefeye sürükle. Bir taraf ağır olursa terazi eğilir — dengeyi sen kur!</p>
+    <p>x², x ve birim bloklarını iki kefeye sürükle. x'i gizleyip dengeyle tahmin et!</p>
   </div>
 
   <div class="card">
-    <div class="xrow">
-      <span class="lab">Bir x bloğu kaç birim ağır?</span>
-      <div class="xstep">
-        <button onclick="bumpX(-1)">−</button>
+    <div class="xpanel">
+      <div class="xbox">
+        <span class="lab">x =</span>
+        <button id="xminus" onclick="bumpX(-1)">−</button>
         <span class="v" id="xv">2</span>
-        <button onclick="bumpX(1)">+</button>
+        <button id="xplus" onclick="bumpX(1)">+</button>
       </div>
+      <button class="minibtn" id="hideBtn" onclick="toggleHide()">🙈 x'i gizle</button>
+      <button class="minibtn" onclick="randomX()">🎲 Rastgele gizli x</button>
     </div>
     <div class="status" id="status">Bloklarla denemeye başla</div>
 
     <div class="scale">
-      <div class="beam-wrap" id="beamWrap"><div class="beam"></div><div class="pivot"></div></div>
+      <div class="ground"></div>
       <div class="base"></div>
+      <div class="stand"></div>
+      <div class="pivot"></div>
+      <div class="knob"></div>
+      <div class="beam-wrap" id="beamWrap"><div class="beam"></div></div>
       <div class="pans">
         <div class="panbox" id="boxL">
-          <div class="string"></div>
+          <svg class="chains" viewBox="0 0 100 26" preserveAspectRatio="none"><line x1="50" y1="0" x2="8" y2="26"/><line x1="50" y1="0" x2="92" y2="26"/></svg>
+          <div class="hook"></div>
           <div class="pan" id="panL" data-side="left"></div>
           <div class="pan-lab">SOL</div>
         </div>
         <div class="panbox" id="boxR">
-          <div class="string"></div>
+          <svg class="chains" viewBox="0 0 100 26" preserveAspectRatio="none"><line x1="50" y1="0" x2="8" y2="26"/><line x1="50" y1="0" x2="92" y2="26"/></svg>
+          <div class="hook"></div>
           <div class="pan" id="panR" data-side="right"></div>
           <div class="pan-lab">SAĞ</div>
         </div>
@@ -152,8 +192,9 @@ body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-h
 
     <div class="palette">
       <span class="ttl">Sürükle →</span>
-      <div class="chip x src" id="srcX" data-t="x">x</div>
-      <div class="chip u src" id="srcU" data-t="u">1</div>
+      <div class="chip x2 src" id="srcX2" data-t="x2">x²</div>
+      <div class="chip x src"  id="srcX"  data-t="x">x</div>
+      <div class="chip u src"  id="srcU"  data-t="u">1</div>
     </div>
     <div class="eqline" id="eqline"></div>
     <div class="tools"><button class="reset" onclick="resetAll()">⟳ Temizle</button></div>
@@ -176,55 +217,74 @@ body{font-family:'Inter',sans-serif;color:var(--ink);background:var(--bg);line-h
     if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(k==="i"||k==="j"||k==="c")){e.preventDefault();}
     if((e.ctrlKey||e.metaKey)&&!inF(e.target)&&(k==="u"||k==="s")){e.preventDefault();}});})();
 
-/* ---------- TERAZİ SANDBOX ---------- */
-let xVal=2;
-let L={x:0,u:0}, R={x:0,u:0};
+/* ---------- TERAZİ ---------- */
+let xVal=2, hidden=false;
+let L={x2:0,x:0,u:0}, R={x2:0,x:0,u:0};
 const panL=document.getElementById('panL'), panR=document.getElementById('panR');
+const WT={x2:()=>xVal*xVal, x:()=>xVal, u:()=>1};
 
-function bumpX(d){xVal=Math.max(1,Math.min(6,xVal+d));document.getElementById('xv').textContent=xVal;render();}
+function bumpX(d){if(hidden)return;xVal=Math.max(1,Math.min(8,xVal+d));render();}
+function toggleHide(){hidden=!hidden;render();}
+function randomX(){xVal=Math.floor(Math.random()*8)+1;hidden=true;render();}
 
-function weight(s){return s.x*xVal + s.u;}
-function exprStr(s){let p=[];if(s.x>0)p.push((s.x===1?'':s.x)+'x');if(s.u>0)p.push(''+s.u);return p.length?p.join(' + '):'0';}
+function weight(s){return s.x2*xVal*xVal + s.x*xVal + s.u;}
+function exprStr(s){let p=[];
+  if(s.x2>0)p.push((s.x2===1?'':s.x2)+'x²');
+  if(s.x>0)p.push((s.x===1?'':s.x)+'x');
+  if(s.u>0)p.push(''+s.u);
+  return p.length?p.join(' + '):'0';}
 
 function render(){
-  // fill pans
+  // x paneli
+  document.getElementById('xv').textContent = hidden ? '?' : xVal;
+  document.getElementById('xminus').disabled = hidden;
+  document.getElementById('xplus').disabled = hidden;
+  const hb=document.getElementById('hideBtn');
+  hb.textContent = hidden ? '👁 x\u2019i göster' : '🙈 x\u2019i gizle';
+  hb.classList.toggle('on',hidden);
+
   renderPan(panL,L); renderPan(panR,R);
   const lw=weight(L), rw=weight(R), diff=lw-rw;
-  // tilt
-  const angle=Math.max(-13,Math.min(13,diff*2.5));
+  const angle=Math.max(-13,Math.min(13,diff*2.2));
   document.getElementById('beamWrap').style.transform=`translateX(-50%) rotate(${-angle}deg)`;
-  const dy=Math.max(-46,Math.min(46,diff*7));
+  const dy=Math.max(-42,Math.min(42,diff*6));
   document.getElementById('boxL').style.transform=`translateY(${dy}px)`;
   document.getElementById('boxR').style.transform=`translateY(${-dy}px)`;
-  // status
-  const st=document.getElementById('status');
-  st.className='status';
+
+  const st=document.getElementById('status'); st.className='status';
+  panL.classList.remove('glow');panR.classList.remove('glow');
   if(lw===0&&rw===0){st.textContent='Bloklarla denemeye başla';}
   else if(diff===0){st.textContent='⚖️ Dengede! İki taraf eşit.';st.classList.add('bal');
     panL.classList.add('glow');panR.classList.add('glow');}
-  else{panL.classList.remove('glow');panR.classList.remove('glow');
-    if(diff>0){st.textContent='Sol taraf daha ağır ↓';st.classList.add('l');}
-    else{st.textContent='Sağ taraf daha ağır ↓';st.classList.add('r');}}
-  if(diff!==0){panL.classList.remove('glow');panR.classList.remove('glow');}
-  // equation line
-  document.getElementById('eqline').innerHTML =
-    `Sol: <b>${exprStr(L)}</b> (ağırlık ${lw}) &nbsp;•&nbsp; Sağ: <b>${exprStr(R)}</b> (ağırlık ${rw})`;
+  else if(diff>0){st.textContent='Sol taraf daha ağır ↓';st.classList.add('l');}
+  else{st.textContent='Sağ taraf daha ağır ↓';st.classList.add('r');}
+
+  // eşitlik satırı — gizliyken ağırlıkları gösterme
+  if(hidden){
+    document.getElementById('eqline').innerHTML =
+      `Sol: <b>${exprStr(L)}</b> &nbsp;•&nbsp; Sağ: <b>${exprStr(R)}</b> &nbsp; <span style="color:var(--faint)">(x gizli)</span>`;
+  }else{
+    document.getElementById('eqline').innerHTML =
+      `Sol: <b>${exprStr(L)}</b> (ağırlık ${lw}) &nbsp;•&nbsp; Sağ: <b>${exprStr(R)}</b> (ağırlık ${rw})`;
+  }
 }
 function renderPan(pan,s){
   pan.innerHTML='';
+  for(let i=0;i<s.x2;i++)pan.appendChild(chip('x2'));
   for(let i=0;i<s.x;i++)pan.appendChild(chip('x'));
   for(let i=0;i<s.u;i++)pan.appendChild(chip('u'));
-  if(s.x===0&&s.u===0){const d=document.createElement('div');d.className='pan-lab';d.textContent='boş';pan.appendChild(d);}
+  if(s.x2===0&&s.x===0&&s.u===0){const d=document.createElement('div');d.className='pan-lab';d.textContent='boş';pan.appendChild(d);}
 }
 function chip(type){const c=document.createElement('div');c.className='chip '+type;c.dataset.t=type;
-  c.textContent=type==='x'?'x':'1';attachChipDrag(c);return c;}
+  c.textContent=type==='x2'?'x²':(type==='x'?'x':'1');attachChipDrag(c);return c;}
 
-/* drag system */
+/* drag */
 let ghost=null;
 function startGhost(type,x,y){
-  ghost=document.createElement('div');ghost.className='ghost '+type;ghost.textContent=type==='x'?'x':'1';
-  if(type==='x'){ghost.style.width='50px';ghost.style.height='38px';ghost.style.background='linear-gradient(135deg,var(--violet),var(--indigo))';}
-  else{ghost.style.width='30px';ghost.style.height='30px';ghost.style.color='#3a2400';ghost.style.background='linear-gradient(135deg,var(--amber),#fbbf24)';}
+  ghost=document.createElement('div');ghost.className='ghost';ghost.textContent=type==='x2'?'x²':(type==='x'?'x':'1');
+  if(type==='x2'){ghost.style.width='46px';ghost.style.height='46px';ghost.style.background='linear-gradient(135deg,var(--indigo),#3730A3)';}
+  else if(type==='x'){ghost.style.width='48px';ghost.style.height='30px';ghost.style.background='linear-gradient(135deg,var(--violet),var(--indigo))';}
+  else{ghost.style.width='28px';ghost.style.height='28px';ghost.style.color='#3a2400';ghost.style.background='linear-gradient(135deg,var(--amber),#fbbf24)';}
   document.body.appendChild(ghost);moveGhost(x,y);
 }
 function moveGhost(x,y){if(ghost){ghost.style.left=(x-ghost.offsetWidth/2)+'px';ghost.style.top=(y-ghost.offsetHeight/2)+'px';}}
@@ -233,8 +293,7 @@ function over(el,x,y){const r=el.getBoundingClientRect();return x>=r.left&&x<=r.
 function targetSide(x,y){if(over(panL,x,y))return'left';if(over(panR,x,y))return'right';return null;}
 function highlight(side){panL.classList.toggle('over',side==='left');panR.classList.toggle('over',side==='right');}
 
-/* palette sources: create on drop */
-['srcX','srcU'].forEach(id=>{
+['srcX2','srcX','srcU'].forEach(id=>{
   const src=document.getElementById(id);
   src.addEventListener('pointerdown',e=>{
     e.preventDefault();const type=src.dataset.t;src.setPointerCapture(e.pointerId);
@@ -248,8 +307,6 @@ function highlight(side){panL.classList.toggle('over',side==='left');panR.classL
     src.addEventListener('pointermove',move);src.addEventListener('pointerup',up);
   });
 });
-
-/* placed chips: move between pans / remove if dropped outside */
 function attachChipDrag(c){
   c.addEventListener('pointerdown',e=>{
     e.preventDefault();e.stopPropagation();
@@ -260,16 +317,14 @@ function attachChipDrag(c){
     const up=ev=>{c.releasePointerCapture(e.pointerId);c.removeEventListener('pointermove',move);c.removeEventListener('pointerup',up);
       endGhost();highlight(null);
       const side=targetSide(ev.clientX,ev.clientY);
-      // remove from source
       (fromSide==='left'?L:R)[type]--;
-      // add to target if dropped on a pan (else removed)
       if(side){(side==='left'?L:R)[type]++;}
       render();
     };
     c.addEventListener('pointermove',move);c.addEventListener('pointerup',up);
   });
 }
-function resetAll(){L={x:0,u:0};R={x:0,u:0};render();}
+function resetAll(){L={x2:0,x:0,u:0};R={x2:0,x:0,u:0};render();}
 render();
 </script>
 </body>
